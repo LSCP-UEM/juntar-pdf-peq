@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Dossiê - Doutorado PEQ/UEM</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; }
+        .container { max-width: 900px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { color: #0056b3; text-align: center; border-bottom: 2px solid #0056b3; padding-bottom: 10px; }
+        h3 { color: #444; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 30px; }
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="file"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 5px;}
+        
+        /* Estilos dos Cards Dinâmicos */
+        .item-card { border: 1px solid #e0e0e0; padding: 15px; border-radius: 6px; margin-bottom: 15px; background-color: #fafafa; }
+        .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;}
+        .item-title { font-weight: bold; font-size: 1.1em; color: #0056b3; }
+        .item-counter { background: #e9ecef; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold; color: #495057; }
+        .btn-add { background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-top: 10px;}
+        .btn-add:hover { background: #0056b3; }
+        .btn-add:disabled { background: #ccc; cursor: not-allowed; }
+        
+        .btn-gerar { display: block; width: 100%; padding: 15px; background: #28a745; color: white; border: none; font-size: 18px; border-radius: 4px; cursor: pointer; margin-top: 30px; font-weight: bold; }
+        .btn-gerar:hover { background: #218838; }
+        #status { margin-top: 20px; font-weight: bold; text-align: center; color: #0056b3; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Gerador de Dossiê - PEQ/UEM</h1>
+    
+    <div id="loading-msg" style="text-align: center; padding: 40px; color: #666;">
+        <h2>🔄 Carregando regras oficiais do edital...</h2>
+    </div>
+
+    <div id="conteudo-principal" style="display: none;">
+        <h3>1. Identificação do Candidato</h3>
+        <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 2; min-width: 250px; margin-bottom: 0;">
+                <label>Nome Completo: <span style="color:red">*</span></label>
+                <input type="text" id="nome" placeholder="Ex: João da Silva" required>
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
+                <label>CPF: <span style="color:red">*</span></label>
+                <input type="text" id="cpf" placeholder="Apenas números" required>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 2; min-width: 200px; margin-bottom: 0;">
+                <label>E-mail: <span style="color:red">*</span></label>
+                <input type="email" id="email" placeholder="Ex: joao.silva@email.com" required>
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
+                <label>Nível de Inscrição: <span style="color:red">*</span></label>
+                <select id="nivel_inscricao" onchange="alternarCamposDoutorado()" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" required>
+                    <option value="">Selecione...</option>
+                    <option value="Mestrado">Mestrado</option>
+                    <option value="Doutorado">Doutorado</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label>Graduação (Curso e Instituição): <span style="color:red">*</span></label>
+            <input type="text" id="graduacao" placeholder="Ex: Engenharia Química - UEM" required>
+        </div>
+
+        <div id="bloco_doutorado" style="display: none; background: #e9ecef; padding: 15px; border-left: 4px solid #17a2b8; border-radius: 4px; margin-bottom: 15px;">
+            <h4 style="margin-top: 0; color: #17a2b8;">Campos Exclusivos para Doutorado</h4>
+            
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Mestrado (Curso e Instituição): <span style="color:red">*</span></label>
+                <input type="text" id="mestrado" placeholder="Ex: Engenharia Química - UEM">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Orientador Pretendido: <span style="color:red">*</span></label>
+                <input type="text" id="orientador" placeholder="Ex: Prof. Dr. João da Silva">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Título do Projeto de Pesquisa: <span style="color:red">*</span></label>
+                <input type="text" id="titulo_projeto" placeholder="Ex: Desenvolvimento de novos nanomateriais...">
+            </div>
+        </div>
+
+        <h3>2. Documentação Básica Obrigatória</h3>
+        <div class="alert" style="background: #e2e3e5; color: #383d41; border-color: #d6d8db; padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 0.9em;">
+            Anexe cada documento em seu respectivo campo. O sistema organizará tudo automaticamente na ordem exigida pela secretaria.
+        </div>
+        
+        <div id="documentos-basicos-container"></div>
+
+        <h3>3. Comprovantes da Tabela 1 (Critérios de Avaliação)</h3>
+        
+        <div id="dynamic-items-container"></div>
+        
+        <div style="background-color: #fff3cd; color: #856404; border-left: 5px solid #ffeeba; padding: 15px; margin-top: 40px; margin-bottom: 20px; border-radius: 4px;">
+            <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 1.1em;">⚠️ Atenção antes de gerar o Dossiê!</h4>
+            <p style="margin-bottom: 15px; font-size: 0.9em; line-height: 1.5;">
+                <strong>1. Não feche ou atualize a página:</strong> Esta é uma ferramenta de compilação em tempo real e <strong>não salva seus dados</strong>. Organize todos os seus PDFs no seu computador e preencha tudo de uma vez.
+            </p>
+            <p style="margin-bottom: 15px; font-size: 0.9em; line-height: 1.5;">
+                <strong>2. A Pontuação é uma ESTIMATIVA:</strong> O valor exibido no banner verde da tela é uma mera referência matemática. <strong>A pontuação final oficial será validada exclusivamente pela Comissão de Seleção</strong>.
+            </p>
+            <p style="margin-bottom: 20px; font-size: 0.9em; line-height: 1.5; color: #d9534f; font-weight: bold;">
+                3. PROIBIDO EDITAR O PDF GERADO: O arquivo final contém metadados estruturais ocultos (XML) exigidos pelo sistema de automação da banca. Editar o PDF externamente (usar sites para juntar, comprimir ou cortar páginas após o download) IRÁ CORROMPER os metadados do arquivo, inviabilizando a avaliação eletrônica e podendo resultar na glosa completa da sua pontuação.
+            </p>
+            <label style="font-weight: normal; cursor: pointer; display: flex; align-items: flex-start; background: #fff; padding: 10px; border: 1px solid #ffeeba; border-radius: 4px;">
+                <input type="checkbox" id="aceite_termos" style="width: 20px; height: 20px; margin-right: 15px; margin-top: 2px;">
+                <span style="font-size: 0.9em; line-height: 1.5; color: #333;">
+                    <strong>TERMO DE CIÊNCIA E RESPONSABILIDADE:</strong> Entendo que esta página roda localmente. Declaro ser minha responsabilidade conferir a legibilidade e a ordem do PDF gerado, e COMPROMETO-ME a enviar o arquivo ao PEQ exatamente como foi baixado, sem realizar nenhuma edição externa.
+                </span>
+            </label>
+        </div>
+        <button type="button" class="btn-gerar" onclick="gerarDossie()">Gerar Dossiê PDF</button>
+        <div id="status"></div>
+    </div>
+</div>
+
+<div style="position: fixed; bottom: 30px; right: 30px; background: #28a745; color: white; padding: 15px 25px; border-radius: 50px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 1.2em; font-weight: bold; z-index: 9999; display: flex; align-items: center; gap: 10px;">
+    <span>🏆 Pontuação Estimada: <span id="pontuacao-estimada-display">0.00</span> pts</span>
+    <span title="Atenção: Sujeito à validação da banca." style="cursor: help; background: white; color: #28a745; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center; font-size: 0.8em;">?</span>
+</div>
+
+<script>
+    // =========================================================================
+    // VARIÁVEIS GLOBAIS (Preenchidas magicamente pelo JSON)
+    // =========================================================================
+    let dadosEdital = null;
+    let regrasPontuacao = {};
+
+    // INICIA O SISTEMA ASSIM QUE A PÁGINA CARREGA
+    window.onload = async function carregarEdital() {
+        try {
+            // "Pesca" o JSON da secretaria
+            const response = await fetch('regras_edital.json');
+            if (!response.ok) throw new Error("Arquivo não encontrado.");
+            
+            dadosEdital = await response.json();
+            
+            // Prepara a matemática
+            dadosEdital.criterios.forEach(item => {
+                regrasPontuacao[item.id] = {
+                    peso: parseFloat(item.peso_pontos),
+                    tipo: item.regra_matematica,
+                    limite: parseFloat(item.teto_maximo) > 0 ? parseFloat(item.teto_maximo) : null
+                };
+            });
+
+            // Esconde aviso de loading e mostra formulário
+            document.getElementById('loading-msg').style.display = 'none';
+            document.getElementById('conteudo-principal').style.display = 'block';
+
+            renderizarDocumentosBasicos();
+            renderizarCriteriosTabela1();
+
+        } catch (erro) {
+            console.error(erro);
+            document.getElementById('loading-msg').innerHTML = `
+                <h2 style="color: red;">❌ Erro de Sistema</h2>
+                <p>Não foi possível carregar as regras do edital (regras_edital.json).</p>
+                <p>Verifique se o arquivo está na mesma pasta que este HTML e se você está rodando um servidor local.</p>
+            `;
+        }
+    };
+    function alternarCamposDoutorado() {
+        const nivel = document.getElementById('nivel_inscricao').value;
+        const bloco = document.getElementById('bloco_doutorado');
+
+        if (nivel === 'Doutorado') {
+            bloco.style.display = 'block'; // Mostra a gaveta
+        } else {
+            bloco.style.display = 'none'; // Esconde a gaveta
+            // Limpa os campos caso o usuário tenha clicado errado e voltado
+            document.getElementById('mestrado').value = '';
+            document.getElementById('orientador').value = '';
+            document.getElementById('titulo_projeto').value = '';
+        }
+    }
+    // =========================================================================
+    // RENDERIZADORES DE TELA
+    // =========================================================================
+    function renderizarDocumentosBasicos() {
+        const container = document.getElementById('documentos-basicos-container');
+        let html = '';
+        
+        dadosEdital.documentos.forEach(doc => {
+            const reqAsterisk = doc.obrigatorio ? '<span style="color:red">*</span>' : '';
+            const isXML = doc.tagBase === 'COMPROV_LATTES_XML';
+            const acceptType = isXML ? '.xml' : '.pdf';
+            
+            html += `
+            <div class="form-group" style="padding: 10px; background: #f8f9fa; border-left: 3px solid #6c757d; border-radius: 4px;">
+                <label>${doc.titulo} ${reqAsterisk}</label>
+                ${doc.descricao ? `<span style="font-size: 0.85em; color: #666; display:block; margin-bottom:8px;">${doc.descricao}</span>` : ''}
+                <input type="file" accept="${acceptType}" data-tag="${doc.tagBase}" data-obrig="${doc.obrigatorio}" data-nome="${doc.titulo}" class="doc-basico-input">
+            </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function renderizarCriteriosTabela1() {
+        const container = document.getElementById('dynamic-items-container');
+        
+        dadosEdital.criterios.forEach(item => {
+            const regra = regrasPontuacao[item.id];
+            let textoPeso = "";
+            
+            if (regra && regra.peso > 0) {
+                if (regra.tipo === "cr") textoPeso = `Peso: ${regra.peso}x o CR`;
+                else if (regra.tipo === "flat") textoPeso = `${regra.peso} pts/item`;
+                else if (regra.tipo === "autores") textoPeso = `Até ${regra.peso} pts (div. por autores)`;
+                else if (regra.tipo === "meses") textoPeso = `${regra.peso} pts a cada 12 meses`;
+                else if (regra.tipo === "semestres") textoPeso = `${regra.peso} pts por semestre`;
+                
+                if (regra.limite) textoPeso += ` | Máx: ${regra.limite} pts`;
+            } else if (regra && regra.peso === 0) {
+                textoPeso = "Sem pontuação direta";
+            }
+
+            const badgeHtml = textoPeso ? `<span style="background: #e2e3e5; color: #383d41; font-size: 0.65em; padding: 4px 8px; border-radius: 12px; margin-left: 10px; font-weight: normal; vertical-align: middle;">${textoPeso}</span>` : '';
+            const descHtml = item.descricao ? `<div style="font-size: 0.85em; color: #666; margin-bottom: 12px; line-height: 1.4;"><em>${item.descricao}</em></div>` : '';
+            
+            const card = document.createElement('div');
+            card.className = 'item-card';
+
+            if (item.is_calculadora_cr) {
+                card.innerHTML = `
+                    <div class="item-header">
+                        <div class="item-title">${item.titulo} ${badgeHtml}</div>
+                        <div class="item-counter" style="background:#d4edda; color:#155724; border-radius:12px;">
+                            CR Calculado: <span id="cr-display-${item.id}">0.00</span>
+                        </div>
+                    </div>
+                    ${descHtml}
+                    <div id="disciplines-${item.id}" data-cr-final="0.00"></div>
+                    <button class="btn-add" type="button" onclick="addDisciplineRow('${item.id}')" style="background:#17a2b8;">+ Adicionar Disciplina</button>
+                `;
+            } else {
+                const paramExtraLabel = item.extraLabel ? `'${item.extraLabel}'` : 'null';
+                card.innerHTML = `
+                    <div class="item-header">
+                        <div class="item-title">${item.titulo} ${badgeHtml}</div>
+                        <div class="item-counter" id="counter-${item.id}">0 / ${item.max_uploads} adicionados</div>
+                    </div>
+                    ${descHtml}
+                    <div id="inputs-${item.id}" data-next-index="1"></div>
+                    <button class="btn-add" id="btn-${item.id}" onclick="addInput('${item.id}', ${item.max_uploads}, '${item.tagBase}', ${paramExtraLabel}, ${item.exige_doi}, ${item.exige_cortador_pagina})">
+                        + Adicionar Comprovante
+                    </button>
+                `;
+            }
+            container.appendChild(card);
+        });
+    }
+
+    // =========================================================================
+    // LÓGICA DA CALCULADORA E CAMPOS (Mantida 100% Intacta do seu código!)
+    // =========================================================================
+    function addDisciplineRow(itemId) {
+        const calcContainer = document.getElementById(`disciplines-${itemId}`);
+        const row = document.createElement('div');
+        row.className = 'calc-row';
+        row.style = "display: flex; gap: 10px; margin-bottom: 10px; align-items: center; background: #f8f9fa; padding: 10px; border-radius: 4px; border-left: 3px solid #17a2b8;";
+        row.innerHTML = `
+            <input type="text" class="disc-nome" placeholder="Nome da Disciplina" style="flex: 2; padding: 8px;">
+            <input type="number" class="disc-cred" placeholder="Créditos" min="1" style="flex: 1; padding: 8px;" oninput="calculateCR('${itemId}')">
+            <select class="disc-nota" style="flex: 1; padding: 8px;" onchange="calculateCR('${itemId}')">
+                <option value="">Conceito...</option>
+                <option value="3">A (9,0 a 10,0)</option>
+                <option value="2">B (7,5 a 8,9)</option>
+                <option value="1">C (6,0 a 7,4)</option>
+                <option value="0">R (Reprovado)</option>
+                <option value="ignore">S, I ou J (Ignorar)</option>
+            </select>
+            <button type="button" onclick="this.parentElement.remove(); calculateCR('${itemId}')" style="background: #dc3545; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer;">❌</button>
+        `;
+        calcContainer.appendChild(row);
+    }
+
+    function calculateCR(itemId) {
+        const calcContainer = document.getElementById(`disciplines-${itemId}`);
+        const rows = calcContainer.querySelectorAll('.calc-row');
+        let totalCreditos = 0;
+        let totalPontos = 0;
+
+        rows.forEach(row => {
+            const credStr = row.querySelector('.disc-cred').value;
+            const notaVal = row.querySelector('.disc-nota').value;
+
+            if (credStr && notaVal && notaVal !== "ignore" && notaVal !== "") {
+                const cred = parseFloat(credStr);
+                const nota = parseFloat(notaVal);
+                if (cred > 0) {
+                    totalCreditos += cred;
+                    totalPontos += (cred * nota);
+                }
+            }
+        });
+
+        const cr = totalCreditos > 0 ? (totalPontos / totalCreditos).toFixed(2) : "0.00";
+        document.getElementById(`cr-display-${itemId}`).innerText = cr;
+        calcContainer.setAttribute('data-cr-final', cr); 
+        atualizarPontuacaoEstimada();
+    }
+
+    function addInput(itemId, max, tagBase, extraLabel, requiresDoi, requiresPageCrop) {
+        const inputContainer = document.getElementById(`inputs-${itemId}`);
+        const currentCount = inputContainer.children.length; 
+
+        if (currentCount < max) {
+            let nextIndex = parseInt(inputContainer.getAttribute('data-next-index'));
+            const uniqueTag = `${tagBase}_${nextIndex}`;
+            inputContainer.setAttribute('data-next-index', nextIndex + 1);
+            
+            const block = document.createElement('div');
+            block.style.borderLeft = "3px solid #007bff";
+            block.style.paddingLeft = "10px";
+            block.style.marginTop = "10px";
+            block.style.marginBottom = "15px";
+
+            const inputHtml = document.createElement('input');
+            inputHtml.type = 'file';
+            inputHtml.accept = '.pdf';
+            inputHtml.setAttribute('data-tag', uniqueTag);
+            block.appendChild(inputHtml);
+
+            if (requiresDoi) {
+                const doiInput = document.createElement('input');
+                doiInput.type = 'text';
+                doiInput.placeholder = 'Cole aqui o DOI, se houver (ex: 10.1016/j.cej.2025...)';
+                doiInput.id = `doi-${uniqueTag}`;
+                doiInput.style.marginTop = "5px";
+                doiInput.style.borderColor = "#007bff"; 
+                doiInput.addEventListener('blur', function() {
+                    let cleanDoi = this.value.trim();
+                    let index10 = cleanDoi.indexOf("10.");
+                    if (index10 !== -1) this.value = cleanDoi.substring(index10);
+                });
+                block.appendChild(doiInput);
+            }
+            
+            if (requiresPageCrop) {
+                const pageWrapper = document.createElement('div');
+                pageWrapper.style.marginTop = "8px";
+                pageWrapper.innerHTML = `<div style="font-size:0.85em; color:#555; font-weight:bold; margin-bottom:3px;">Página exata do PDF onde constam o TÍTULO do artigo e o NOME DOS AUTORES:</div>`;
+                const pageInput = document.createElement('input');
+                pageInput.type = 'number'; pageInput.min = '1'; pageInput.value = '1'; 
+                pageInput.id = `pagecrop-${uniqueTag}`;
+                pageInput.style.width = "70px"; pageInput.style.padding = "6px"; pageInput.style.borderColor = "#28a745"; 
+                pageWrapper.appendChild(pageInput);
+                block.appendChild(pageWrapper);
+            }
+
+            if (extraLabel) {
+                const extraInput = document.createElement('input');
+                extraInput.type = 'number';
+                extraInput.placeholder = extraLabel;
+                extraInput.id = `extra-${uniqueTag}`;
+                extraInput.style.marginTop = "5px";
+                extraInput.oninput = atualizarPontuacaoEstimada; 
+                block.appendChild(extraInput);
+            }
+            
+            const btnRemove = document.createElement('button');
+            btnRemove.innerText = "❌ Remover";
+            btnRemove.style.background = "#dc3545"; btnRemove.style.color = "white"; btnRemove.style.border = "none";
+            btnRemove.style.padding = "6px 12px"; btnRemove.style.borderRadius = "4px"; btnRemove.style.cursor = "pointer";
+            btnRemove.style.fontSize = "0.85em"; btnRemove.style.marginTop = "5px";
+            
+            btnRemove.onclick = function() {
+                block.remove(); 
+                document.getElementById(`counter-${itemId}`).innerText = `${inputContainer.children.length} / ${max} adicionados`;
+                const btnAdd = document.getElementById(`btn-${itemId}`);
+                btnAdd.disabled = false; btnAdd.innerText = "+ Adicionar Comprovante"; btnAdd.style.background = "#007bff"; 
+                atualizarPontuacaoEstimada();
+            };
+
+            block.appendChild(btnRemove);
+            inputContainer.appendChild(block);
+
+            document.getElementById(`counter-${itemId}`).innerText = `${inputContainer.children.length} / ${max} adicionados`;
+            if (inputContainer.children.length >= max) {
+                const btn = document.getElementById(`btn-${itemId}`);
+                btn.disabled = true; btn.innerText = "Máximo atingido"; btn.style.background = "#6c757d"; 
+            }
+            atualizarPontuacaoEstimada();
+        }
+    }
+
+    // =========================================================================
+    // O MOTOR DE MATEMÁTICA
+    // =========================================================================
+    function atualizarPontuacaoEstimada() {
+        let totalEstimado = 0;
+
+        dadosEdital.criterios.forEach(item => {
+            const regra = regrasPontuacao[item.id];
+            if (!regra || regra.peso === 0) return;
+
+            let itemTotal = 0;
+
+            if (item.is_calculadora_cr) {
+                const calcContainer = document.getElementById(`disciplines-${item.id}`);
+                if (calcContainer) {
+                    const cr = parseFloat(calcContainer.getAttribute('data-cr-final')) || 0;
+                    itemTotal = cr * regra.peso;
+                }
+            } else {
+                const inputContainer = document.getElementById(`inputs-${item.id}`);
+                if (inputContainer) {
+                    const blocks = inputContainer.children;
+                    let totalMesesAcumulados = 0; // <--- O NOSSO NOVO "CARRINHO" DE MESES
+
+                    for (let i = 0; i < blocks.length; i++) {
+                        const extraInput = blocks[i].querySelector('input[id^="extra-"]');
+                        const extraValue = extraInput ? (parseFloat(extraInput.value) || 0) : 0;
+
+                        if (regra.tipo === "flat") {
+                            itemTotal += regra.peso;
+                        } else if (regra.tipo === "autores") {
+                            itemTotal += (extraValue >= 4) ? regra.peso * (4 / extraValue) : regra.peso;
+                        } else if (regra.tipo === "semestres") {
+                            itemTotal += regra.peso * extraValue;
+                        } else if (regra.tipo === "meses") {
+                            totalMesesAcumulados += extraValue; // <--- SOMA TUDO ANTES DE CALCULAR!
+                        }
+                    }
+
+                    // Depois que varreu todos os PDFs anexados neste item, aí sim ele divide os meses!
+                    if (regra.tipo === "meses") {
+                        itemTotal += regra.peso * Math.floor(totalMesesAcumulados / 12);
+                    }
+                }
+            }
+
+            // Trava matemática: se o item estourar o limite da Tabela 1, corta no teto!
+            if (regra.limite && itemTotal > regra.limite) {
+                itemTotal = regra.limite;
+            }
+            totalEstimado += itemTotal;
+        });
+
+        const displayEle = document.getElementById('pontuacao-estimada-display');
+        if (displayEle) displayEle.innerText = totalEstimado.toFixed(2);
+    }
+
+    // =========================================================================
+    // A IMPRESSORA (Geração do PDF)
+    // =========================================================================
+async function gerarDossie() {
+        const aceitouTermosEle = document.getElementById('aceite_termos');
+        if (aceitouTermosEle && !aceitouTermosEle.checked) {
+            alert("⚠️ Você precisa ler e aceitar o Termo de Ciência e Responsabilidade para gerar o Dossiê.");
+            return;
+        }
+
+        const nomeInput = document.getElementById('nome').value.trim();
+        const cpfInput = document.getElementById('cpf').value.trim();
+        const emailInput = document.getElementById('email').value.trim();
+        const nivelInput = document.getElementById('nivel_inscricao').value;
+        const gradInput = document.getElementById('graduacao').value.trim();
+        
+        // Os do doutorado podem vir vazios
+        const mestInput = document.getElementById('mestrado').value.trim();
+        const oriInput = document.getElementById('orientador').value.trim();
+        const projInput = document.getElementById('titulo_projeto').value.trim();
+
+        if (!nomeInput || !cpfInput || !emailInput || !nivelInput || !gradInput) {
+            alert("⚠️ Por favor, preencha todos os campos obrigatórios da Identificação.");
+            return;
+        }
+
+        // Validação condicional!
+        if (nivelInput === 'Doutorado' && (!mestInput || !oriInput || !projInput)) {
+            alert("⚠️ Candidatos ao Doutorado devem preencher Instituição de Mestrado, Orientador e Título do Projeto.");
+            return;
+        }
+
+        // NOVO: Auditoria dos Campos Obrigatórios Dinâmicos
+        const basicDocs = document.querySelectorAll('.doc-basico-input');
+        for (let input of basicDocs) {
+            if (input.getAttribute('data-obrig') === 'true' && input.files.length === 0) {
+                alert(`⚠️ O documento obrigatório "${input.getAttribute('data-nome')}" não foi anexado!`);
+                return;
+            }
+        }
+
+        const statusDiv = document.getElementById('status');
+        statusDiv.innerText = "⏳ Processando arquivos e carimbando tags... Aguarde. Não feche a janela!";
+        
+        try {
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            const mergedPdf = await PDFDocument.create();
+            const font = await mergedPdf.embedFont(StandardFonts.HelveticaBold);
+            const normalFont = await mergedPdf.embedFont(StandardFonts.Helvetica);
+
+            // ==========================================
+            // CAPA DO PDF TURBINADA
+            // ==========================================
+            const coverPage = mergedPdf.addPage();
+            coverPage.drawText(`DOSSIE DE INSCRICAO - PEQ UEM`, { x: 50, y: 750, size: 24, font: font, color: rgb(0, 0.33, 0.7) });
+            
+            coverPage.drawText(`Candidato: ${nomeInput}`, { x: 50, y: 700, size: 16, font: font });
+            coverPage.drawText(`CPF: ${cpfInput}  |  E-mail: ${emailInput}`, { x: 50, y: 680, size: 12, font: normalFont });
+            
+            coverPage.drawText(`Nivel: ${nivelInput}`, { x: 50, y: 660, size: 12, font: font, color: rgb(0.8, 0.2, 0) });
+            coverPage.drawText(`Graduacao: ${gradInput}`, { x: 50, y: 645, size: 12, font: normalFont });
+            
+            // Só imprime essas linhas se for Doutorado!
+            if (nivelInput === 'Doutorado') {
+                coverPage.drawText(`Mestrado: ${mestInput}`, { x: 50, y: 630, size: 12, font: normalFont });
+                coverPage.drawText(`Orientador: ${oriInput}`, { x: 50, y: 615, size: 12, font: font });
+                coverPage.drawText(`Projeto: ${projInput}`, { x: 50, y: 600, size: 10, font: normalFont });
+            }
+
+            const pontuacaoEstimadaEle = document.getElementById('pontuacao-estimada-display');
+            const pontuacaoFinal = pontuacaoEstimadaEle ? pontuacaoEstimadaEle.innerText : "0.00";
+            
+            coverPage.drawText(`Pontuacao Estimada pelo Candidato: ${pontuacaoFinal} pts`, { x: 50, y: 560, size: 16, font: font, color: rgb(0.15, 0.65, 0.15) });
+            coverPage.drawText(`(Nota sujeita a auditoria e validacao oficial da Comissao de Selecao)`, { x: 50, y: 540, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) }); 
+            // ==========================================
+            // FUNÇÃO DE ANEXAR (Agora com Textos Dinâmicos e Claros)
+            // ==========================================
+            async function anexarComTag(fileInputEle, tagString, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue) {
+                if (fileInputEle.files.length > 0) {
+                    const file = fileInputEle.files[0];
+                    
+                    const separatorPage = mergedPdf.addPage();
+                    separatorPage.drawText(`### ${tagString} ###`, { x: 50, y: 400, size: 24, font: font, color: rgb(0.8, 0, 0) });
+                    separatorPage.drawText(`Arquivo original: ${file.name}`, { x: 50, y: 350, size: 12, font: normalFont });
+
+                    let yCursor = 310;
+                    if (detalheRegra) {
+                        separatorPage.drawText(detalheRegra, { x: 50, y: yCursor, size: 14, font: font, color: rgb(0, 0.4, 0) });
+                        yCursor -= 25;
+                    }
+                    if (notaPleiteadaDoc) {
+                        separatorPage.drawText(notaPleiteadaDoc, { x: 50, y: yCursor, size: 14, font: font, color: rgb(0.8, 0.3, 0) });
+                        yCursor -= 25;
+                    }
+                    if (doiValue) {
+                        separatorPage.drawText(`DOI DECLARADO: ${doiValue}`, { x: 50, y: yCursor, size: 14, font: font, color: rgb(0, 0, 0.8) });
+                        yCursor -= 25;
+                    }
+
+                    const fileArrayBuffer = await file.arrayBuffer();
+                    const userPdf = await PDFDocument.load(fileArrayBuffer);
+                    
+                    let pagesToCopy;
+                    if (pageCropValue) {
+                        let pageNum = parseInt(pageCropValue);
+                        const totalPages = userPdf.getPageCount();
+                        if (isNaN(pageNum) || pageNum < 1) pageNum = 1;
+                        if (pageNum > totalPages) pageNum = totalPages; 
+
+                        pagesToCopy = await mergedPdf.copyPages(userPdf, [pageNum - 1]);
+                        separatorPage.drawText(`(O sistema extraiu apenas a pagina ${pageNum} do PDF original enviado)`, { x: 50, y: yCursor - 10, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) });
+                    } else {
+                        pagesToCopy = await mergedPdf.copyPages(userPdf, userPdf.getPageIndices());
+                    }
+
+                    pagesToCopy.forEach((page) => mergedPdf.addPage(page));
+                }
+            }
+
+            // 1. Embutir o Lattes XML Invisível
+            const lattesXmlInput = document.querySelector('input[data-tag="COMPROV_LATTES_XML"]');
+            if (lattesXmlInput && lattesXmlInput.files.length > 0) {
+                const xmlFile = lattesXmlInput.files[0];
+                const xmlArrayBuffer = await xmlFile.arrayBuffer();
+                await mergedPdf.attach(xmlArrayBuffer, 'lattes_candidato.xml', { mimeType: 'application/xml', description: 'Arquivo XML original' });
+            }
+
+            // 2. Anexar os PDFs da Aba de Documentos Básicos
+            for (let input of basicDocs) {
+                const tag = input.getAttribute('data-tag');
+                if (tag !== 'COMPROV_LATTES_XML') {
+                    await anexarComTag(input, tag, null, null, null, null); // Passa null para os textos de nota
+                }
+            }
+
+            // 3. Anexar a Tabela 1 Dinâmica
+            for (let itemConfig of dadosEdital.criterios) {
+                const regra = regrasPontuacao[itemConfig.id]; // Traz a regra matemática pro loop!
+                
+                if (itemConfig.is_calculadora_cr) {
+                    const calcContainer = document.getElementById(`disciplines-${itemConfig.id}`);
+                    if(calcContainer) {
+                        const rows = calcContainer.querySelectorAll('.calc-row');
+                        if (rows.length > 0) {
+                            const crFinal = calcContainer.getAttribute('data-cr-final') || "0.00";
+                            const notaCRCalculada = (parseFloat(crFinal) * regra.peso).toFixed(2);
+                            
+                            const separatorPage = mergedPdf.addPage();
+                            separatorPage.drawText(`### ${itemConfig.tagBase} ###`, { x: 50, y: 750, size: 24, font: font, color: rgb(0.8, 0, 0) });
+                            separatorPage.drawText(`CR FINAL CALCULADO: ${crFinal}`, { x: 50, y: 700, size: 18, font: font, color: rgb(0, 0.5, 0) });
+                            separatorPage.drawText(`PONTUACAO PLEITEADA: ${notaCRCalculada} pts`, { x: 50, y: 670, size: 16, font: font, color: rgb(0.8, 0.3, 0) });
+                            separatorPage.drawText(`Memoria de Calculo Declarada pelo Candidato:`, { x: 50, y: 630, size: 14, font: font });
+                            
+                            let yPos = 600;
+                            rows.forEach(row => {
+                                let nome = row.querySelector('.disc-nome').value || "Sem nome";
+                                nome = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
+                                const cred = row.querySelector('.disc-cred').value || "0";
+                                const notaSelect = row.querySelector('.disc-nota');
+                                const notaText = notaSelect.options[notaSelect.selectedIndex].text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                                separatorPage.drawText(`- ${nome} (${cred} creditos) -> ${notaText}`, { x: 50, y: yPos, size: 12, font: normalFont });
+                                yPos -= 20;
+                            });
+                        }
+                    }
+                } 
+                else {
+                    const itemContainer = document.getElementById(`inputs-${itemConfig.id}`);
+                    if(itemContainer) {
+                        const fileInputs = itemContainer.querySelectorAll('input[type="file"]');
+                        for (let input of fileInputs) {
+                            const tag = input.getAttribute('data-tag');
+                            const extraInputEle = document.getElementById(`extra-${tag}`);
+                            const extraValue = extraInputEle ? parseFloat(extraInputEle.value) : null;
+                            const doiInputEle = document.getElementById(`doi-${tag}`);
+                            const doiValue = doiInputEle ? doiInputEle.value : null;
+                            const pageCropInput = document.getElementById(`pagecrop-${tag}`);
+                            const pageCropValue = pageCropInput ? pageCropInput.value : null;
+                            
+                            // ==========================================
+                            // A MÁGICA DA MEMÓRIA DE CÁLCULO NO PDF!
+                            // ==========================================
+                            let detalheRegra = null;
+                            let notaPleiteadaDoc = null;
+
+                            if (regra && regra.peso > 0) {
+                                if (regra.tipo === "flat") {
+                                    notaPleiteadaDoc = `PONTUACAO PLEITEADA: ${regra.peso.toFixed(2)} pts`;
+                                } else if (regra.tipo === "autores" && extraValue) {
+                                    detalheRegra = `AUTORES DECLARADOS: ${extraValue}`;
+                                    let pts = (extraValue >= 4) ? regra.peso * (4 / extraValue) : regra.peso;
+                                    notaPleiteadaDoc = `PONTUACAO PLEITEADA: ${pts.toFixed(2)} pts (Regra de divisao aplicada)`;
+                                } else if (regra.tipo === "meses" && extraValue) {
+                                    detalheRegra = `MESES DECLARADOS: ${extraValue}`;
+                                    notaPleiteadaDoc = `PONTUACAO PLEITEADA: Submetido para soma global de meses`;
+                                } else if (regra.tipo === "semestres" && extraValue) {
+                                    detalheRegra = `SEMESTRES DECLARADOS: ${extraValue}`;
+                                    let pts = regra.peso * extraValue;
+                                    notaPleiteadaDoc = `PONTUACAO PLEITEADA: ${pts.toFixed(2)} pts`;
+                                }
+                            }
+
+                            await anexarComTag(input, tag, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue);
+                        }
+                    }
+                }
+            }
+            // Remove pontuação do CPF
+            const cpfLimpo = cpfInput.replace(/\D/g, ''); 
+            
+            // Remove os acentos (Pavão vira Pavao, João vira Joao)
+            const nomeSemAcento = nomeInput.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            
+            // Troca os espaços por underline e remove símbolos bizarros
+            const nomeArquivoLimpo = nomeSemAcento.replace(/[^a-zA-Z0-9]/g, '_');
+            
+            const pdfBytes = await mergedPdf.save();
+            const blob = new Blob([pdfBytes], { type: "application/pdf" });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            
+            // Aplica o nome blindado!
+            link.download = `Dossie_${cpfLimpo}_${nomeArquivoLimpo}_PEQ.pdf`;
+            link.click();
+            
+            statusDiv.innerText = "✅ Dossiê gerado com sucesso! Verifique a pasta Downloads do seu computador.";
+            statusDiv.style.color = "green";
+
+        } catch (error) {
+            console.error(error);
+            statusDiv.innerText = "❌ Erro. Certifique-se de que os arquivos enviados são PDFs válidos e não estão corrompidos.";
+            statusDiv.style.color = "red";
+        }
+    }
+</script>
+
+</body>
+</html>
