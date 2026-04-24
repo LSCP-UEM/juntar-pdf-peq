@@ -3,17 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Dossiê - Doutorado PEQ/UEM</title>
+    <title>Gerador de Dossiê - PEQ/UEM</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; }
-        .container { max-width: 900px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h1 { color: #0056b3; text-align: center; border-bottom: 2px solid #0056b3; padding-bottom: 10px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 900px; margin: auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 8px solid #c8102e; flex-grow: 1; width: 100%; box-sizing: border-box; }
+        
+        /* Cabeçalho Estilo Timbrado */
+        .header-timbrado { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e0e0e0; }
+        .header-timbrado img { max-width: 350px; height: auto; }
+        
+        h1 { color: #333; text-align: center; font-size: 1.8em; margin-top: 20px; }
         h3 { color: #444; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 30px; }
         .form-group { margin-bottom: 15px; }
         label { font-weight: bold; display: block; margin-bottom: 5px; }
-        input[type="text"], input[type="file"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 5px;}
+        input[type="text"], input[type="email"], input[type="file"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 5px; }
         
+        /* Card de Seleção de Edital */
+        .edital-selector-card { background: #f8f9fa; padding: 20px; border-radius: 6px; border-left: 5px solid #0056b3; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .edital-selector-card label { color: #0056b3; font-size: 1.2em; margin-bottom: 10px; }
+        .edital-selector-card select { font-size: 1.1em; font-weight: bold; color: #333; cursor: pointer; }
+
         /* Estilos dos Cards Dinâmicos */
         .item-card { border: 1px solid #e0e0e0; padding: 15px; border-radius: 6px; margin-bottom: 15px; background-color: #fafafa; }
         .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;}
@@ -23,18 +33,28 @@
         .btn-add:hover { background: #0056b3; }
         .btn-add:disabled { background: #ccc; cursor: not-allowed; }
         
-        .btn-gerar { display: block; width: 100%; padding: 15px; background: #28a745; color: white; border: none; font-size: 18px; border-radius: 4px; cursor: pointer; margin-top: 30px; font-weight: bold; }
+        .btn-gerar { display: block; width: 100%; padding: 15px; background: #28a745; color: white; border: none; font-size: 18px; border-radius: 4px; cursor: pointer; margin-top: 30px; font-weight: bold; transition: background 0.3s; }
         .btn-gerar:hover { background: #218838; }
         #status { margin-top: 20px; font-weight: bold; text-align: center; color: #0056b3; }
+        
+        /* Rodapé Institucional */
+        .footer-institucional { text-align: center; padding: 20px; margin-top: 40px; color: #6c757d; font-size: 0.9em; border-top: 1px solid #dee2e6; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Gerador de Dossiê - PEQ/UEM</h1>
-    
-    <div id="loading-msg" style="text-align: center; padding: 40px; color: #666;">
-        <h2>🔄 Carregando regras oficiais do edital...</h2>
+    <div class="header-timbrado">
+        <img src="logo_peq.png" alt="Programa de Pós-Graduação em Engenharia Química - UEM">
+        <h1 id="main-title">Sistema de Geração de Dossiês</h1>
+    </div>
+
+    <div class="edital-selector-card">
+        <label>Selecione o Edital Desejado:</label>
+        <select id="edital-selector" onchange="carregarEditalEspecifico()">
+            <option value="">⏳ Carregando editais disponíveis...</option>
+        </select>
+        <div id="status-edital" style="margin-top: 10px; font-weight: bold; color: #0056b3;"></div>
     </div>
 
     <div id="conteudo-principal" style="display: none;">
@@ -56,18 +76,9 @@
                 <input type="email" id="email" placeholder="Ex: joao.silva@email.com" required>
             </div>
             <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
-                <label>Nível de Inscrição: <span style="color:red">*</span></label>
-                <select id="nivel_inscricao" onchange="alternarCamposDoutorado()" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" required>
-                    <option value="">Selecione...</option>
-                    <option value="Mestrado">Mestrado</option>
-                    <option value="Doutorado">Doutorado</option>
-                </select>
+                <label>Graduação (Curso e Instituição): <span style="color:red">*</span></label>
+                <input type="text" id="graduacao" placeholder="Ex: Engenharia Química - UEM" required>
             </div>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 15px;">
-            <label>Graduação (Curso e Instituição): <span style="color:red">*</span></label>
-            <input type="text" id="graduacao" placeholder="Ex: Engenharia Química - UEM" required>
         </div>
 
         <div id="bloco_doutorado" style="display: none; background: #e9ecef; padding: 15px; border-left: 4px solid #17a2b8; border-radius: 4px; margin-bottom: 15px;">
@@ -123,6 +134,11 @@
     </div>
 </div>
 
+<div class="footer-institucional">
+    <strong>Universidade Estadual de Maringá (UEM)</strong><br>
+    Sistema de Automação mantido pelo Laboratório de Simulação e Controle de Processos (LSCP)
+</div>
+
 <div style="position: fixed; bottom: 30px; right: 30px; background: #28a745; color: white; padding: 15px 25px; border-radius: 50px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 1.2em; font-weight: bold; z-index: 9999; display: flex; align-items: center; gap: 10px;">
     <span>🏆 Pontuação Estimada: <span id="pontuacao-estimada-display">0.00</span> pts</span>
     <span title="Atenção: Sujeito à validação da banca." style="cursor: help; background: white; color: #28a745; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center; font-size: 0.8em;">?</span>
@@ -130,21 +146,83 @@
 
 <script>
     // =========================================================================
-    // VARIÁVEIS GLOBAIS (Preenchidas magicamente pelo JSON)
+    // VARIÁVEIS GLOBAIS E ESTADO
     // =========================================================================
     let dadosEdital = null;
     let regrasPontuacao = {};
+    let nivelAtual = ""; // Definido automaticamente pela escolha do edital
+    let nomeEditalAtual = "";
 
-    // INICIA O SISTEMA ASSIM QUE A PÁGINA CARREGA
-    window.onload = async function carregarEdital() {
+    // 1. CARREGA O CATÁLOGO DE EDITAIS AO ABRIR O SITE
+    window.onload = async function() {
+        const selector = document.getElementById('edital-selector');
         try {
-            // "Pesca" o JSON da secretaria
-            const response = await fetch('regras_edital.json');
-            if (!response.ok) throw new Error("Arquivo não encontrado.");
+            // Busca a lista de editais ativos (caminho relativo)
+            const response = await fetch('editais_ativos.json');
+            if (!response.ok) throw new Error("Catálogo não encontrado.");
+            
+            const editais = await response.json();
+            
+            selector.innerHTML = '<option value="">-- Selecione o Edital --</option>';
+            editais.forEach(ed => {
+                let opt = document.createElement('option');
+                opt.value = ed.id + ".json"; // Ex: regras_057.json
+                opt.text = ed.nome;
+                selector.appendChild(opt);
+            });
+
+        } catch (erro) {
+            console.error(erro);
+            selector.innerHTML = '<option value="">Erro ao carregar editais disponíveis.</option>';
+            // Fallback de desenvolvimento local
+            const optDev = document.createElement('option');
+            optDev.value = "regras_edital.json";
+            optDev.text = "[Modo Local] Regras de Teste";
+            selector.appendChild(optDev);
+        }
+    };
+
+    // 2. CARREGA O EDITAL ESPECÍFICO QUANDO O ALUNO SELECIONA
+    async function carregarEditalEspecifico() {
+        const selector = document.getElementById('edital-selector');
+        const arquivoSelecionado = selector.value;
+        const statusDiv = document.getElementById('status-edital');
+        const conteudo = document.getElementById('conteudo-principal');
+
+        if (!arquivoSelecionado) {
+            conteudo.style.display = 'none';
+            statusDiv.innerHTML = "";
+            return;
+        }
+
+        nomeEditalAtual = selector.options[selector.selectedIndex].text;
+        
+        // Magia da Inferência de Nível: Se a palavra Doutorado estiver no nome, é Doutorado.
+        nivelAtual = nomeEditalAtual.toLowerCase().includes('doutorado') ? 'Doutorado' : 'Mestrado';
+
+        document.getElementById('main-title').innerText = `Gerador de Dossiê - ${nomeEditalAtual}`;
+        statusDiv.innerHTML = "⏳ Baixando regras...";
+        conteudo.style.display = 'none'; // Esconde para remontar
+
+        // Controla a gaveta de campos extras do Doutorado
+        const blocoDoutorado = document.getElementById('bloco_doutorado');
+        if (nivelAtual === 'Doutorado') {
+            blocoDoutorado.style.display = 'block';
+        } else {
+            blocoDoutorado.style.display = 'none';
+            document.getElementById('mestrado').value = '';
+            document.getElementById('orientador').value = '';
+            document.getElementById('titulo_projeto').value = '';
+        }
+
+        try {
+            const response = await fetch(arquivoSelecionado);
+            if (!response.ok) throw new Error("Arquivo de regras não encontrado.");
             
             dadosEdital = await response.json();
             
-            // Prepara a matemática
+            // Prepara a matemática limpa
+            regrasPontuacao = {};
             dadosEdital.criterios.forEach(item => {
                 regrasPontuacao[item.id] = {
                     peso: parseFloat(item.peso_pontos),
@@ -153,36 +231,21 @@
                 };
             });
 
-            // Esconde aviso de loading e mostra formulário
-            document.getElementById('loading-msg').style.display = 'none';
-            document.getElementById('conteudo-principal').style.display = 'block';
-
             renderizarDocumentosBasicos();
             renderizarCriteriosTabela1();
+            
+            // Zera a pontuação estimada ao trocar de edital
+            document.getElementById('pontuacao-estimada-display').innerText = "0.00";
+
+            statusDiv.innerHTML = "";
+            conteudo.style.display = 'block';
 
         } catch (erro) {
             console.error(erro);
-            document.getElementById('loading-msg').innerHTML = `
-                <h2 style="color: red;">❌ Erro de Sistema</h2>
-                <p>Não foi possível carregar as regras do edital (regras_edital.json).</p>
-                <p>Verifique se o arquivo está na mesma pasta que este HTML e se você está rodando um servidor local.</p>
-            `;
-        }
-    };
-    function alternarCamposDoutorado() {
-        const nivel = document.getElementById('nivel_inscricao').value;
-        const bloco = document.getElementById('bloco_doutorado');
-
-        if (nivel === 'Doutorado') {
-            bloco.style.display = 'block'; // Mostra a gaveta
-        } else {
-            bloco.style.display = 'none'; // Esconde a gaveta
-            // Limpa os campos caso o usuário tenha clicado errado e voltado
-            document.getElementById('mestrado').value = '';
-            document.getElementById('orientador').value = '';
-            document.getElementById('titulo_projeto').value = '';
+            statusDiv.innerHTML = "❌ Erro ao carregar as regras deste edital.";
         }
     }
+
     // =========================================================================
     // RENDERIZADORES DE TELA
     // =========================================================================
@@ -208,6 +271,7 @@
 
     function renderizarCriteriosTabela1() {
         const container = document.getElementById('dynamic-items-container');
+        container.innerHTML = ""; // Limpa antes de renderizar
         
         dadosEdital.criterios.forEach(item => {
             const regra = regrasPontuacao[item.id];
@@ -262,7 +326,7 @@
     }
 
     // =========================================================================
-    // LÓGICA DA CALCULADORA E CAMPOS (Mantida 100% Intacta do seu código!)
+    // LÓGICA DA CALCULADORA E CAMPOS DINÂMICOS
     // =========================================================================
     function addDisciplineRow(itemId) {
         const calcContainer = document.getElementById(`disciplines-${itemId}`);
@@ -417,7 +481,7 @@
                 const inputContainer = document.getElementById(`inputs-${item.id}`);
                 if (inputContainer) {
                     const blocks = inputContainer.children;
-                    let totalMesesAcumulados = 0; // <--- O NOSSO NOVO "CARRINHO" DE MESES
+                    let totalMesesAcumulados = 0;
 
                     for (let i = 0; i < blocks.length; i++) {
                         const extraInput = blocks[i].querySelector('input[id^="extra-"]');
@@ -430,18 +494,16 @@
                         } else if (regra.tipo === "semestres") {
                             itemTotal += regra.peso * extraValue;
                         } else if (regra.tipo === "meses") {
-                            totalMesesAcumulados += extraValue; // <--- SOMA TUDO ANTES DE CALCULAR!
+                            totalMesesAcumulados += extraValue;
                         }
                     }
 
-                    // Depois que varreu todos os PDFs anexados neste item, aí sim ele divide os meses!
                     if (regra.tipo === "meses") {
                         itemTotal += regra.peso * Math.floor(totalMesesAcumulados / 12);
                     }
                 }
             }
 
-            // Trava matemática: se o item estourar o limite da Tabela 1, corta no teto!
             if (regra.limite && itemTotal > regra.limite) {
                 itemTotal = regra.limite;
             }
@@ -455,7 +517,7 @@
     // =========================================================================
     // A IMPRESSORA (Geração do PDF)
     // =========================================================================
-async function gerarDossie() {
+    async function gerarDossie() {
         const aceitouTermosEle = document.getElementById('aceite_termos');
         if (aceitouTermosEle && !aceitouTermosEle.checked) {
             alert("⚠️ Você precisa ler e aceitar o Termo de Ciência e Responsabilidade para gerar o Dossiê.");
@@ -465,26 +527,22 @@ async function gerarDossie() {
         const nomeInput = document.getElementById('nome').value.trim();
         const cpfInput = document.getElementById('cpf').value.trim();
         const emailInput = document.getElementById('email').value.trim();
-        const nivelInput = document.getElementById('nivel_inscricao').value;
         const gradInput = document.getElementById('graduacao').value.trim();
         
-        // Os do doutorado podem vir vazios
         const mestInput = document.getElementById('mestrado').value.trim();
         const oriInput = document.getElementById('orientador').value.trim();
         const projInput = document.getElementById('titulo_projeto').value.trim();
 
-        if (!nomeInput || !cpfInput || !emailInput || !nivelInput || !gradInput) {
+        if (!nomeInput || !cpfInput || !emailInput || !gradInput) {
             alert("⚠️ Por favor, preencha todos os campos obrigatórios da Identificação.");
             return;
         }
 
-        // Validação condicional!
-        if (nivelInput === 'Doutorado' && (!mestInput || !oriInput || !projInput)) {
+        if (nivelAtual === 'Doutorado' && (!mestInput || !oriInput || !projInput)) {
             alert("⚠️ Candidatos ao Doutorado devem preencher Instituição de Mestrado, Orientador e Título do Projeto.");
             return;
         }
 
-        // NOVO: Auditoria dos Campos Obrigatórios Dinâmicos
         const basicDocs = document.querySelectorAll('.doc-basico-input');
         for (let input of basicDocs) {
             if (input.getAttribute('data-obrig') === 'true' && input.files.length === 0) {
@@ -494,7 +552,8 @@ async function gerarDossie() {
         }
 
         const statusDiv = document.getElementById('status');
-        statusDiv.innerText = "⏳ Processando arquivos e carimbando tags... Aguarde. Não feche a janela!";
+        statusDiv.innerText = "⏳ Processando arquivos e carimbando metadados institucionais... Aguarde e não feche a janela.";
+        statusDiv.style.color = "#0056b3";
         
         try {
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
@@ -503,31 +562,39 @@ async function gerarDossie() {
             const normalFont = await mergedPdf.embedFont(StandardFonts.Helvetica);
 
             // ==========================================
-            // CAPA DO PDF TURBINADA
+            // CAPA DO PDF TIMBRADA
             // ==========================================
             const coverPage = mergedPdf.addPage();
-            coverPage.drawText(`DOSSIE DE INSCRICAO - PEQ UEM`, { x: 50, y: 750, size: 24, font: font, color: rgb(0, 0.33, 0.7) });
             
-            coverPage.drawText(`Candidato: ${nomeInput}`, { x: 50, y: 700, size: 16, font: font });
-            coverPage.drawText(`CPF: ${cpfInput}  |  E-mail: ${emailInput}`, { x: 50, y: 680, size: 12, font: normalFont });
+            // Texto do Timbre na Capa
+            coverPage.drawText(`UNIVERSIDADE ESTADUAL DE MARINGA`, { x: 50, y: 800, size: 14, font: font });
+            coverPage.drawText(`Programa de Pos-Graduacao em Engenharia Quimica - PEQ`, { x: 50, y: 785, size: 12, font: normalFont });
             
-            coverPage.drawText(`Nivel: ${nivelInput}`, { x: 50, y: 660, size: 12, font: font, color: rgb(0.8, 0.2, 0) });
-            coverPage.drawText(`Graduacao: ${gradInput}`, { x: 50, y: 645, size: 12, font: normalFont });
+            coverPage.drawText(`DOSSIE DIGITAL DE INSCRICAO`, { x: 50, y: 730, size: 24, font: font, color: rgb(0.78, 0.06, 0.18) }); // Vermelho UEM
             
-            // Só imprime essas linhas se for Doutorado!
-            if (nivelInput === 'Doutorado') {
-                coverPage.drawText(`Mestrado: ${mestInput}`, { x: 50, y: 630, size: 12, font: normalFont });
-                coverPage.drawText(`Orientador: ${oriInput}`, { x: 50, y: 615, size: 12, font: font });
-                coverPage.drawText(`Projeto: ${projInput}`, { x: 50, y: 600, size: 10, font: normalFont });
+            coverPage.drawText(`Processo Seletivo: ${nomeEditalAtual}`, { x: 50, y: 690, size: 14, font: font });
+            coverPage.drawText(`Candidato: ${nomeInput}`, { x: 50, y: 660, size: 14, font: font });
+            coverPage.drawText(`CPF: ${cpfInput}  |  E-mail: ${emailInput}`, { x: 50, y: 640, size: 12, font: normalFont });
+            
+            coverPage.drawText(`Nivel: ${nivelAtual}`, { x: 50, y: 620, size: 12, font: font, color: rgb(0, 0.33, 0.7) });
+            coverPage.drawText(`Graduacao: ${gradInput}`, { x: 50, y: 600, size: 12, font: normalFont });
+            
+            if (nivelAtual === 'Doutorado') {
+                coverPage.drawText(`Mestrado: ${mestInput}`, { x: 50, y: 580, size: 12, font: normalFont });
+                coverPage.drawText(`Orientador: ${oriInput}`, { x: 50, y: 560, size: 12, font: font });
+                coverPage.drawText(`Projeto: ${projInput}`, { x: 50, y: 540, size: 10, font: normalFont });
             }
 
             const pontuacaoEstimadaEle = document.getElementById('pontuacao-estimada-display');
             const pontuacaoFinal = pontuacaoEstimadaEle ? pontuacaoEstimadaEle.innerText : "0.00";
             
-            coverPage.drawText(`Pontuacao Estimada pelo Candidato: ${pontuacaoFinal} pts`, { x: 50, y: 560, size: 16, font: font, color: rgb(0.15, 0.65, 0.15) });
-            coverPage.drawText(`(Nota sujeita a auditoria e validacao oficial da Comissao de Selecao)`, { x: 50, y: 540, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) }); 
+            coverPage.drawText(`Pontuacao Estimada pelo Candidato: ${pontuacaoFinal} pts`, { x: 50, y: 480, size: 16, font: font, color: rgb(0.15, 0.65, 0.15) });
+            coverPage.drawText(`(A pontuacao final oficial sera validada exclusivamente pela Comissao de Selecao do PEQ)`, { x: 50, y: 460, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) }); 
+            
+            coverPage.drawText(`Documento gerado automaticamente pelo Sistema LSCP-UEM.`, { x: 50, y: 50, size: 10, font: normalFont, color: rgb(0.6, 0.6, 0.6) }); 
+
             // ==========================================
-            // FUNÇÃO DE ANEXAR (Agora com Textos Dinâmicos e Claros)
+            // FUNÇÃO DE ANEXAR
             // ==========================================
             async function anexarComTag(fileInputEle, tagString, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue) {
                 if (fileInputEle.files.length > 0) {
@@ -579,17 +646,17 @@ async function gerarDossie() {
                 await mergedPdf.attach(xmlArrayBuffer, 'lattes_candidato.xml', { mimeType: 'application/xml', description: 'Arquivo XML original' });
             }
 
-            // 2. Anexar os PDFs da Aba de Documentos Básicos
+            // 2. Anexar os PDFs Básicos
             for (let input of basicDocs) {
                 const tag = input.getAttribute('data-tag');
                 if (tag !== 'COMPROV_LATTES_XML') {
-                    await anexarComTag(input, tag, null, null, null, null); // Passa null para os textos de nota
+                    await anexarComTag(input, tag, null, null, null, null);
                 }
             }
 
             // 3. Anexar a Tabela 1 Dinâmica
             for (let itemConfig of dadosEdital.criterios) {
-                const regra = regrasPontuacao[itemConfig.id]; // Traz a regra matemática pro loop!
+                const regra = regrasPontuacao[itemConfig.id]; 
                 
                 if (itemConfig.is_calculadora_cr) {
                     const calcContainer = document.getElementById(`disciplines-${itemConfig.id}`);
@@ -631,9 +698,6 @@ async function gerarDossie() {
                             const pageCropInput = document.getElementById(`pagecrop-${tag}`);
                             const pageCropValue = pageCropInput ? pageCropInput.value : null;
                             
-                            // ==========================================
-                            // A MÁGICA DA MEMÓRIA DE CÁLCULO NO PDF!
-                            // ==========================================
                             let detalheRegra = null;
                             let notaPleiteadaDoc = null;
 
@@ -659,25 +723,22 @@ async function gerarDossie() {
                     }
                 }
             }
-            // Remove pontuação do CPF
+            
             const cpfLimpo = cpfInput.replace(/\D/g, ''); 
-            
-            // Remove os acentos (Pavão vira Pavao, João vira Joao)
             const nomeSemAcento = nomeInput.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            
-            // Troca os espaços por underline e remove símbolos bizarros
             const nomeArquivoLimpo = nomeSemAcento.replace(/[^a-zA-Z0-9]/g, '_');
+            const identificadorNivel = nivelAtual === 'Doutorado' ? 'DO' : 'ME';
             
             const pdfBytes = await mergedPdf.save();
             const blob = new Blob([pdfBytes], { type: "application/pdf" });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
             
-            // Aplica o nome blindado!
-            link.download = `Dossie_${cpfLimpo}_${nomeArquivoLimpo}_PEQ.pdf`;
+            // O nome do arquivo salvo agora contém o nível automaticamente (ME ou DO)
+            link.download = `Dossie_${cpfLimpo}_${nomeArquivoLimpo}_${identificadorNivel}_PEQ.pdf`;
             link.click();
             
-            statusDiv.innerText = "✅ Dossiê gerado com sucesso! Verifique a pasta Downloads do seu computador.";
+            statusDiv.innerText = "✅ Dossiê institucional gerado com sucesso! Verifique a pasta Downloads do seu computador.";
             statusDiv.style.color = "green";
 
         } catch (error) {
