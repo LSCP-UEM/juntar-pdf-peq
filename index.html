@@ -58,47 +58,51 @@
     </div>
 
     <div id="conteudo-principal" style="display: none;">
-        <h3>1. Identificação do Candidato</h3>
+<h3>1. Identificação do Candidato</h3>
+        
         <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
             <div class="form-group" style="flex: 2; min-width: 250px; margin-bottom: 0;">
                 <label>Nome Completo: <span style="color:red">*</span></label>
                 <input type="text" id="nome" placeholder="Ex: João da Silva" required>
             </div>
-            <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
-                <label>CPF: <span style="color:red">*</span></label>
-                <input type="text" id="cpf" placeholder="Apenas números" required>
-            </div>
-        </div>
-        
-        <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
-            <div class="form-group" style="flex: 2; min-width: 200px; margin-bottom: 0;">
+            <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
                 <label>E-mail: <span style="color:red">*</span></label>
                 <input type="email" id="email" placeholder="Ex: joao.silva@email.com" required>
             </div>
-            <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
-                <label>Graduação (Curso e Instituição): <span style="color:red">*</span></label>
-                <input type="text" id="graduacao" placeholder="Ex: Engenharia Química - UEM" required>
+        </div>
+
+        <div style="background: #e9ecef; padding: 15px; border-left: 4px solid #0056b3; border-radius: 4px; margin-bottom: 20px;">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Nacionalidade:</label>
+                <select id="nacionalidade" onchange="alternarDocumento()" style="width: 100%; max-width: 300px; padding: 8px;">
+                    <option value="br">Brasileiro</option>
+                    <option value="estrangeiro">Estrangeiro</option>
+                </select>
+            </div>
+
+            <div id="bloco_br" class="form-group" style="margin-bottom: 0;">
+                <label>CPF: <span style="color:red">*</span></label>
+                <input type="text" id="cpf" placeholder="Apenas números" style="max-width: 300px;">
+            </div>
+
+            <div id="bloco_estrangeiro" style="display: none; gap: 15px; flex-wrap: wrap; margin-bottom: 0;">
+                <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
+                    <label>Tipo de Documento: <span style="color:red">*</span></label>
+                    <select id="tipo_doc_estrangeiro" style="padding: 10px;">
+                        <option value="Passaporte">Passaporte</option>
+                        <option value="DNI">DNI (Documento Nacional de Identidade)</option>
+                        <option value="Outro">Outro Documento Local</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 2; min-width: 200px; margin-bottom: 0;">
+                    <label>Número do Documento: <span style="color:red">*</span></label>
+                    <input type="text" id="numero_doc_estrangeiro" placeholder="Ex: AX123456">
+                </div>
             </div>
         </div>
 
-        <div id="bloco_doutorado" style="display: none; background: #e9ecef; padding: 15px; border-left: 4px solid #17a2b8; border-radius: 4px; margin-bottom: 15px;">
-            <h4 style="margin-top: 0; color: #17a2b8;">Campos Exclusivos para Doutorado</h4>
-            
-            <div class="form-group" style="margin-bottom: 10px;">
-                <label>Mestrado (Curso e Instituição): <span style="color:red">*</span></label>
-                <input type="text" id="mestrado" placeholder="Ex: Engenharia Química - UEM">
+        <div id="campos-personalizados-container" style="margin-bottom: 20px; padding: 15px; background: #fff; border: 1px dashed #ccc; border-radius: 4px; display: none;">
             </div>
-            
-            <div class="form-group" style="margin-bottom: 10px;">
-                <label>Orientador Pretendido: <span style="color:red">*</span></label>
-                <input type="text" id="orientador" placeholder="Ex: Prof. Dr. João da Silva">
-            </div>
-            
-            <div class="form-group" style="margin-bottom: 0;">
-                <label>Título do Projeto de Pesquisa: <span style="color:red">*</span></label>
-                <input type="text" id="titulo_projeto" placeholder="Ex: Desenvolvimento de novos nanomateriais...">
-            </div>
-        </div>
 
         <h3>2. Documentação Básica Obrigatória</h3>
         <div class="alert" style="background: #e2e3e5; color: #383d41; border-color: #d6d8db; padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 0.9em;">
@@ -233,6 +237,7 @@
 
             renderizarDocumentosBasicos();
             renderizarCriteriosTabela1();
+            renderizarCamposPersonalizados();
             
             // Zera a pontuação estimada ao trocar de edital
             document.getElementById('pontuacao-estimada-display').innerText = "0.00";
@@ -249,6 +254,42 @@
     // =========================================================================
     // RENDERIZADORES DE TELA
     // =========================================================================
+    // Alterna a exibição entre CPF e Documento Estrangeiro
+    function alternarDocumento() {
+        const nac = document.getElementById('nacionalidade').value;
+        if (nac === 'br') {
+            document.getElementById('bloco_br').style.display = 'block';
+            document.getElementById('bloco_estrangeiro').style.display = 'none';
+        } else {
+            document.getElementById('bloco_br').style.display = 'none';
+            document.getElementById('bloco_estrangeiro').style.display = 'flex';
+        }
+    }
+
+    // Desenha as perguntas que a secretaria criou no painel
+    function renderizarCamposPersonalizados() {
+        const container = document.getElementById('campos-personalizados-container');
+        container.innerHTML = ''; // Limpa tudo
+        
+        if (dadosEdital.campos_personalizados && dadosEdital.campos_personalizados.length > 0) {
+            container.style.display = 'block';
+            let html = '<h4 style="margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">Informações Adicionais do Edital</h4>';
+            
+            dadosEdital.campos_personalizados.forEach((campo, index) => {
+                const reqAsterisk = campo.obrigatorio ? '<span style="color:red">*</span>' : '';
+                html += `
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>${campo.label} ${reqAsterisk}</label>
+                    ${campo.helper ? `<span style="font-size: 0.85em; color: #666; display:block; margin-bottom:5px;"><em>${campo.helper}</em></span>` : ''}
+                    <input type="text" id="campo_dinamico_${index}" class="resposta-dinamica" data-label="${campo.label}" data-obrig="${campo.obrigatorio}" placeholder="Sua resposta...">
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        } else {
+            container.style.display = 'none';
+        }
+    }
     function renderizarDocumentosBasicos() {
         const container = document.getElementById('documentos-basicos-container');
         let html = '';
