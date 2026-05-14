@@ -71,7 +71,7 @@
             </div>
         </div>
 
-        <div style="background: #e9ecef; padding: 15px; border-left: 4px solid #0056b3; border-radius: 4px; margin-bottom: 20px;">
+        <div style="background: #e9ecef; padding: 15px; border-left: 4px solid #0056b3; border-radius: 4px; margin-bottom: 15px;">
             <div class="form-group" style="margin-bottom: 15px;">
                 <label>Nacionalidade:</label>
                 <select id="nacionalidade" onchange="alternarDocumento()" style="width: 100%; max-width: 300px; padding: 8px;">
@@ -101,8 +101,8 @@
             </div>
         </div>
 
-        <div id="campos-personalizados-container" style="margin-bottom: 20px; padding: 15px; background: #fff; border: 1px dashed #ccc; border-radius: 4px; display: none;">
-            </div>
+        <div id="campos-personalizados-container" style="background: #fdfdfe; padding: 15px; border-left: 4px solid #17a2b8; border-radius: 4px; margin-bottom: 15px; display: none;"></div>
+
 
         <h3>2. Documentação Básica Obrigatória</h3>
         <div class="alert" style="background: #e2e3e5; color: #383d41; border-color: #d6d8db; padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 0.9em;">
@@ -255,7 +255,7 @@
     // RENDERIZADORES DE TELA
     // =========================================================================
     // Alterna a exibição entre CPF e Documento Estrangeiro
-    function alternarDocumento() {
+function alternarDocumento() {
         const nac = document.getElementById('nacionalidade').value;
         if (nac === 'br') {
             document.getElementById('bloco_br').style.display = 'block';
@@ -266,24 +266,22 @@
         }
     }
 
-    // Desenha as perguntas que a secretaria criou no painel
     function renderizarCamposPersonalizados() {
         const container = document.getElementById('campos-personalizados-container');
-        container.innerHTML = ''; // Limpa tudo
+        container.innerHTML = ''; 
         
         if (dadosEdital.campos_personalizados && dadosEdital.campos_personalizados.length > 0) {
             container.style.display = 'block';
-            let html = '<h4 style="margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">Informações Adicionais do Edital</h4>';
+            let html = '<h4 style="margin-top: 0; color: #17a2b8;">Informações Específicas do Edital</h4>';
             
             dadosEdital.campos_personalizados.forEach((campo, index) => {
                 const reqAsterisk = campo.obrigatorio ? '<span style="color:red">*</span>' : '';
                 html += `
-                <div class="form-group" style="margin-bottom: 15px;">
+                <div class="form-group" style="margin-bottom: 10px;">
                     <label>${campo.label} ${reqAsterisk}</label>
                     ${campo.helper ? `<span style="font-size: 0.85em; color: #666; display:block; margin-bottom:5px;"><em>${campo.helper}</em></span>` : ''}
-                    <input type="text" id="campo_dinamico_${index}" class="resposta-dinamica" data-label="${campo.label}" data-obrig="${campo.obrigatorio}" placeholder="Sua resposta...">
-                </div>
-                `;
+                    <input type="text" class="resposta-dinamica" data-label="${campo.label}" data-obrig="${campo.obrigatorio}" placeholder="Sua resposta...">
+                </div>`;
             });
             container.innerHTML = html;
         } else {
@@ -555,7 +553,7 @@
         if (displayEle) displayEle.innerText = totalEstimado.toFixed(2);
     }
 
-    // =========================================================================
+// =========================================================================
     // A IMPRESSORA (Geração do PDF)
     // =========================================================================
     async function gerarDossie() {
@@ -565,25 +563,37 @@
             return;
         }
 
+        // ==========================================
+        // 1. CAPTURA DO NÚCLEO DE IDENTIFICAÇÃO
+        // ==========================================
         const nomeInput = document.getElementById('nome').value.trim();
-        const cpfInput = document.getElementById('cpf').value.trim();
         const emailInput = document.getElementById('email').value.trim();
-        const gradInput = document.getElementById('graduacao').value.trim();
         
-        const mestInput = document.getElementById('mestrado').value.trim();
-        const oriInput = document.getElementById('orientador').value.trim();
-        const projInput = document.getElementById('titulo_projeto').value.trim();
+        const isBr = document.getElementById('nacionalidade').value === 'br';
+        const docId = isBr ? document.getElementById('cpf').value.trim() : document.getElementById('numero_doc_estrangeiro').value.trim();
+        const docTipo = isBr ? "CPF" : document.getElementById('tipo_doc_estrangeiro').value;
 
-        if (!nomeInput || !cpfInput || !emailInput || !gradInput) {
-            alert("⚠️ Por favor, preencha todos os campos obrigatórios da Identificação.");
+        if (!nomeInput || !emailInput || !docId) {
+            alert("⚠️ Por favor, preencha todos os campos obrigatórios da Identificação (Nome, E-mail e Documento).");
             return;
         }
 
-        if (nivelAtual === 'Doutorado' && (!mestInput || !oriInput || !projInput)) {
-            alert("⚠️ Candidatos ao Doutorado devem preencher Instituição de Mestrado, Orientador e Título do Projeto.");
-            return;
+        // ==========================================
+        // 2. CAPTURA DAS PERGUNTAS DA SECRETARIA
+        // ==========================================
+        const camposDinamicos = document.querySelectorAll('.resposta-dinamica');
+        let respostasExtras = [];
+        for (let input of camposDinamicos) {
+            if (input.getAttribute('data-obrig') === 'true' && input.value.trim() === '') {
+                alert(`⚠️ O campo "${input.getAttribute('data-label')}" é obrigatório.`);
+                return;
+            }
+            respostasExtras.push({ label: input.getAttribute('data-label'), valor: input.value.trim() });
         }
 
+        // ==========================================
+        // 3. VALIDAÇÃO DOS DOCUMENTOS BÁSICOS
+        // ==========================================
         const basicDocs = document.querySelectorAll('.doc-basico-input');
         for (let input of basicDocs) {
             if (input.getAttribute('data-obrig') === 'true' && input.files.length === 0) {
@@ -603,39 +613,40 @@
             const normalFont = await mergedPdf.embedFont(StandardFonts.Helvetica);
 
             // ==========================================
-            // CAPA DO PDF TIMBRADA
+            // 4. DESENHANDO A CAPA DO PDF TIMBRADA
             // ==========================================
             const coverPage = mergedPdf.addPage();
             
-            // Texto do Timbre na Capa
+            // Cabeçalho da UEM
             coverPage.drawText(`UNIVERSIDADE ESTADUAL DE MARINGA`, { x: 50, y: 800, size: 14, font: font });
             coverPage.drawText(`Programa de Pos-Graduacao em Engenharia Quimica - PEQ`, { x: 50, y: 785, size: 12, font: normalFont });
+            coverPage.drawText(`DOSSIE DIGITAL DE INSCRICAO`, { x: 50, y: 730, size: 24, font: font, color: rgb(0.78, 0.06, 0.18) });
             
-            coverPage.drawText(`DOSSIE DIGITAL DE INSCRICAO`, { x: 50, y: 730, size: 24, font: font, color: rgb(0.78, 0.06, 0.18) }); // Vermelho UEM
-            
+            // Identificação Básica
             coverPage.drawText(`Processo Seletivo: ${nomeEditalAtual}`, { x: 50, y: 690, size: 14, font: font });
             coverPage.drawText(`Candidato: ${nomeInput}`, { x: 50, y: 660, size: 14, font: font });
-            coverPage.drawText(`CPF: ${cpfInput}  |  E-mail: ${emailInput}`, { x: 50, y: 640, size: 12, font: normalFont });
+            coverPage.drawText(`${docTipo}: ${docId}  |  E-mail: ${emailInput}`, { x: 50, y: 640, size: 12, font: normalFont });
             
-            coverPage.drawText(`Nivel: ${nivelAtual}`, { x: 50, y: 620, size: 12, font: font, color: rgb(0, 0.33, 0.7) });
-            coverPage.drawText(`Graduacao: ${gradInput}`, { x: 50, y: 600, size: 12, font: normalFont });
-            
-            if (nivelAtual === 'Doutorado') {
-                coverPage.drawText(`Mestrado: ${mestInput}`, { x: 50, y: 580, size: 12, font: normalFont });
-                coverPage.drawText(`Orientador: ${oriInput}`, { x: 50, y: 560, size: 12, font: font });
-                coverPage.drawText(`Projeto: ${projInput}`, { x: 50, y: 540, size: 10, font: normalFont });
-            }
+            // Impressão dos Campos Dinâmicos (Substituindo o antigo bloco de Doutorado)
+            let yCursorCapa = 610;
+            respostasExtras.forEach(resp => {
+                // Desenha a pergunta em azul e negrito
+                coverPage.drawText(`${resp.label}:`, { x: 50, y: yCursorCapa, size: 12, font: font, color: rgb(0, 0.33, 0.7) });
+                // Desenha a resposta do candidato embaixo
+                coverPage.drawText(`${resp.valor}`, { x: 50, y: yCursorCapa - 15, size: 12, font: normalFont });
+                yCursorCapa -= 40; // Dá um espaço para a próxima pergunta
+            });
 
             const pontuacaoEstimadaEle = document.getElementById('pontuacao-estimada-display');
             const pontuacaoFinal = pontuacaoEstimadaEle ? pontuacaoEstimadaEle.innerText : "0.00";
             
-            coverPage.drawText(`Pontuacao Estimada pelo Candidato: ${pontuacaoFinal} pts`, { x: 50, y: 480, size: 16, font: font, color: rgb(0.15, 0.65, 0.15) });
-            coverPage.drawText(`(A pontuacao final oficial sera validada exclusivamente pela Comissao de Selecao do PEQ)`, { x: 50, y: 460, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) }); 
+            coverPage.drawText(`Pontuacao Estimada pelo Candidato: ${pontuacaoFinal} pts`, { x: 50, y: yCursorCapa - 30, size: 16, font: font, color: rgb(0.15, 0.65, 0.15) });
+            coverPage.drawText(`(A pontuacao final oficial sera validada exclusivamente pela Comissao de Selecao do PEQ)`, { x: 50, y: yCursorCapa - 50, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) }); 
             
             coverPage.drawText(`Documento gerado automaticamente pelo Sistema LSCP-UEM.`, { x: 50, y: 50, size: 10, font: normalFont, color: rgb(0.6, 0.6, 0.6) }); 
 
             // ==========================================
-            // FUNÇÃO DE ANEXAR
+            // 5. MOTOR DE ANEXAÇÃO (MANTIDO INTACTO)
             // ==========================================
             async function anexarComTag(fileInputEle, tagString, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue) {
                 if (fileInputEle.files.length > 0) {
@@ -765,21 +776,25 @@
                 }
             }
             
-            const cpfLimpo = cpfInput.replace(/\D/g, ''); 
+            // ==========================================
+            // 6. SALVAMENTO E NOME DO ARQUIVO
+            // ==========================================
+            const docLimpo = docId.replace(/\W/g, ''); 
             const nomeSemAcento = nomeInput.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             const nomeArquivoLimpo = nomeSemAcento.replace(/[^a-zA-Z0-9]/g, '_');
-            const identificadorNivel = nivelAtual === 'Doutorado' ? 'DO' : 'ME';
+            
+            // O nome do arquivo agora reflete qualquer documento usado
+            const nomeArquivoFinal = `Dossie_${docLimpo}_${nomeArquivoLimpo}_PEQ.pdf`;
             
             const pdfBytes = await mergedPdf.save();
             const blob = new Blob([pdfBytes], { type: "application/pdf" });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
             
-            // O nome do arquivo salvo agora contém o nível automaticamente (ME ou DO)
-            link.download = `Dossie_${cpfLimpo}_${nomeArquivoLimpo}_${identificadorNivel}_PEQ.pdf`;
+            link.download = nomeArquivoFinal;
             link.click();
             
-            statusDiv.innerText = "✅ Dossiê institucional gerado com sucesso! Verifique a pasta Downloads do seu computador.";
+            statusDiv.innerText = `✅ Dossiê gerado com sucesso! Arquivo salvo como: ${nomeArquivoFinal}`;
             statusDiv.style.color = "green";
 
         } catch (error) {
