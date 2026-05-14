@@ -210,14 +210,7 @@
 
         // Controla a gaveta de campos extras do Doutorado
         //const blocoDoutorado = document.getElementById('bloco_doutorado');
-        if (nivelAtual === 'Doutorado') {
-            //blocoDoutorado.style.display = 'block';
-        } else {
-            //blocoDoutorado.style.display = 'none';
-            document.getElementById('mestrado').value = '';
-            document.getElementById('orientador').value = '';
-            document.getElementById('titulo_projeto').value = '';
-        }
+
 
         try {
             const response = await fetch(arquivoSelecionado);
