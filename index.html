@@ -50,9 +50,9 @@
     </div>
 
     <div class="edital-selector-card">
-        <label>Selecione o Edital Desejado: / Select the Desired Notice:</label>
+        <label>Selecione o Edital Desejado: / Select the Desired Call:</label>
         <select id="edital-selector" onchange="carregarEditalEspecifico()">
-            <option value="">⏳ Carregando editais disponíveis... / Loading available notices...</option>
+            <option value="">⏳ Carregando editais disponíveis... / Loading available calls...</option>
         </select>
         <div id="status-edital" style="margin-top: 10px; font-weight: bold; color: #0056b3;"></div>
     </div>
@@ -165,7 +165,7 @@
             
             const editais = await response.json();
             
-            selector.innerHTML = '<option value="">-- Selecione o Edital / Select Notice --</option>';
+            selector.innerHTML = '<option value="">-- Selecione o Edital / Select Call --</option>';
             editais.forEach(ed => {
                 let opt = document.createElement('option');
                 opt.value = ed.id + ".json"; 
@@ -175,7 +175,7 @@
 
         } catch (erro) {
             console.error(erro);
-            selector.innerHTML = '<option value="">Erro ao carregar editais / Error loading notices.</option>';
+            selector.innerHTML = '<option value="">Erro ao carregar editais / Error loading calls.</option>';
             const optDev = document.createElement('option');
             optDev.value = "regras_edital.json";
             optDev.text = "[Modo Local] Regras de Teste";
