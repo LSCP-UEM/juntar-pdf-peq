@@ -1,6 +1,4 @@
 {
-    "id": "regras_057-2025-peq",
-    "campos_personalizados": [],
     "documentos": [
         {
             "nome_curto": "Formulário de Inscrição (Anexo V)",
@@ -9,7 +7,7 @@
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc01",
-            "titulo": "Doc 01 - Formulário de Inscrição (Anexo V) / Application Form (Annex V)"
+            "titulo": "Doc 01 - Formulário de Inscrição (Anexo V)"
         },
         {
             "nome_curto": "Certidão Civil",
@@ -18,7 +16,7 @@
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc02",
-            "titulo": "Doc 02 - Certidão Civil / Civil Registry Certificate"
+            "titulo": "Doc 02 - Certidão Civil"
         },
         {
             "nome_curto": "Documento de Identificação Oficial",
@@ -27,7 +25,7 @@
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc03",
-            "titulo": "Doc 03 - Documento de Identificação Oficial / Official ID Document"
+            "titulo": "Doc 03 - Documento de Identificação Oficial"
         },
         {
             "nome_curto": "Histórico Escolar da Graduação",
@@ -36,7 +34,7 @@
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc04",
-            "titulo": "Doc 04 - Histórico Escolar da Graduação / Undergraduate Transcript"
+            "titulo": "Doc 04 - Histórico Escolar da Graduação"
         },
         {
             "nome_curto": "Diploma da Graduação",
@@ -45,7 +43,7 @@
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc05",
-            "titulo": "Doc 05 - Diploma da Graduação / Undergraduate Diploma"
+            "titulo": "Doc 05 - Diploma da Graduação"
         },
         {
             "nome_curto": "Histórico Escolar da Pós-Graduação",
@@ -54,7 +52,7 @@
             "obrigatorio": false,
             "max_uploads": 1,
             "id": "doc06",
-            "titulo": "Doc 06 - Histórico Escolar da Pós-Graduação / Graduate Transcript"
+            "titulo": "Doc 06 - Histórico Escolar da Pós-Graduação"
         },
         {
             "nome_curto": "Diploma/Certificado da Pós-Graduação",
@@ -63,7 +61,7 @@
             "obrigatorio": false,
             "max_uploads": 1,
             "id": "doc07",
-            "titulo": "Doc 07 - Diploma/Certificado da Pós-Graduação / Graduate Diploma or Certificate"
+            "titulo": "Doc 07 - Diploma/Certificado da Pós-Graduação"
         },
         {
             "nome_curto": "Declaração de Aceite de Orientação",
@@ -72,7 +70,7 @@
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc08",
-            "titulo": "Doc 08 - Declaração de Aceite de Orientação / Advisor Acceptance Declaration"
+            "titulo": "Doc 08 - Declaração de Aceite de Orientação"
         },
         {
             "nome_curto": "Plano de Pesquisa",
@@ -81,7 +79,7 @@
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc09",
-            "titulo": "Doc 09 - Plano de Pesquisa / Research Plan"
+            "titulo": "Doc 09 - Plano de Pesquisa"
         },
         {
             "nome_curto": "Programa de Estudos",
@@ -90,7 +88,7 @@
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc10",
-            "titulo": "Doc 10 - Programa de Estudos / Study Program"
+            "titulo": "Doc 10 - Programa de Estudos"
         },
         {
             "nome_curto": "Print da Plataforma Sucupira",
@@ -99,7 +97,7 @@
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc11",
-            "titulo": "Doc 11 - Print da Plataforma Sucupira / Sucupira Platform Screenshot"
+            "titulo": "Doc 11 - Print da Plataforma Sucupira"
         },
         {
             "nome_curto": "Comprovante SGIPOS / UEM",
@@ -108,7 +106,7 @@
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc12",
-            "titulo": "Doc 12 - Comprovante SGIPOS / UEM / SGIPOS/UEM Registration Receipt"
+            "titulo": "Doc 12 - Comprovante SGIPOS / UEM"
         },
         {
             "nome_curto": "Currículo Lattes (PDF)",
@@ -117,7 +115,7 @@
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc13",
-            "titulo": "Doc 13 - Currículo Lattes (PDF) / Lattes Curriculum (PDF)"
+            "titulo": "Doc 13 - Currículo Lattes (PDF)"
         },
         {
             "nome_curto": "Autodeclaração Étnico-Racial (Anexo II)",
@@ -125,8 +123,8 @@
             "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc15",
-            "titulo": "Doc 15 - Autodeclaração Étnico-Racial (Anexo II) / Ethnic-Racial Self-Declaration (Annex II)"
+            "id": "doc14",
+            "titulo": "Doc 14 - Autodeclaração Étnico-Racial (Anexo II)"
         },
         {
             "nome_curto": "Comprovante Indígena",
@@ -134,8 +132,8 @@
             "descricao": "RANI ou Declaração de Liderança (Preencher apenas se aplicável). / RANI or Leadership Declaration (Fill only if applicable).",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc16",
-            "titulo": "Doc 16 - Comprovante Indígena / Indigenous Proof"
+            "id": "doc15",
+            "titulo": "Doc 15 - Comprovante Indígena"
         },
         {
             "nome_curto": "Autodeclaração PcD (Anexo III)",
@@ -143,8 +141,8 @@
             "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc17",
-            "titulo": "Doc 17 - Autodeclaração PcD (Anexo III) / Person with Disability Self-Declaration (Annex III)"
+            "id": "doc16",
+            "titulo": "Doc 16 - Autodeclaração PcD (Anexo III)"
         },
         {
             "nome_curto": "Laudo Médico PcD (Anexo IV)",
@@ -152,8 +150,8 @@
             "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc18",
-            "titulo": "Doc 18 - Laudo Médico PcD (Anexo IV) / Medical Report for PcD (Annex IV)"
+            "id": "doc17",
+            "titulo": "Doc 17 - Laudo Médico PcD (Anexo IV)"
         }
     ],
     "criterios": [
@@ -170,7 +168,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item01",
-            "titulo": "Item 01 - Mestrado em Eng. Química / Master's in Chemical Engineering"
+            "titulo": "Item 01 - Mestrado em Eng. Química"
         },
         {
             "nome_curto": "Mestrado em outras Engenharias",
@@ -185,7 +183,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item02",
-            "titulo": "Item 02 - Mestrado em outras Engenharias / Master's in other Engineering fields"
+            "titulo": "Item 02 - Mestrado em outras Engenharias"
         },
         {
             "nome_curto": "Mestrado em outras áreas",
@@ -200,7 +198,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item03",
-            "titulo": "Item 03 - Mestrado em outras áreas / Master's in other fields"
+            "titulo": "Item 03 - Mestrado em outras áreas"
         },
         {
             "nome_curto": "Tempo do Mestrado (≤ 24 meses)",
@@ -215,7 +213,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item04",
-            "titulo": "Item 04 - Tempo do Mestrado (≤ 24 meses) / Master's Duration (≤ 24 months)"
+            "titulo": "Item 04 - Tempo do Mestrado (≤ 24 meses)"
         },
         {
             "nome_curto": "Tempo do Mestrado (24 a 30 meses)",
@@ -230,7 +228,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item05",
-            "titulo": "Item 05 - Tempo do Mestrado (24 a 30 meses) / Master's Duration (24 to 30 months)"
+            "titulo": "Item 05 - Tempo do Mestrado (24 a 30 meses)"
         },
         {
             "nome_curto": "Tempo do Mestrado (30 a 36 meses)",
@@ -245,7 +243,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item06",
-            "titulo": "Item 06 - Tempo do Mestrado (30 a 36 meses) / Master's Duration (30 to 36 months)"
+            "titulo": "Item 06 - Tempo do Mestrado (30 a 36 meses)"
         },
         {
             "nome_curto": "Segundo Mestrado",
@@ -260,7 +258,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item07",
-            "titulo": "Item 07 - Segundo Mestrado / Second Master's Degree"
+            "titulo": "Item 07 - Segundo Mestrado"
         },
         {
             "nome_curto": "Mestrado no Exterior",
@@ -275,7 +273,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item08",
-            "titulo": "Item 08 - Mestrado no Exterior / Master's Abroad"
+            "titulo": "Item 08 - Mestrado no Exterior"
         },
         {
             "nome_curto": "Especialização",
@@ -290,7 +288,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item09",
-            "titulo": "Item 09 - Especialização / Specialization"
+            "titulo": "Item 09 - Especialização"
         },
         {
             "nome_curto": "Artigos A1 (Percentil ≥ 87,5%)",
@@ -305,7 +303,7 @@
             "exige_cortador_pagina": true,
             "is_calculadora_cr": false,
             "id": "item10",
-            "titulo": "Item 10 - Artigos A1 (Percentil ≥ 87,5%) / A1 Articles (Percentile ≥ 87.5%)"
+            "titulo": "Item 10 - Artigos A1 (Percentil ≥ 87,5%)"
         },
         {
             "nome_curto": "Artigos A2 (Percentil 75% a 87,5%)",
@@ -320,7 +318,7 @@
             "exige_cortador_pagina": true,
             "is_calculadora_cr": false,
             "id": "item11",
-            "titulo": "Item 11 - Artigos A2 (Percentil 75% a 87,5%) / A2 Articles (Percentile 75% to 87.5%)"
+            "titulo": "Item 11 - Artigos A2 (Percentil 75% a 87,5%)"
         },
         {
             "nome_curto": "Artigos A3 (Percentil 62,5% a 75%)",
@@ -335,7 +333,7 @@
             "exige_cortador_pagina": true,
             "is_calculadora_cr": false,
             "id": "item12",
-            "titulo": "Item 12 - Artigos A3 (Percentil 62,5% a 75%) / A3 Articles (Percentile 62.5% to 75%)"
+            "titulo": "Item 12 - Artigos A3 (Percentil 62,5% a 75%)"
         },
         {
             "nome_curto": "Artigos A4 (Percentil 50% a 62,5%)",
@@ -350,7 +348,7 @@
             "exige_cortador_pagina": true,
             "is_calculadora_cr": false,
             "id": "item13",
-            "titulo": "Item 13 - Artigos A4 (Percentil 50% a 62,5%) / A4 Articles (Percentile 50% to 62.5%)"
+            "titulo": "Item 13 - Artigos A4 (Percentil 50% a 62,5%)"
         },
         {
             "nome_curto": "Artigos A5 (Percentil 37,5% a 50%)",
@@ -365,7 +363,7 @@
             "exige_cortador_pagina": true,
             "is_calculadora_cr": false,
             "id": "item14",
-            "titulo": "Item 14 - Artigos A5 (Percentil 37,5% a 50%) / A5 Articles (Percentile 37.5% to 50%)"
+            "titulo": "Item 14 - Artigos A5 (Percentil 37,5% a 50%)"
         },
         {
             "nome_curto": "Artigos A6 (Percentil 25% a 37,5%)",
@@ -380,7 +378,7 @@
             "exige_cortador_pagina": true,
             "is_calculadora_cr": false,
             "id": "item15",
-            "titulo": "Item 15 - Artigos A6 (Percentil 25% a 37,5%) / A6 Articles (Percentile 25% to 37.5%)"
+            "titulo": "Item 15 - Artigos A6 (Percentil 25% a 37,5%)"
         },
         {
             "nome_curto": "Artigos A7 (Percentil 12,5% a 25%)",
@@ -395,7 +393,7 @@
             "exige_cortador_pagina": true,
             "is_calculadora_cr": false,
             "id": "item16",
-            "titulo": "Item 16 - Artigos A7 (Percentil 12,5% a 25%) / A7 Articles (Percentile 12.5% to 25%)"
+            "titulo": "Item 16 - Artigos A7 (Percentil 12,5% a 25%)"
         },
         {
             "nome_curto": "Artigos A8 (Percentil < 12,5%)",
@@ -410,7 +408,7 @@
             "exige_cortador_pagina": true,
             "is_calculadora_cr": false,
             "id": "item17",
-            "titulo": "Item 17 - Artigos A8 (Percentil < 12,5%) / A8 Articles (Percentile < 12.5%)"
+            "titulo": "Item 17 - Artigos A8 (Percentil < 12,5%)"
         },
         {
             "nome_curto": "Patente concedida / Software",
@@ -425,7 +423,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item18",
-            "titulo": "Item 18 - Patente concedida / Software / Granted Patent / Software"
+            "titulo": "Item 18 - Patente concedida / Software"
         },
         {
             "nome_curto": "Patente depositada / Solicitação",
@@ -440,7 +438,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item19",
-            "titulo": "Item 19 - Patente depositada / Solicitação / Filed Patent / Software Application"
+            "titulo": "Item 19 - Patente depositada / Solicitação"
         },
         {
             "nome_curto": "Livro Internacional",
@@ -455,7 +453,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item20",
-            "titulo": "Item 20 - Livro Internacional / International Book"
+            "titulo": "Item 20 - Livro Internacional"
         },
         {
             "nome_curto": "Livro Nacional",
@@ -470,7 +468,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item21",
-            "titulo": "Item 21 - Livro Nacional / National Book"
+            "titulo": "Item 21 - Livro Nacional"
         },
         {
             "nome_curto": "Capítulos de livros",
@@ -485,7 +483,7 @@
             "exige_cortador_pagina": true,
             "is_calculadora_cr": false,
             "id": "item22",
-            "titulo": "Item 22 - Capítulos de livros / Book Chapters"
+            "titulo": "Item 22 - Capítulos de livros"
         },
         {
             "nome_curto": "Trabalhos Completos em Anais",
@@ -500,7 +498,7 @@
             "exige_cortador_pagina": true,
             "is_calculadora_cr": false,
             "id": "item23",
-            "titulo": "Item 23 - Trabalhos Completos em Anais / Full Papers in Conference Proceedings"
+            "titulo": "Item 23 - Trabalhos Completos em Anais"
         },
         {
             "nome_curto": "Resumos/Expandidos em Anais",
@@ -515,7 +513,7 @@
             "exige_cortador_pagina": true,
             "is_calculadora_cr": false,
             "id": "item24",
-            "titulo": "Item 24 - Resumos/Expandidos em Anais / Expanded/Abstracts in Conference Proceedings"
+            "titulo": "Item 24 - Resumos/Expandidos em Anais"
         },
         {
             "nome_curto": "Apresentação de trabalhos",
@@ -530,7 +528,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item25",
-            "titulo": "Item 25 - Apresentação de trabalhos / Work Presentations"
+            "titulo": "Item 25 - Apresentação de trabalhos"
         },
         {
             "nome_curto": "Part. em Eventos/Cursos Curtos",
@@ -545,7 +543,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item26",
-            "titulo": "Item 26 - Part. em Eventos/Cursos Curtos / Participation in Events/Short Courses"
+            "titulo": "Item 26 - Part. em Eventos/Cursos Curtos"
         },
         {
             "nome_curto": "Ensino Superior na Graduação",
@@ -560,7 +558,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item27",
-            "titulo": "Item 27 - Ensino Superior na Graduação / Undergraduate Teaching"
+            "titulo": "Item 27 - Ensino Superior na Graduação"
         },
         {
             "nome_curto": "Consultoria na Área",
@@ -575,7 +573,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item28",
-            "titulo": "Item 28 - Consultoria na Área / Consulting in the Field"
+            "titulo": "Item 28 - Consultoria na Área"
         },
         {
             "nome_curto": "Projetos (Enquanto Mestrando)",
@@ -590,7 +588,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item29",
-            "titulo": "Item 29 - Projetos (Enquanto Mestrando) / Projects (During Master's)"
+            "titulo": "Item 29 - Projetos (Enquanto Mestrando)"
         },
         {
             "nome_curto": "Orientação de Especialização",
@@ -605,7 +603,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item30",
-            "titulo": "Item 30 - Orientação de Especialização / Advising Specialization Students"
+            "titulo": "Item 30 - Orientação de Especialização"
         },
         {
             "nome_curto": "Orientação Graduação (TCC, IC)",
@@ -620,7 +618,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item31",
-            "titulo": "Item 31 - Orientação Graduação (TCC, IC) / Advising Undergraduate Students (Thesis, Research)"
+            "titulo": "Item 31 - Orientação Graduação (TCC, IC)"
         },
         {
             "nome_curto": "Part. em Banca (TCC/Esp.)",
@@ -635,7 +633,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item32",
-            "titulo": "Item 32 - Part. em Banca (TCC/Esp.) / Participation in Defense Committees (Thesis/Spec.)"
+            "titulo": "Item 32 - Part. em Banca (TCC/Esp.)"
         },
         {
             "nome_curto": "Organização de Eventos",
@@ -650,7 +648,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item33",
-            "titulo": "Item 33 - Organização de Eventos / Event Organization"
+            "titulo": "Item 33 - Organização de Eventos"
         },
         {
             "nome_curto": "Projetos (Pós-Mestrado)",
@@ -665,7 +663,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item34",
-            "titulo": "Item 34 - Projetos (Pós-Mestrado) / Projects (Post-Master's)"
+            "titulo": "Item 34 - Projetos (Pós-Mestrado)"
         },
         {
             "nome_curto": "Cursos de Curta Duração ministrados",
@@ -680,7 +678,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item35",
-            "titulo": "Item 35 - Cursos de Curta Duração ministrados / Short Courses Taught"
+            "titulo": "Item 35 - Cursos de Curta Duração ministrados"
         },
         {
             "nome_curto": "Docência Ensino Médio / Monitoria",
@@ -695,7 +693,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item36",
-            "titulo": "Item 36 - Docência Ensino Médio / Monitoria / High School Teaching / Teaching Assistantship"
+            "titulo": "Item 36 - Docência Ensino Médio / Monitoria"
         },
         {
             "nome_curto": "Experiência Profissional em Engenharia",
@@ -710,39 +708,10 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item37",
-            "titulo": "Item 37 - Experiência Profissional em Engenharia / Professional Experience in Engineering"
-        },
-        {
-            "nome_curto": "CR (Obrigatórias Mestrado)",
-            "tagBase": "ITEM_38_CR_OBRIGATORIAS",
-            "descricao": "Atenção: Não inclua disciplinas com conceito 'S', 'I' ou 'J'. Em caso de repetição (Conceito R), lance apenas a nota da aprovação. / Warning: Do not include courses with 'S', 'I', or 'J' grades. If retaken (Grade R), input only the passing grade.",
-            "extraLabel": "",
-            "regra_matematica": "cr",
-            "peso_pontos": 10.0,
-            "teto_maximo": 0.0,
-            "max_uploads": 1,
-            "exige_doi": false,
-            "exige_cortador_pagina": false,
-            "is_calculadora_cr": true,
-            "id": "item38",
-            "titulo": "Item 38 - CR (Obrigatórias Mestrado) / GPA (Master's Core Courses)"
-        },
-        {
-            "nome_curto": "CR (Eletivas Mestrado)",
-            "tagBase": "ITEM_39_CR_ELETIVAS",
-            "descricao": "Atenção: Não inclua disciplinas com conceito 'S', 'I' ou 'J'. Em caso de repetição (Conceito R), lance apenas a nota da aprovação. / Warning: Do not include courses with 'S', 'I', or 'J' grades. If retaken (Grade R), input only the passing grade.",
-            "extraLabel": "",
-            "regra_matematica": "cr",
-            "peso_pontos": 5.0,
-            "teto_maximo": 0.0,
-            "max_uploads": 1,
-            "exige_doi": false,
-            "exige_cortador_pagina": false,
-            "is_calculadora_cr": true,
-            "id": "item39",
-            "titulo": "Item 39 - CR (Eletivas Mestrado) / GPA (Master's Elective Courses)"
+            "titulo": "Item 37 - Experiência Profissional em Engenharia"
         }
     ],
+    "campos_personalizados": [],
     "comissao": [
         "amsvieira@uem.br",
         "cbbcosta@uem.br",
