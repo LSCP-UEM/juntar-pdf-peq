@@ -109,22 +109,13 @@
             "titulo": "Doc 12 - Comprovante SGIPOS / UEM"
         },
         {
-            "nome_curto": "Currículo Lattes (PDF)",
-            "tagBase": "COMPROV_LATTES_PDF",
-            "descricao": "Exportado diretamente da plataforma Lattes. / Exported directly from the Lattes platform.",
-            "obrigatorio": true,
-            "max_uploads": 1,
-            "id": "doc13",
-            "titulo": "Doc 13 - Currículo Lattes (PDF)"
-        },
-        {
             "nome_curto": "Autodeclaração Étnico-Racial (Anexo II)",
             "tagBase": "DOC_COTA_ANEXO2",
             "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc14",
-            "titulo": "Doc 14 - Autodeclaração Étnico-Racial (Anexo II)"
+            "id": "doc13",
+            "titulo": "Doc 13 - Autodeclaração Étnico-Racial (Anexo II)"
         },
         {
             "nome_curto": "Comprovante Indígena",
@@ -132,8 +123,8 @@
             "descricao": "RANI ou Declaração de Liderança (Preencher apenas se aplicável). / RANI or Leadership Declaration (Fill only if applicable).",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc15",
-            "titulo": "Doc 15 - Comprovante Indígena"
+            "id": "doc14",
+            "titulo": "Doc 14 - Comprovante Indígena"
         },
         {
             "nome_curto": "Autodeclaração PcD (Anexo III)",
@@ -141,8 +132,8 @@
             "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc16",
-            "titulo": "Doc 16 - Autodeclaração PcD (Anexo III)"
+            "id": "doc15",
+            "titulo": "Doc 15 - Autodeclaração PcD (Anexo III)"
         },
         {
             "nome_curto": "Laudo Médico PcD (Anexo IV)",
@@ -150,8 +141,8 @@
             "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc17",
-            "titulo": "Doc 17 - Laudo Médico PcD (Anexo IV)"
+            "id": "doc16",
+            "titulo": "Doc 16 - Laudo Médico PcD (Anexo IV)"
         }
     ],
     "criterios": [
