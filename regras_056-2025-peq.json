@@ -64,40 +64,13 @@
             "titulo": "Doc 07 - Diploma/Certificado da Pós-Graduação"
         },
         {
-            "nome_curto": "Declaração de Aceite de Orientação",
-            "tagBase": "DOC_ACEITE_ORIENTACAO",
-            "descricao": "",
-            "obrigatorio": true,
-            "max_uploads": 1,
-            "id": "doc08",
-            "titulo": "Doc 08 - Declaração de Aceite de Orientação"
-        },
-        {
-            "nome_curto": "Plano de Pesquisa",
-            "tagBase": "DOC_PLANO_PESQUISA",
-            "descricao": "Proposta de trabalho com endosso do orientador. / Work proposal endorsed by the advisor.",
-            "obrigatorio": true,
-            "max_uploads": 1,
-            "id": "doc09",
-            "titulo": "Doc 09 - Plano de Pesquisa"
-        },
-        {
-            "nome_curto": "Programa de Estudos",
-            "tagBase": "DOC_PROGRAMA_ESTUDOS",
-            "descricao": "Modelo preenchido com disciplinas a cursar e convalidar. / Filled template with courses to take and validate.",
-            "obrigatorio": true,
-            "max_uploads": 1,
-            "id": "doc10",
-            "titulo": "Doc 10 - Programa de Estudos"
-        },
-        {
             "nome_curto": "Print da Plataforma Sucupira",
             "tagBase": "DOC_PRINT_SUCUPIRA",
             "descricao": "Captura da aba Identificadores contendo Lattes e ORCID. / Screenshot of the Identifiers tab showing Lattes and ORCID.",
             "obrigatorio": true,
             "max_uploads": 1,
-            "id": "doc11",
-            "titulo": "Doc 11 - Print da Plataforma Sucupira"
+            "id": "doc08",
+            "titulo": "Doc 08 - Print da Plataforma Sucupira"
         },
         {
             "nome_curto": "Comprovante SGIPOS / UEM",
@@ -105,8 +78,8 @@
             "descricao": "Cópia do cadastro realizado no sistema da universidade. / Copy of the registration in the university system.",
             "obrigatorio": true,
             "max_uploads": 1,
-            "id": "doc12",
-            "titulo": "Doc 12 - Comprovante SGIPOS / UEM"
+            "id": "doc09",
+            "titulo": "Doc 09 - Comprovante SGIPOS / UEM"
         },
         {
             "nome_curto": "Autodeclaração Étnico-Racial (Anexo II)",
@@ -114,8 +87,8 @@
             "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc13",
-            "titulo": "Doc 13 - Autodeclaração Étnico-Racial (Anexo II)"
+            "id": "doc10",
+            "titulo": "Doc 10 - Autodeclaração Étnico-Racial (Anexo II)"
         },
         {
             "nome_curto": "Comprovante Indígena",
@@ -123,8 +96,8 @@
             "descricao": "RANI ou Declaração de Liderança (Preencher apenas se aplicável). / RANI or Leadership Declaration (Fill only if applicable).",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc14",
-            "titulo": "Doc 14 - Comprovante Indígena"
+            "id": "doc11",
+            "titulo": "Doc 11 - Comprovante Indígena"
         },
         {
             "nome_curto": "Autodeclaração PcD (Anexo III)",
@@ -132,8 +105,8 @@
             "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc15",
-            "titulo": "Doc 15 - Autodeclaração PcD (Anexo III)"
+            "id": "doc12",
+            "titulo": "Doc 12 - Autodeclaração PcD (Anexo III)"
         },
         {
             "nome_curto": "Laudo Médico PcD (Anexo IV)",
@@ -141,8 +114,8 @@
             "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
             "obrigatorio": false,
             "max_uploads": 1,
-            "id": "doc16",
-            "titulo": "Doc 16 - Laudo Médico PcD (Anexo IV)"
+            "id": "doc13",
+            "titulo": "Doc 13 - Laudo Médico PcD (Anexo IV)"
         }
     ],
     "criterios": [
