@@ -750,6 +750,8 @@
             const nomeSemAcento = nomeInput.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             const nomeArquivoLimpo = nomeSemAcento.replace(/[^a-zA-Z0-9]/g, '_');
             
+            const seletorEdital = document.getElementById('edital-selector');
+            const id_ed_arq = seletorEdital.value.replace('.json', '');
             const nomeArquivoFinal = `Dossie_${id_ed_arq}_${docLimpo}_${nomeArquivoLimpo}_PEQ.pdf`;
             
             const pdfBytes = await mergedPdf.save();
