@@ -147,9 +147,9 @@
     ],
     "criterios": [
         {
-            "nome_curto": "Mestrado em Eng. Química",
-            "tagBase": "ITEM_01_MESTRADO_EQ",
-            "descricao": "Curso de Mestrado concluído em Engenharia Química. / Completed Master's degree in Chemical Engineering.",
+            "nome_curto": "Graduação em Eng. Química",
+            "tagBase": "ITEM_01_GRAD_EQ",
+            "descricao": "Curso de graduação concluído em Engenharia Química. / Completed undergraduate degree in Chemical Engineering.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 40.0,
@@ -159,12 +159,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item01",
-            "titulo": "Item 01 - Mestrado em Eng. Química"
+            "titulo": "Item 01 - Graduação em Eng. Química"
         },
         {
-            "nome_curto": "Mestrado em outras Engenharias",
-            "tagBase": "ITEM_02_MESTRADO_OUTRAS_ENG",
-            "descricao": "Curso de Mestrado concluído em outras Engenharias. / Completed Master's degree in other Engineering fields.",
+            "nome_curto": "Graduação em outras Engenharias",
+            "tagBase": "ITEM_02_GRAD_OUTRAS_ENG",
+            "descricao": "Curso de Graduação em outras Engenharias. / Undergraduate degree in other Engineering fields.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 30.0,
@@ -174,12 +174,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item02",
-            "titulo": "Item 02 - Mestrado em outras Engenharias"
+            "titulo": "Item 02 - Graduação em outras Engenharias"
         },
         {
-            "nome_curto": "Mestrado em outras áreas",
-            "tagBase": "ITEM_03_MESTRADO_OUTRAS_AREAS",
-            "descricao": "Curso de Mestrado concluído em outras áreas. / Completed Master's degree in other fields.",
+            "nome_curto": "Graduação em outras áreas",
+            "tagBase": "ITEM_03_GRAD_OUTRAS_AREAS",
+            "descricao": "Curso de graduação concluído em outras áreas. / Completed undergraduate degree in other fields.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 20.0,
@@ -189,12 +189,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item03",
-            "titulo": "Item 03 - Mestrado em outras áreas"
+            "titulo": "Item 03 - Graduação em outras áreas"
         },
         {
-            "nome_curto": "Tempo do Mestrado (≤ 24 meses)",
+            "nome_curto": "Tempo de graduação (≤ 24 meses)",
             "tagBase": "ITEM_04_TEMPO_24",
-            "descricao": "Tempo de integralização do Mestrado menor ou igual a 24 meses. / Master's completion time less than or equal to 24 months.",
+            "descricao": "Tempo de integralização da graduação menor ou igual a 24 meses. / Undergraduate degree completion time less than or equal to 24 months.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 10.0,
@@ -204,12 +204,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item04",
-            "titulo": "Item 04 - Tempo do Mestrado (≤ 24 meses)"
+            "titulo": "Item 04 - Tempo de graduação (≤ 24 meses)"
         },
         {
-            "nome_curto": "Tempo do Mestrado (24 a 30 meses)",
+            "nome_curto": "Tempo do graduação (24 a 30 meses)",
             "tagBase": "ITEM_05_TEMPO_30",
-            "descricao": "Tempo de integralização do Mestrado maior que 24 e menor/igual a 30 meses. / Master's completion time greater than 24 and less than/equal to 30 months.",
+            "descricao": "Tempo de integralização da graduação maior que 24 e menor/igual a 30 meses. / Undergraduate degree completion time greater than 24 and less than/equal to 30 months.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 5.0,
@@ -219,12 +219,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item05",
-            "titulo": "Item 05 - Tempo do Mestrado (24 a 30 meses)"
+            "titulo": "Item 05 - Tempo do graduação (24 a 30 meses)"
         },
         {
-            "nome_curto": "Tempo do Mestrado (30 a 36 meses)",
+            "nome_curto": "Tempo do graduação (30 a 36 meses)",
             "tagBase": "ITEM_06_TEMPO_36",
-            "descricao": "Tempo de integralização do Mestrado maior que 30 e menor/igual a 36 meses. / Master's completion time greater than 30 and less than/equal to 36 months.",
+            "descricao": "Tempo de integralização da graduação maior que 30 e menor/igual a 36 meses. / Undergraduate degree completion time greater than 30 and less than/equal to 36 months.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 1.0,
@@ -234,12 +234,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item06",
-            "titulo": "Item 06 - Tempo do Mestrado (30 a 36 meses)"
+            "titulo": "Item 06 - Tempo do graduação (30 a 36 meses)"
         },
         {
-            "nome_curto": "Segundo Mestrado",
-            "tagBase": "ITEM_07_SEGUNDO_MESTRADO",
-            "descricao": "Segundo Curso de Mestrado concluído independentemente da Área e do tempo. / Second Master's Degree completed regardless of the field or duration.",
+            "nome_curto": "Segunda graduação",
+            "tagBase": "ITEM_07_SEGUNDA_GRAD",
+            "descricao": "Segundo Curso de graduação concluído independentemente da Área e do tempo. / Second completed undergraduate degree completed regardless of the field or completion time.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 10.0,
@@ -249,12 +249,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item07",
-            "titulo": "Item 07 - Segundo Mestrado"
+            "titulo": "Item 07 - Segunda graduação"
         },
         {
-            "nome_curto": "Mestrado no Exterior",
-            "tagBase": "ITEM_08_MESTRADO_EXTERIOR",
-            "descricao": "Realização de parte do Mestrado no Exterior (mínimo de 3 meses, exceto país de origem). / Completion of part of the Master's degree abroad (minimum of 3 months, excluding home country).",
+            "nome_curto": "Mobilidade Internacional",
+            "tagBase": "ITEM_08_MOBILIDADE_INTER",
+            "descricao": "Participação em mobilidade internacional, mínimo 6 meses. / Participation in international mobility, minimum of 6 months.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 5.0,
@@ -264,7 +264,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item08",
-            "titulo": "Item 08 - Mestrado no Exterior"
+            "titulo": "Item 08 - Mobilidade Internacional"
         },
         {
             "nome_curto": "Especialização",
