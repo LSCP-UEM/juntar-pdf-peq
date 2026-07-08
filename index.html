@@ -591,6 +591,14 @@
         statusDiv.innerText = "⏳ Processando arquivos e carimbando metadados institucionais... / Processing files and stamping institutional metadata... Aguarde / Please wait.";
         statusDiv.style.color = "#0056b3";
         
+        // --- NOVO: Remove caixas vermelhas de tentativas anteriores ---
+        const inputsComErro = document.querySelectorAll('.erro-destaque');
+        inputsComErro.forEach(el => {
+            el.classList.remove('erro-destaque');
+            el.style.border = "";
+            el.style.backgroundColor = "";
+        });
+        
         try {
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
             const mergedPdf = await PDFDocument.create();
@@ -651,7 +659,40 @@
                     }
 
                     const fileArrayBuffer = await file.arrayBuffer();
-                    const userPdf = await PDFDocument.load(fileArrayBuffer);
+                    let userPdf;
+                    
+                    // --- INÍCIO DO erro? ---
+                    try {
+                        userPdf = await PDFDocument.load(fileArrayBuffer);
+                    } catch (e) {
+                        // Pinta a caixa do arquivo de vermelho
+                        fileInputEle.parentElement.classList.add('erro-destaque');
+                        fileInputEle.parentElement.style.border = "2px solid red";
+                        fileInputEle.parentElement.style.backgroundColor = "#ffe6e6";
+
+                        // Monta a mensagem apontando o nome
+                        const msgErro = `🚨 <b>FALHA NO ARQUIVO: "${file.name}"</b><br><br>
+                        Este PDF possui um script interno (ex: auto-imprimir), assinatura digital ou formatação corrompida.<br><br>
+                        👉 <b>COMO RESOLVER AGORA:</b><br>
+                        1. Abra este arquivo no seu navegador (Chrome/Edge).<br>
+                        2. Aperte <b>Ctrl + P</b> (Imprimir).<br>
+                        3. Escolha <b>"Salvar/imprimir como PDF"</b>.<br>
+                        4. Anexe o novo arquivo aqui e tente novamente.`;
+
+                        // Joga na tela e trava
+                        statusDiv.innerHTML = msgErro;
+                        statusDiv.style.color = "#721c24";
+                        statusDiv.style.backgroundColor = "#f8d7da";
+                        statusDiv.style.border = "1px solid #f5c6cb";
+                        statusDiv.style.padding = "15px";
+                        statusDiv.style.borderRadius = "5px";
+                        
+                        statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                        // Lança um erro com um "código secreto" para parar o processo
+                        throw new Error(`SISTEMA_DEDO_DURO: Falha ao ler ${file.name}`);
+                    }
+                    // --- FIM DO erro ---
                     
                     let pagesToCopy;
                     if (pageCropValue) {
@@ -767,8 +808,11 @@
 
         } catch (error) {
             console.error(error);
-            statusDiv.innerText = "❌ Erro. Certifique-se de que os arquivos enviados são PDFs válidos e não estão corrompidos. / Error. Make sure the uploaded files are valid PDFs and not corrupted.";
-            statusDiv.style.color = "red";
+            // Se o erro NÃO for o nosso dedo-duro, ele exibe a mensagem genérica
+            if (!error.message.includes("SISTEMA_DEDO_DURO")) {
+                statusDiv.innerText = "❌ Erro. Certifique-se de que os arquivos enviados são PDFs válidos e não estão corrompidos. / Error. Make sure the uploaded files are valid PDFs and not corrupted.";
+                statusDiv.style.color = "red";
+            }
         }
     }
 </script>
