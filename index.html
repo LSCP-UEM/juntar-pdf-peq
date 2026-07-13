@@ -615,19 +615,51 @@
             coverPage.drawText(`Candidato: ${nomeInput}`, { x: 50, y: 660, size: 14, font: font });
             coverPage.drawText(`${docTipo}: ${docId}  |  E-mail: ${emailInput}`, { x: 50, y: 640, size: 12, font: normalFont });
             
+// Função inteligente para medir palavras e quebrar linhas
+            function quebrarTexto(texto, fonte, tamanho, larguraMaxima) {
+                const palavras = texto.split(' ');
+                let linhas = [];
+                let linhaAtual = palavras[0] || "";
+
+                for (let i = 1; i < palavras.length; i++) {
+                    const palavra = palavras[i];
+                    // Mede a largura da linha atual + a nova palavra
+                    const largura = fonte.widthOfTextAtSize(linhaAtual + " " + palavra, tamanho);
+                    if (largura < larguraMaxima) {
+                        linhaAtual += " " + palavra; // Cabe na linha, adiciona
+                    } else {
+                        linhas.push(linhaAtual); // Não cabe, fecha a linha e joga a palavra para baixo
+                        linhaAtual = palavra;
+                    }
+                }
+                if (linhaAtual) linhas.push(linhaAtual);
+                return linhas;
+            }
+
             let yCursorCapa = 610;
+            const maxWidth = 500; // Limite da borda da página A4
+
             respostasExtras.forEach(resp => {
                 coverPage.drawText(`${resp.label}:`, { x: 50, y: yCursorCapa, size: 12, font: font, color: rgb(0, 0.33, 0.7) });
-                coverPage.drawText(`${resp.valor}`, { x: 50, y: yCursorCapa - 15, size: 12, font: normalFont });
-                yCursorCapa -= 40; 
+                yCursorCapa -= 15; // Desce o cursor para a resposta
+                
+                // Aplica o quebrador de texto na resposta do aluno
+                const linhasQuebradas = quebrarTexto(resp.valor, normalFont, 12, maxWidth);
+                
+                // Imprime linha por linha descendo o cursor
+                linhasQuebradas.forEach(linha => {
+                    coverPage.drawText(linha, { x: 50, y: yCursorCapa, size: 12, font: normalFont });
+                    yCursorCapa -= 15;
+                });
+                
+                yCursorCapa -= 10; // Dá um espaço extra antes da próxima pergunta
             });
 
             const pontuacaoEstimadaEle = document.getElementById('pontuacao-estimada-display');
             const pontuacaoFinal = pontuacaoEstimadaEle ? pontuacaoEstimadaEle.innerText : "0.00";
             
-            coverPage.drawText(`Pontuacao Estimada pelo Candidato: ${pontuacaoFinal} pts`, { x: 50, y: yCursorCapa - 30, size: 16, font: font, color: rgb(0.15, 0.65, 0.15) });
-            coverPage.drawText(`(A pontuacao final oficial sera validada exclusivamente pela Comissao de Selecao do PEQ)`, { x: 50, y: yCursorCapa - 50, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) }); 
-            
+            coverPage.drawText(`Pontuacao Estimada pelo Candidato: ${pontuacaoFinal} pts`, { x: 50, y: yCursorCapa - 15, size: 16, font: font, color: rgb(0.15, 0.65, 0.15) });
+            coverPage.drawText(`(A pontuacao final oficial sera validada exclusivamente pela Comissao de Selecao do PEQ)`, { x: 50, y: yCursorCapa - 35, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) });
             coverPage.drawText(`Documento gerado automaticamente pelo Sistema LSCP-UEM.`, { x: 50, y: 50, size: 10, font: normalFont, color: rgb(0.6, 0.6, 0.6) }); 
 
             // ==========================================
