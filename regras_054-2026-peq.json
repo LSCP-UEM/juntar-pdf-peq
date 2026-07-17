@@ -569,23 +569,8 @@
     ],
     "campos_personalizados": [
         {
-            "label": "Instituição onde realizou o Mestrado / Institution where you obtained your Master's degree",
-            "helper": "Ex: UEM, UFPR, USP...",
-            "obrigatorio": true
-        },
-        {
-            "label": "Ano de Defesa do Mestrado / Year of Master's Defense",
-            "helper": "Ex: 2024",
-            "obrigatorio": true
-        },
-        {
             "label": "Orientador / Advisor",
-            "helper": "Nome do professor do PEQ / Name of the PEQ professor",
-            "obrigatorio": true
-        },
-        {
-            "label": "Título do Projeto de Pesquisa / Research Project Title",
-            "helper": "Título exato que consta no PDF do Plano de Pesquisa / Exact title as it appears on the Research Plan PDF",
+            "helper": "Nome do orientador do PEQ / Name of the advisor from PEQ",
             "obrigatorio": true
         }
     ],
