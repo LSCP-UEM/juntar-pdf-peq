@@ -542,7 +542,7 @@
         {
             "nome_curto": "Projetos (Enquanto Mestrando)",
             "tagBase": "ITEM_29_PROJETO_MESTRANDO",
-            "descricao": "Part. em Projeto de Ensino/Pesquisa/Extensão no mestrado. 1 ponto/semestre (Máximo 6 semestres). / Participation in Teaching/Research/Extension Project during Master's. 1 point/semester (Max 6 semesters).",
+            "descricao": "Part. em Projeto de Ensino, Pesquisa ou Extensão enquanto acadêmico de graduação. Nos últimos 5 anos completos até a data da inscrição. (1 ponto/semestre - Máximo 6 semestres) incluindo PIC, PIBIC, PIBITI e PET, Empresa Júnior.1 ponto/semestre (Máximo 6 semestres). / Participation in Teaching/Research/Extension Project during undergradion. 1 point/semester (Max 6 semesters).",
             "extraLabel": "Semestres comprovados: / Proven semesters:",
             "regra_matematica": "semestres",
             "peso_pontos": 1.0,
@@ -553,21 +553,6 @@
             "is_calculadora_cr": false,
             "id": "item29",
             "titulo": "Item 29 - Projetos (Enquanto Mestrando)"
-        },
-        {
-            "nome_curto": "Orientação de Especialização",
-            "tagBase": "ITEM_30_ORIENTACAO_ESP",
-            "descricao": "Orientação de Especialização. Limite de 10 pontos totais (vale 2,0 cada - últimos 5 anos). / Advising Specialization students. Max 10 total points (2.0 each - last 5 years).",
-            "extraLabel": "",
-            "regra_matematica": "flat",
-            "peso_pontos": 2.0,
-            "teto_maximo": 10.0,
-            "max_uploads": 5,
-            "exige_doi": false,
-            "exige_cortador_pagina": false,
-            "is_calculadora_cr": false,
-            "id": "item30",
-            "titulo": "Item 30 - Orientação de Especialização"
         },
         {
             "nome_curto": "Orientação Graduação (TCC, IC)",
@@ -581,8 +566,8 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item31",
-            "titulo": "Item 31 - Orientação Graduação (TCC, IC)"
+            "id": "item30",
+            "titulo": "Item 30 - Orientação Graduação (TCC, IC)"
         },
         {
             "nome_curto": "Part. em Banca (TCC/Esp.)",
@@ -596,8 +581,8 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item32",
-            "titulo": "Item 32 - Part. em Banca (TCC/Esp.)"
+            "id": "item31",
+            "titulo": "Item 31 - Part. em Banca (TCC/Esp.)"
         },
         {
             "nome_curto": "Organização de Eventos",
@@ -611,8 +596,8 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item33",
-            "titulo": "Item 33 - Organização de Eventos"
+            "id": "item32",
+            "titulo": "Item 32 - Organização de Eventos"
         },
         {
             "nome_curto": "Projetos (Pós-Mestrado)",
@@ -626,8 +611,8 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item34",
-            "titulo": "Item 34 - Projetos (Pós-Mestrado)"
+            "id": "item33",
+            "titulo": "Item 33 - Projetos (Pós-Mestrado)"
         },
         {
             "nome_curto": "Cursos de Curta Duração ministrados",
@@ -641,8 +626,8 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item35",
-            "titulo": "Item 35 - Cursos de Curta Duração ministrados"
+            "id": "item34",
+            "titulo": "Item 34 - Cursos de Curta Duração ministrados"
         },
         {
             "nome_curto": "Docência Ensino Médio / Monitoria",
@@ -656,8 +641,8 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item36",
-            "titulo": "Item 36 - Docência Ensino Médio / Monitoria"
+            "id": "item35",
+            "titulo": "Item 35 - Docência Ensino Médio / Monitoria"
         },
         {
             "nome_curto": "Experiência Profissional em Engenharia",
@@ -671,8 +656,8 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item37",
-            "titulo": "Item 37 - Experiência Profissional em Engenharia"
+            "id": "item36",
+            "titulo": "Item 36 - Experiência Profissional em Engenharia"
         }
     ],
     "campos_personalizados": [],
