@@ -10,12 +10,13 @@
         "ativo": false
     },
     {
-        "id": "regras_054-2026-peq",
-        "nome": "Edital 054/2026-PEQ"
-    },
-    {
         "id": "regras_053-2026-peq",
         "nome": "Edital 053/2026-PEQ",
+        "ativo": true
+    },
+    {
+        "id": "regras_054-2026-peq",
+        "nome": "Edital 054/2026-PEQ",
         "ativo": true
     }
 ]
