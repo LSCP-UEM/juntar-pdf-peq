@@ -1,13 +1,13 @@
 {
     "documentos": [
         {
-            "nome_curto": "Formulário de Inscrição (Anexo V)",
-            "tagBase": "DOC_ANEXO_V_INSCRICAO",
-            "descricao": "Anexo V preenchido e assinado. / Annex V filled and signed.",
+            "nome_curto": "Requerimento de Inscrição (Anexo I)",
+            "tagBase": "DOC_ANEXO_I_INSCRICAO",
+            "descricao": "Requerimento (Anexo I) preenchido e assinado. / Requirement (Annex I) filled and signed.",
             "obrigatorio": true,
             "max_uploads": 1,
             "id": "doc01",
-            "titulo": "Doc 01 - Formulário de Inscrição (Anexo V)"
+            "titulo": "Doc 01 - Requerimento de Inscrição (Anexo I)"
         },
         {
             "nome_curto": "Certidão Civil",
@@ -165,9 +165,9 @@
             "titulo": "Item 03 - Mestrado em outras áreas"
         },
         {
-            "nome_curto": "Tempo do Mestrado (≤ 24 meses)",
+            "nome_curto": "Tempo do Mestrado (t ≤ 24 meses)",
             "tagBase": "ITEM_04_TEMPO_24",
-            "descricao": "Tempo de integralização do Mestrado menor ou igual a 24 meses. / Master's completion time less than or equal to 24 months.",
+            "descricao": "Tempo de integralização do Mestrado (meses) t ≤ 24. / Master's completion time (months) t ≤ 24.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 10.0,
@@ -177,12 +177,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item04",
-            "titulo": "Item 04 - Tempo do Mestrado (≤ 24 meses)"
+            "titulo": "Item 04 - Tempo do Mestrado (t ≤ 24 meses)"
         },
         {
-            "nome_curto": "Tempo do Mestrado (24 a 30 meses)",
+            "nome_curto": "Tempo do Mestrado (24 < t ≤ 30)",
             "tagBase": "ITEM_05_TEMPO_30",
-            "descricao": "Tempo de integralização do Mestrado maior que 24 e menor/igual a 30 meses. / Master's completion time greater than 24 and less than/equal to 30 months.",
+            "descricao": "Tempo de integralização Mestrado (meses) 24 < t ≤ 30. / Master's completion time (months) 24 < t ≤ 30.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 5.0,
@@ -192,12 +192,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item05",
-            "titulo": "Item 05 - Tempo do Mestrado (24 a 30 meses)"
+            "titulo": "Item 05 - Tempo do Mestrado (24 < t ≤ 30)"
         },
         {
-            "nome_curto": "Tempo do Mestrado (30 a 36 meses)",
+            "nome_curto": "Tempo do Mestrado (30 < t ≤ 36)",
             "tagBase": "ITEM_06_TEMPO_36",
-            "descricao": "Tempo de integralização do Mestrado maior que 30 e menor/igual a 36 meses. / Master's completion time greater than 30 and less than/equal to 36 months.",
+            "descricao": "Tempo de integralização do Mestrado (meses) 30 < t ≤ 36. / Master's completion time (months) 30 < t ≤ 36.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 1.0,
@@ -207,12 +207,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item06",
-            "titulo": "Item 06 - Tempo do Mestrado (30 a 36 meses)"
+            "titulo": "Item 06 - Tempo do Mestrado (30 < t ≤ 36)"
         },
         {
             "nome_curto": "Segundo Mestrado",
             "tagBase": "ITEM_07_SEGUNDO_MESTRADO",
-            "descricao": "Segundo Curso de Mestrado concluído independentemente da Área e do tempo. / Second Master's Degree completed regardless of the field or duration.",
+            "descricao": "Segundo Curso de Mestrado concluído independentemente da Área e do tempo de conclusão. / Second completed Master's degree regardless of the field or completion time.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 10.0,
@@ -227,7 +227,7 @@
         {
             "nome_curto": "Mestrado no Exterior",
             "tagBase": "ITEM_08_MESTRADO_EXTERIOR",
-            "descricao": "Realização de parte do Mestrado no Exterior (mínimo de 3 meses, exceto país de origem). / Completion of part of the Master's degree abroad (minimum of 3 months, excluding home country).",
+            "descricao": "Realização de parte do Mestrado no exterior (exceto país de origem no caso de candidato estrangeiro), mínimo de 3 meses. / Completion of part of the Master's abroad (excluding home country for foreign candidates), minimum of 3 months.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 5.0,
@@ -242,7 +242,7 @@
         {
             "nome_curto": "Especialização",
             "tagBase": "ITEM_09_ESPECIALIZACAO",
-            "descricao": "Cursos de Especialização (Máximo de 2 Especializações). / Specialization Courses (Max 2 Specializations).",
+            "descricao": "Especialização (Máximo 2 Especializações). / Specialization (Max 2 Specializations).",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 3.0,
@@ -257,7 +257,7 @@
         {
             "nome_curto": "Artigos A1 (Percentil ≥ 87,5%)",
             "tagBase": "ITEM_10_ARTIGO_A1",
-            "descricao": "Artigos com 4 ou mais autores terão o valor dividido pelo número de autores. Máximo 4 artigos (últimos 5 anos). / Articles with 4 or more authors will have the value divided by the number of authors. Max 4 articles (last 5 years).",
+            "descricao": "Artigos A1 - Percentil da Scopus* maior ou igual a 87,5%. Artigos com 4 ou mais autores terão o valor dividido pelo número de autores (artigos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. - Máximo 4 artigos. / A1 Articles - Scopus percentile ≥ 87.5%. Articles with 4 or more authors will have the value divided by the number of authors (e.g., 5 authors = multiplied by 4/5). In the last 5 full years up to the enrollment date. - Max 4 articles.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 15.0,
@@ -272,7 +272,7 @@
         {
             "nome_curto": "Artigos A2 (Percentil 75% a 87,5%)",
             "tagBase": "ITEM_11_ARTIGO_A2",
-            "descricao": "Artigos com 4 ou mais autores terão o valor dividido pelo número de autores. Máximo 4 artigos (últimos 5 anos). / Articles with 4 or more authors will have the value divided by the number of authors. Max 4 articles (last 5 years).",
+            "descricao": "Artigos A2 - Percentil da Scopus* entre 75,0% e 87,5%. Artigos com 4 ou mais autores terão o valor dividido pelo número de autores (artigos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 artigos. / A2 Articles - Scopus percentile between 75.0% and 87.5%. Articles with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 articles.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 13.0,
@@ -287,7 +287,7 @@
         {
             "nome_curto": "Artigos A3 (Percentil 62,5% a 75%)",
             "tagBase": "ITEM_12_ARTIGO_A3",
-            "descricao": "Artigos com 4 ou mais autores terão o valor dividido pelo número de autores. Máximo 4 artigos (últimos 5 anos). / Articles with 4 or more authors will have the value divided by the number of authors. Max 4 articles (last 5 years).",
+            "descricao": "Artigos A3 - Percentil da Scopus* entre 62,5% e 75,0%. Artigos com 4 ou mais autores terão o valor dividido pelo número de autores (artigos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 artigos. / A3 Articles - Scopus percentile between 62.5% and 75.0%. Articles with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 articles.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 11.0,
@@ -302,7 +302,7 @@
         {
             "nome_curto": "Artigos A4 (Percentil 50% a 62,5%)",
             "tagBase": "ITEM_13_ARTIGO_A4",
-            "descricao": "Artigos com 4 ou mais autores terão o valor dividido pelo número de autores. Máximo 4 artigos (últimos 5 anos). / Articles with 4 or more authors will have the value divided by the number of authors. Max 4 articles (last 5 years).",
+            "descricao": "Artigos A4 - Percentil da Scopus* entre 50,0% e 62,5%. Artigos com 4 ou mais autores terão o valor dividido pelo número de autores (artigos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 artigos. / A4 Articles - Scopus percentile between 50.0% and 62.5%. Articles with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 articles.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 9.0,
@@ -317,7 +317,7 @@
         {
             "nome_curto": "Artigos A5 (Percentil 37,5% a 50%)",
             "tagBase": "ITEM_14_ARTIGO_A5",
-            "descricao": "Artigos com 4 ou mais autores terão o valor dividido pelo número de autores. Máximo 4 artigos (últimos 5 anos). / Articles with 4 or more authors will have the value divided by the number of authors. Max 4 articles (last 5 years).",
+            "descricao": "Artigos A5 - Percentil da Scopus* entre 37,5% e 50,0%. Artigos com 4 ou mais autores terão o valor dividido pelo número de autores (artigos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 artigos. / A5 Articles - Scopus percentile between 37.5% and 50.0%. Articles with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 articles.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 7.0,
@@ -332,7 +332,7 @@
         {
             "nome_curto": "Artigos A6 (Percentil 25% a 37,5%)",
             "tagBase": "ITEM_15_ARTIGO_A6",
-            "descricao": "Artigos com 4 ou mais autores terão o valor dividido pelo número de autores. Máximo 4 artigos (últimos 5 anos). / Articles with 4 or more authors will have the value divided by the number of authors. Max 4 articles (last 5 years).",
+            "descricao": "Artigos A6 - Percentil da Scopus* entre 25,0% e 37,5%. Artigos com 4 ou mais autores terão o valor dividido pelo número de autores (artigos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 artigos. / A6 Articles - Scopus percentile between 25.0% and 37.5%. Articles with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 articles.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 6.0,
@@ -347,7 +347,7 @@
         {
             "nome_curto": "Artigos A7 (Percentil 12,5% a 25%)",
             "tagBase": "ITEM_16_ARTIGO_A7",
-            "descricao": "Artigos com 4 ou mais autores terão o valor dividido pelo número de autores. Máximo 4 artigos (últimos 5 anos). / Articles with 4 or more authors will have the value divided by the number of authors. Max 4 articles (last 5 years).",
+            "descricao": "Artigos A7 - Percentil da Scopus* entre 12,5% e 25,0%. Artigos com 4 ou mais autores terão o valor dividido pelo número de autores (artigos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 artigos. / A7 Articles - Scopus percentile between 12.5% and 25.0%. Articles with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 articles.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 5.0,
@@ -362,7 +362,7 @@
         {
             "nome_curto": "Artigos A8 (Percentil < 12,5%)",
             "tagBase": "ITEM_17_ARTIGO_A8",
-            "descricao": "Artigos com 4 ou mais autores terão o valor dividido pelo número de autores. Máximo 4 artigos (últimos 5 anos). / Articles with 4 or more authors will have the value divided by the number of authors. Max 4 articles (last 5 years).",
+            "descricao": "Artigos A8 - Percentil da Scopus* menor do que 12,5%. Artigos com 4 ou mais autores terão o valor dividido pelo número de autores (artigos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 artigos. / A8 Articles - Scopus percentile lower than 12.5%. Articles with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 articles.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 4.0,
@@ -377,7 +377,7 @@
         {
             "nome_curto": "Patente concedida / Software",
             "tagBase": "ITEM_18_PATENTE_CONCEDIDA",
-            "descricao": "Patente concedida ou registro de software. Autores ≥ 4 divide valor. Máx 4 itens (últimos 5 anos). / Granted patent or software registration. Authors ≥ 4 divide value. Max 4 items (last 5 years).",
+            "descricao": "Patente concedida ou registro de software. Produtos com 4 ou mais autores terão o valor dividido pelo número de autores (produtos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 itens. / Granted patent or software registration. Products with 4 or more authors will have the value divided by the number of authors (e.g., 5 authors = multiplied by 4/5). In the last 5 full years up to the enrollment date. Max 4 items.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 15.0,
@@ -392,7 +392,7 @@
         {
             "nome_curto": "Patente depositada / Solicitação",
             "tagBase": "ITEM_19_PATENTE_DEPOSITADA",
-            "descricao": "Patente depositada ou solicitação de software. Autores ≥ 4 divide valor. Máx 4 itens (últimos 5 anos). / Filed patent or software application. Authors ≥ 4 divide value. Max 4 items (last 5 years).",
+            "descricao": "Patente depositada ou solicitação de registro de software. Produtos com 4 ou mais autores terão o valor dividido pelo número de autores (produtos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 itens. / Filed patent or software registration request. Products with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 items.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 13.0,
@@ -407,7 +407,7 @@
         {
             "nome_curto": "Livro Internacional",
             "tagBase": "ITEM_20_LIVRO_INT",
-            "descricao": "Autor/Organizador de livro internacional. Autores ≥ 4 divide valor. Máx 4 livros (últimos 5 anos). / Author/Organizer of an international book. Authors ≥ 4 divide value. Max 4 books (last 5 years).",
+            "descricao": "Autor/Organizador de livro publicado em editora internacional. Livros com 4 ou mais autores terão o valor dividido pelo número de autores (trabalhos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 livros. / Author/Organizer of a book published by an international publisher. Books with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 books.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 15.0,
@@ -422,7 +422,7 @@
         {
             "nome_curto": "Livro Nacional",
             "tagBase": "ITEM_21_LIVRO_NAC",
-            "descricao": "Autor/Organizador de livro nacional. Autores ≥ 4 divide valor. Máx 4 livros (últimos 5 anos). / Author/Organizer of a national book. Authors ≥ 4 divide value. Max 4 books (last 5 years).",
+            "descricao": "Autor/Organizador de livro publicado em editora nacional. Livros com 4 ou mais autores terão o valor dividido pelo número de autores (trabalhos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 livros. / Author/Organizer of a book published by a national publisher. Books with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 books.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 13.0,
@@ -437,7 +437,7 @@
         {
             "nome_curto": "Capítulos de livros",
             "tagBase": "ITEM_22_CAPITULO",
-            "descricao": "Capítulos (exceto Anais). Autores ≥ 4 divide valor. Máx 4 capítulos (últimos 5 anos). / Chapters (excluding Proceedings). Authors ≥ 4 divide value. Max 4 chapters (last 5 years).",
+            "descricao": "Capítulos de livros (exceto Anais de Eventos). Capítulos de livros com 4 ou mais autores terão o valor dividido pelo número de autores (trabalhos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 capítulos. / Book chapters (excluding Event Proceedings). Chapters with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 chapters.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 3.0,
@@ -452,7 +452,7 @@
         {
             "nome_curto": "Trabalhos Completos em Anais",
             "tagBase": "ITEM_23_ANAIS_COMPLETO",
-            "descricao": "Eventos Técnico-Científicos. Autores ≥ 4 divide valor. Máx 5 trabalhos (últimos 5 anos). / Technical-Scientific Events. Authors ≥ 4 divide value. Max 5 papers (last 5 years).",
+            "descricao": "Trabalhos publicados em Anais de Eventos Técnico-Científicos (completos). Trabalhos com 4 ou mais autores terão o valor dividido pelo número de autores (trabalhos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 5 Trabalhos. / Full papers published in Technical-Scientific Event Proceedings. Papers with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 5 papers.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 3.0,
@@ -467,7 +467,7 @@
         {
             "nome_curto": "Resumos/Expandidos em Anais",
             "tagBase": "ITEM_24_RESUMO_ANAIS",
-            "descricao": "Eventos Técnico-Científicos. Autores ≥ 4 divide valor. Máx 3 resumos (últimos 5 anos). / Technical-Scientific Events. Authors ≥ 4 divide value. Max 3 abstracts (last 5 years).",
+            "descricao": "Resumos ou Resumos Expandidos publicados em Anais de Evento Técnico-Científicos. Resumos com 4 ou mais autores terão o valor dividido pelo número de autores (trabalhos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 3 Resumos. / Abstracts or Extended Abstracts published in Technical-Scientific Event Proceedings. Abstracts with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 3 abstracts.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 1.0,
@@ -482,7 +482,7 @@
         {
             "nome_curto": "Apresentação de trabalhos",
             "tagBase": "ITEM_25_APRESENTACAO",
-            "descricao": "Apresentações não consideradas acima. Exige nome como apresentador. Máximo 5 (últimos 5 anos). / Presentations not considered above. Requires name as presenter. Max 5 (last 5 years).",
+            "descricao": "Apresentação de Trabalhos (não considerados acima) em Eventos Técnico-Científicos. Nos últimos 5 anos completos até a data da inscrição (máximo 5 apresentações). Computados somente os Certificados que apresentarem o nome do candidato como apresentador. / Presentation of Papers (not considered above) in Technical-Scientific Events. In the last 5 full years up to the enrollment date (max 5 presentations). Only Certificates showing the candidate's name as the presenter are computed.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 1.0,
@@ -497,7 +497,7 @@
         {
             "nome_curto": "Part. em Eventos/Cursos Curtos",
             "tagBase": "ITEM_26_PART_EVENTOS",
-            "descricao": "Participação em eventos e cursos na área. Limite de 10 pontos totais (vale 0,1 por evento). / Participation in events and courses in the field. Max 10 total points (0.1 per event).",
+            "descricao": "Part. em Eventos e Cursos de Curta Duração na Área ou Área Afim. Nos últimos 5 anos completos até a data da inscrição (limite de 10 pontos). / Participation in Events and Short Courses in the Field or Related Field. In the last 5 full years up to the enrollment date (limit of 10 points).",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 0.1,
@@ -512,7 +512,7 @@
         {
             "nome_curto": "Ensino Superior na Graduação",
             "tagBase": "ITEM_27_ENSINO_GRADUACAO",
-            "descricao": "5 pontos a cada 12 meses (limite de 25 pontos). Contar apenas ano completo. / 5 points every 12 months (max 25 points). Count full years only.",
+            "descricao": "Ensino Superior na Graduação – 5 pontos a cada 12 meses (limite de 25 pontos) (contar apenas ano completo). / Higher Education Teaching at Undergraduate Level - 5 points every 12 months (limit of 25 points) (count only full years).",
             "extraLabel": "Meses comprovados: / Proven months:",
             "regra_matematica": "meses",
             "peso_pontos": 5.0,
@@ -527,7 +527,7 @@
         {
             "nome_curto": "Consultoria na Área",
             "tagBase": "ITEM_28_CONSULTORIA",
-            "descricao": "Consultoria na Área ou Afim. Limite de 10 pontos totais (vale 2,0 cada - últimos 5 anos). / Consulting in the field or related areas. Max 10 total points (2.0 each - last 5 years).",
+            "descricao": "Consultoria na Área ou Área Afim. Nos últimos 5 anos completos até a data da inscrição (limite de 10 pontos). / Consulting in the Field or Related Field. In the last 5 full years up to the enrollment date (limit of 10 points).",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 2.0,
@@ -540,9 +540,9 @@
             "titulo": "Item 28 - Consultoria na Área"
         },
         {
-            "nome_curto": "Projetos (Enquanto Mestrando)",
+            "nome_curto": "Projetos (Durante o Mestrado)",
             "tagBase": "ITEM_29_PROJETO_MESTRANDO",
-            "descricao": "Part. em Projeto de Ensino/Pesquisa/Extensão no mestrado. 1 ponto/semestre (Máximo 6 semestres). / Participation in Teaching/Research/Extension Project during Master's. 1 point/semester (Max 6 semesters).",
+            "descricao": "Part. em Projeto de Ensino, Pesquisa ou Extensão enquanto mestrando (exceto projeto de pesquisa do Mestrado). Nos últimos 5 anos completos até a data da inscrição (1 ponto/semestre - Máximo 6 semestres). / Participation in Teaching, Research, or Extension Project as a master's student (excluding Master's research project). In the last 5 full years up to the enrollment date. (1 point/semester - Max 6 semesters).",
             "extraLabel": "Semestres comprovados: / Proven semesters:",
             "regra_matematica": "semestres",
             "peso_pontos": 1.0,
@@ -552,12 +552,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item29",
-            "titulo": "Item 29 - Projetos (Enquanto Mestrando)"
+            "titulo": "Item 29 - Projetos (Durante o Mestrado)"
         },
         {
             "nome_curto": "Orientação de Especialização",
             "tagBase": "ITEM_30_ORIENTACAO_ESP",
-            "descricao": "Orientação de Especialização. Limite de 10 pontos totais (vale 2,0 cada - últimos 5 anos). / Advising Specialization students. Max 10 total points (2.0 each - last 5 years).",
+            "descricao": "Orientação de Especialização. Nos últimos 5 anos completos até a data da inscrição (limite de 10 pontos). / Advising Specialization students. In the last 5 full years up to the enrollment date (limit of 10 points).",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 2.0,
@@ -572,7 +572,7 @@
         {
             "nome_curto": "Orientação Graduação (TCC, IC)",
             "tagBase": "ITEM_31_ORIENTACAO_GRAD",
-            "descricao": "Orientação em nível de Graduação. Limite de 10 pontos totais (vale 1,0 cada - últimos 5 anos). / Advising Undergraduate students. Max 10 total points (1.0 each - last 5 years).",
+            "descricao": "Orientação em nível de Graduação (TCC, IC etc.). Nos últimos 5 anos completos até a data da inscrição (limite de 10 pontos). / Advising Undergraduate students (CBT, Scientific Initiation, etc.). In the last 5 full years up to the enrollment date (limit of 10 points).",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 1.0,
@@ -587,7 +587,7 @@
         {
             "nome_curto": "Part. em Banca (TCC/Esp.)",
             "tagBase": "ITEM_32_BANCA",
-            "descricao": "Participação em bancas (exceto se foi orientador). Limite de 2 pontos (vale 0,2 cada - últimos 5 anos). / Participation in defense committees (unless you were the advisor). Max 2 points (0.2 each - last 5 years).",
+            "descricao": "Participação em Banca de Conclusão de TCC, Especialização, exceto se foi orientador (limite 2 pontos). / Participation in an Undergraduate or Specialization Thesis Defense Committee, unless as the advisor (limit of 2 points).",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 0.2,
@@ -602,7 +602,7 @@
         {
             "nome_curto": "Organização de Eventos",
             "tagBase": "ITEM_33_ORG_EVENTOS",
-            "descricao": "Organização de Eventos. Limite de 5 pontos totais (vale 1,0 cada - últimos 5 anos). / Event Organization. Max 5 total points (1.0 each - last 5 years).",
+            "descricao": "Organização de Eventos. Nos últimos 5 anos completos até a data da inscrição (limite 5 pontos) – pontuar por evento. / Event Organization. In the last 5 full years up to the enrollment date (limit of 5 points) - scored per event.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 1.0,
@@ -615,9 +615,9 @@
             "titulo": "Item 33 - Organização de Eventos"
         },
         {
-            "nome_curto": "Projetos (Pós-Mestrado)",
+            "nome_curto": "Projetos (Após Mestrado)",
             "tagBase": "ITEM_34_PROJETO_POS_MESTRADO",
-            "descricao": "Projetos de Pesquisa/Ensino/Extensão concluídos após Mestrado. Limite 10 pts (vale 5,0 cada). / Research/Teaching/Extension Projects completed after Master's. Max 10 pts (5.0 each).",
+            "descricao": "Participação em Projeto de Pesquisa, Ensino e Extensão concluídos após o Mestrado. Nos últimos 5 anos completos até a data da inscrição (limite de 10 pontos). / Participation in Research, Teaching, and Extension Project completed after Master's. In the last 5 full years up to the enrollment date (limit of 10 points).",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 5.0,
@@ -627,12 +627,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item34",
-            "titulo": "Item 34 - Projetos (Pós-Mestrado)"
+            "titulo": "Item 34 - Projetos (Após Mestrado)"
         },
         {
-            "nome_curto": "Cursos de Curta Duração ministrados",
+            "nome_curto": "Cursos Curtos ministrados",
             "tagBase": "ITEM_35_CURSOS_MINISTRADOS",
-            "descricao": "Cursos ministrados. Limite de 2 pontos (vale 0,1 cada). / Short courses taught. Max 2 points (0.1 each).",
+            "descricao": "Cursos de Curta Duração ministrados (limite de 2 pontos). / Short Courses Taught (limit of 2 points).",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 0.1,
@@ -642,12 +642,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item35",
-            "titulo": "Item 35 - Cursos de Curta Duração ministrados"
+            "titulo": "Item 35 - Cursos Curtos ministrados"
         },
         {
-            "nome_curto": "Docência Ensino Médio / Monitoria",
+            "nome_curto": "Docência Ensino Médio/Monitoria",
             "tagBase": "ITEM_36_DOCENCIA_MEDIO",
-            "descricao": "0,2 ponto a cada 12 meses (limite de 5 pontos) - por disciplina-semestre. / 0.2 points every 12 months (max 5 points) - per course/semester.",
+            "descricao": "Docência no Ensino Médio ou monitoria - 0,2 ponto a cada 12 meses (limite de 5 pontos) – por disciplina-semestre. / High School Teaching or Tutoring - 0.2 point every 12 months (limit of 5 points) - per course-semester.",
             "extraLabel": "Meses comprovados: / Proven months:",
             "regra_matematica": "meses",
             "peso_pontos": 0.2,
@@ -657,12 +657,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item36",
-            "titulo": "Item 36 - Docência Ensino Médio / Monitoria"
+            "titulo": "Item 36 - Docência Ensino Médio/Monitoria"
         },
         {
-            "nome_curto": "Experiência Profissional em Engenharia",
+            "nome_curto": "Experiência Profissional Eng.",
             "tagBase": "ITEM_37_EXP_PROFISSIONAL",
-            "descricao": "Experiência em Engenharia e áreas afins. 3 pontos a cada 12 meses (limite de 15 pontos). / Experience in Engineering and related fields. 3 points every 12 months (max 15 points).",
+            "descricao": "Experiência Profissional em Engenharia e áreas afins 3 pontos a cada 12 meses (limite de 15 pontos) – contar ano completo. / Professional Experience in Engineering and related fields 3 points every 12 months (limit of 15 points) - count full year.",
             "extraLabel": "Meses comprovados: / Proven months:",
             "regra_matematica": "meses",
             "peso_pontos": 3.0,
@@ -672,37 +672,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item37",
-            "titulo": "Item 37 - Experiência Profissional em Engenharia"
-        },
-        {
-            "nome_curto": "CR (Obrigatórias Mestrado)",
-            "tagBase": "ITEM_38_CR_OBRIGATORIAS",
-            "descricao": "Atenção: Não inclua disciplinas com conceito 'S', 'I' ou 'J'. Em caso de repetição (Conceito R), lance apenas a nota da aprovação. / Warning: Do not include courses with 'S', 'I', or 'J' grades. If retaken (Grade R), input only the passing grade.",
-            "extraLabel": "",
-            "regra_matematica": "cr",
-            "peso_pontos": 10.0,
-            "teto_maximo": 0.0,
-            "max_uploads": 1,
-            "exige_doi": false,
-            "exige_cortador_pagina": false,
-            "is_calculadora_cr": true,
-            "id": "item38",
-            "titulo": "Item 38 - CR (Obrigatórias Mestrado)"
-        },
-        {
-            "nome_curto": "CR (Eletivas Mestrado)",
-            "tagBase": "ITEM_39_CR_ELETIVAS",
-            "descricao": "Atenção: Não inclua disciplinas com conceito 'S', 'I' ou 'J'. Em caso de repetição (Conceito R), lance apenas a nota da aprovação. / Warning: Do not include courses with 'S', 'I', or 'J' grades. If retaken (Grade R), input only the passing grade.",
-            "extraLabel": "",
-            "regra_matematica": "cr",
-            "peso_pontos": 5.0,
-            "teto_maximo": 0.0,
-            "max_uploads": 1,
-            "exige_doi": false,
-            "exige_cortador_pagina": false,
-            "is_calculadora_cr": true,
-            "id": "item39",
-            "titulo": "Item 39 - CR (Eletivas Mestrado)"
+            "titulo": "Item 37 - Experiência Profissional Eng."
         }
     ],
     "campos_personalizados": [
@@ -767,9 +737,9 @@
     ],
     "info_ata": {
         "semestre_ingresso": "segundo semestre de 2026",
-        "numero_edital": "054/2026-PEQ",
+        "numero_edital": "017/2026-PEQ",
         "resolucao_comissao": "345/2025-PEQ",
-        "resolucao_criterios": "318/2025-PEQ",
+        "resolucao_criterios": "320/2025-PEQ",
         "local_reuniao": "sala 121 do bloco D90"
     }
 }
