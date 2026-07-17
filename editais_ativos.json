@@ -14,12 +14,13 @@
         "nome": "Edital 054/2026-PEQ"
     },
     {
-        "id": "regras_053-2026-peq",
-        "nome": "Edital 053/2026-PEQ"
-    },
-    {
         "id": "regras_017-2026-peq",
         "nome": "Edital 017/2026-PEQ",
         "ativo": false
+    },
+    {
+        "id": "regras_053-2026-peq",
+        "nome": "Edital 053/2026-PEQ",
+        "ativo": true
     }
 ]
