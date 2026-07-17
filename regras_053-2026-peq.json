@@ -48,7 +48,7 @@
         {
             "nome_curto": "Histórico Escolar da Pós-Graduação",
             "tagBase": "DOC_HIST_POS",
-            "descricao": "Mestrado ou Especialização (Se aplicável). / Master's or Specialization (If applicable).",
+            "descricao": "Especialização (Se aplicável). / Specialization (If applicable).",
             "obrigatorio": false,
             "max_uploads": 1,
             "id": "doc06",
@@ -57,7 +57,7 @@
         {
             "nome_curto": "Diploma/Certificado da Pós-Graduação",
             "tagBase": "DOC_DIPLOMA_POS",
-            "descricao": "Ou atestado oficial de aptidão para defesa (Se aplicável). / Or official certificate of readiness for defense (If applicable).",
+            "descricao": "Especialização (Se aplicável). / Specialization (If applicable).",
             "obrigatorio": false,
             "max_uploads": 1,
             "id": "doc07",
@@ -120,9 +120,9 @@
     ],
     "criterios": [
         {
-            "nome_curto": "Mestrado em Eng. Química",
-            "tagBase": "ITEM_01_MESTRADO_EQ",
-            "descricao": "Curso de Mestrado concluído em Engenharia Química. / Completed Master's degree in Chemical Engineering.",
+            "nome_curto": "Graduação em Eng. Química",
+            "tagBase": "ITEM_01_GRAD_EQ",
+            "descricao": "Curso de graduação concluído em Engenharia Química. / Completed undergraduate degree in Chemical Engineering.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 40.0,
@@ -132,12 +132,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item01",
-            "titulo": "Item 01 - Mestrado em Eng. Química"
+            "titulo": "Item 01 - Graduação em Eng. Química"
         },
         {
-            "nome_curto": "Mestrado em outras Engenharias",
-            "tagBase": "ITEM_02_MESTRADO_OUTRAS_ENG",
-            "descricao": "Curso de Mestrado concluído em outras Engenharias. / Completed Master's degree in other Engineering fields.",
+            "nome_curto": "Graduação em outras Engenharias",
+            "tagBase": "ITEM_02_GRAD_OUTRAS_ENG",
+            "descricao": "Curso de graduação em outras Engenharias. / Undergraduate degree in other Engineering fields.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 30.0,
@@ -147,12 +147,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item02",
-            "titulo": "Item 02 - Mestrado em outras Engenharias"
+            "titulo": "Item 02 - Graduação em outras Engenharias"
         },
         {
-            "nome_curto": "Mestrado em outras áreas",
-            "tagBase": "ITEM_03_MESTRADO_OUTRAS_AREAS",
-            "descricao": "Curso de Mestrado concluído em outras áreas. / Completed Master's degree in other fields.",
+            "nome_curto": "Graduação em outras áreas",
+            "tagBase": "ITEM_03_GRAD_OUTRAS_AREAS",
+            "descricao": "Curso de graduação concluído em outras áreas. / Completed undergraduate degree in other fields.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 20.0,
@@ -162,12 +162,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item03",
-            "titulo": "Item 03 - Mestrado em outras áreas"
+            "titulo": "Item 03 - Graduação em outras áreas"
         },
         {
-            "nome_curto": "Tempo do Mestrado (t ≤ 24 meses)",
-            "tagBase": "ITEM_04_TEMPO_24",
-            "descricao": "Tempo de integralização do Mestrado (meses) t ≤ 24. / Master's completion time (months) t ≤ 24.",
+            "nome_curto": "Tempo de graduação (t ≤ 5 anos)",
+            "tagBase": "ITEM_04_TEMPO_5",
+            "descricao": "Tempo de integralização da graduação (anos) t ≤ 5. / Undergraduate degree completion time (years) t ≤ 5.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 10.0,
@@ -177,12 +177,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item04",
-            "titulo": "Item 04 - Tempo do Mestrado (t ≤ 24 meses)"
+            "titulo": "Item 04 - Tempo de graduação (t ≤ 5 anos)"
         },
         {
-            "nome_curto": "Tempo do Mestrado (24 < t ≤ 30)",
-            "tagBase": "ITEM_05_TEMPO_30",
-            "descricao": "Tempo de integralização Mestrado (meses) 24 < t ≤ 30. / Master's completion time (months) 24 < t ≤ 30.",
+            "nome_curto": "Tempo de graduação (5 < t ≤ 6 anos)",
+            "tagBase": "ITEM_05_TEMPO_6",
+            "descricao": "Tempo de integralização da graduação (anos) 5 < t ≤ 6. / Undergraduate degree completion time (years) 5 < t ≤ 6.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 5.0,
@@ -192,12 +192,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item05",
-            "titulo": "Item 05 - Tempo do Mestrado (24 < t ≤ 30)"
+            "titulo": "Item 05 - Tempo de graduação (5 < t ≤ 6 anos)"
         },
         {
-            "nome_curto": "Tempo do Mestrado (30 < t ≤ 36)",
-            "tagBase": "ITEM_06_TEMPO_36",
-            "descricao": "Tempo de integralização do Mestrado (meses) 30 < t ≤ 36. / Master's completion time (months) 30 < t ≤ 36.",
+            "nome_curto": "Tempo de graduação (t > 6 anos)",
+            "tagBase": "ITEM_06_TEMPO_MAIOR_6",
+            "descricao": "Tempo de integralização da graduação (anos) t > 6. / Undergraduate degree completion time (years) t > 6.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 1.0,
@@ -207,12 +207,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item06",
-            "titulo": "Item 06 - Tempo do Mestrado (30 < t ≤ 36)"
+            "titulo": "Item 06 - Tempo de graduação (t > 6 anos)"
         },
         {
-            "nome_curto": "Segundo Mestrado",
-            "tagBase": "ITEM_07_SEGUNDO_MESTRADO",
-            "descricao": "Segundo Curso de Mestrado concluído independentemente da Área e do tempo de conclusão. / Second completed Master's degree regardless of the field or completion time.",
+            "nome_curto": "Segunda graduação",
+            "tagBase": "ITEM_07_SEGUNDA_GRAD",
+            "descricao": "Segundo curso de graduação concluído independentemente da Área e do tempo de conclusão. / Second completed undergraduate degree regardless of the field or completion time.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 10.0,
@@ -222,12 +222,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item07",
-            "titulo": "Item 07 - Segundo Mestrado"
+            "titulo": "Item 07 - Segunda graduação"
         },
         {
-            "nome_curto": "Mestrado no Exterior",
-            "tagBase": "ITEM_08_MESTRADO_EXTERIOR",
-            "descricao": "Realização de parte do Mestrado no exterior (exceto país de origem no caso de candidato estrangeiro), mínimo de 3 meses. / Completion of part of the Master's abroad (excluding home country for foreign candidates), minimum of 3 months.",
+            "nome_curto": "Mobilidade Internacional",
+            "tagBase": "ITEM_08_MOBILIDADE_INTER",
+            "descricao": "Participação em mobilidade internacional, mínimo 6 meses. / Participation in international mobility, minimum of 6 months.",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 5.0,
@@ -237,7 +237,7 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item08",
-            "titulo": "Item 08 - Mestrado no Exterior"
+            "titulo": "Item 08 - Mobilidade Internacional"
         },
         {
             "nome_curto": "Especialização",
@@ -437,7 +437,7 @@
         {
             "nome_curto": "Capítulos de livros",
             "tagBase": "ITEM_22_CAPITULO",
-            "descricao": "Capítulos de livros (exceto Anais de Eventos). Capítulos de livros com 4 ou mais autores terão o valor dividido pelo número de autores (trabalhos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da inscrição. Máximo 4 capítulos. / Book chapters (excluding Event Proceedings). Chapters with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the enrollment date. Max 4 chapters.",
+            "descricao": "Capítulos de livros (exceto Anais de Eventos). Capítulos de livros com 4 ou mais autores terão o valor dividido pelo número de autores (trabalhos com 5 autores terão o valor multiplicado por 4/5, com 6 autores multiplicado por 4/6 e assim, sucessivamente). Nos últimos 5 anos completos até a data da avaliação. Máximo 4 capítulos. / Book chapters (excluding Event Proceedings). Chapters with 4 or more authors will have the value divided by the number of authors. In the last 5 full years up to the EVALUATION date. Max 4 chapters.",
             "extraLabel": "Número total de autores: / Total number of authors:",
             "regra_matematica": "autores",
             "peso_pontos": 3.0,
@@ -540,9 +540,9 @@
             "titulo": "Item 28 - Consultoria na Área"
         },
         {
-            "nome_curto": "Projetos (Durante o Mestrado)",
-            "tagBase": "ITEM_29_PROJETO_MESTRANDO",
-            "descricao": "Part. em Projeto de Ensino, Pesquisa ou Extensão enquanto mestrando (exceto projeto de pesquisa do Mestrado). Nos últimos 5 anos completos até a data da inscrição (1 ponto/semestre - Máximo 6 semestres). / Participation in Teaching, Research, or Extension Project as a master's student (excluding Master's research project). In the last 5 full years up to the enrollment date. (1 point/semester - Max 6 semesters).",
+            "nome_curto": "Projetos (Acadêmico de Graduação)",
+            "tagBase": "ITEM_29_PROJETO_GRAD",
+            "descricao": "Part. em Projeto de Ensino, Pesquisa ou Extensão enquanto acadêmico de graduação. Nos últimos 5 anos completos até a data da inscrição. (1 ponto/semestre - Máximo 6 semestres) incluindo PIC, PIBIC, PIBITI e PET, Empresa Júnior. / Participation in Teaching, Research, or Extension Project as an undergraduate student. In the last 5 full years up to the enrollment date. (1 point/semester - Max 6 semesters) including PIC, PIBIC, PIBITI, PET, and Junior Enterprise.",
             "extraLabel": "Semestres comprovados: / Proven semesters:",
             "regra_matematica": "semestres",
             "peso_pontos": 1.0,
@@ -552,27 +552,12 @@
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item29",
-            "titulo": "Item 29 - Projetos (Durante o Mestrado)"
-        },
-        {
-            "nome_curto": "Orientação de Especialização",
-            "tagBase": "ITEM_30_ORIENTACAO_ESP",
-            "descricao": "Orientação de Especialização. Nos últimos 5 anos completos até a data da inscrição (limite de 10 pontos). / Advising Specialization students. In the last 5 full years up to the enrollment date (limit of 10 points).",
-            "extraLabel": "",
-            "regra_matematica": "flat",
-            "peso_pontos": 2.0,
-            "teto_maximo": 10.0,
-            "max_uploads": 5,
-            "exige_doi": false,
-            "exige_cortador_pagina": false,
-            "is_calculadora_cr": false,
-            "id": "item30",
-            "titulo": "Item 30 - Orientação de Especialização"
+            "titulo": "Item 29 - Projetos (Acadêmico de Graduação)"
         },
         {
             "nome_curto": "Orientação Graduação (TCC, IC)",
-            "tagBase": "ITEM_31_ORIENTACAO_GRAD",
-            "descricao": "Orientação em nível de Graduação (TCC, IC etc.). Nos últimos 5 anos completos até a data da inscrição (limite de 10 pontos). / Advising Undergraduate students (CBT, Scientific Initiation, etc.). In the last 5 full years up to the enrollment date (limit of 10 points).",
+            "tagBase": "ITEM_30_ORIENTACAO_GRAD",
+            "descricao": "Orientação em nível de Graduação (TCC, IC etc.). Nos últimos 5 anos completos até a data da inscrição (limite de 10 pontos). / Undergraduate level advising (CBT, Scientific Initiation, etc.). In the last 5 full years up to the enrollment date (limit of 10 points).",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 1.0,
@@ -581,13 +566,13 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item31",
-            "titulo": "Item 31 - Orientação Graduação (TCC, IC)"
+            "id": "item30",
+            "titulo": "Item 30 - Orientação Graduação (TCC, IC)"
         },
         {
-            "nome_curto": "Part. em Banca (TCC/Esp.)",
-            "tagBase": "ITEM_32_BANCA",
-            "descricao": "Participação em Banca de Conclusão de TCC, Especialização, exceto se foi orientador (limite 2 pontos). / Participation in an Undergraduate or Specialization Thesis Defense Committee, unless as the advisor (limit of 2 points).",
+            "nome_curto": "Part. em Banca (TCC)",
+            "tagBase": "ITEM_31_BANCA_TCC",
+            "descricao": "Participação em Banca de Conclusão de TCC, exceto se foi orientador (limite 2 pontos). / Participation in an Undergraduate Thesis Defense Committee, unless as the advisor (limit of 2 points).",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 0.2,
@@ -596,12 +581,12 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item32",
-            "titulo": "Item 32 - Part. em Banca (TCC/Esp.)"
+            "id": "item31",
+            "titulo": "Item 31 - Part. em Banca (TCC)"
         },
         {
             "nome_curto": "Organização de Eventos",
-            "tagBase": "ITEM_33_ORG_EVENTOS",
+            "tagBase": "ITEM_32_ORG_EVENTOS",
             "descricao": "Organização de Eventos. Nos últimos 5 anos completos até a data da inscrição (limite 5 pontos) – pontuar por evento. / Event Organization. In the last 5 full years up to the enrollment date (limit of 5 points) - scored per event.",
             "extraLabel": "",
             "regra_matematica": "flat",
@@ -611,13 +596,13 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item33",
-            "titulo": "Item 33 - Organização de Eventos"
+            "id": "item32",
+            "titulo": "Item 32 - Organização de Eventos"
         },
         {
-            "nome_curto": "Projetos (Após Mestrado)",
-            "tagBase": "ITEM_34_PROJETO_POS_MESTRADO",
-            "descricao": "Participação em Projeto de Pesquisa, Ensino e Extensão concluídos após o Mestrado. Nos últimos 5 anos completos até a data da inscrição (limite de 10 pontos). / Participation in Research, Teaching, and Extension Project completed after Master's. In the last 5 full years up to the enrollment date (limit of 10 points).",
+            "nome_curto": "Projetos (Após Graduação)",
+            "tagBase": "ITEM_33_PROJETO_POS_GRAD",
+            "descricao": "Participação em Projeto de Pesquisa, Ensino e Extensão, após a graduação. Nos últimos 5 anos completos até a data da inscrição (limite de 10 pontos). / Participation in Research, Teaching, and Extension Project, after graduation. In the last 5 full years up to the enrollment date (limit of 10 points).",
             "extraLabel": "",
             "regra_matematica": "flat",
             "peso_pontos": 5.0,
@@ -626,12 +611,12 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item34",
-            "titulo": "Item 34 - Projetos (Após Mestrado)"
+            "id": "item33",
+            "titulo": "Item 33 - Projetos (Após Graduação)"
         },
         {
             "nome_curto": "Cursos Curtos ministrados",
-            "tagBase": "ITEM_35_CURSOS_MINISTRADOS",
+            "tagBase": "ITEM_34_CURSOS_MINISTRADOS",
             "descricao": "Cursos de Curta Duração ministrados (limite de 2 pontos). / Short Courses Taught (limit of 2 points).",
             "extraLabel": "",
             "regra_matematica": "flat",
@@ -641,12 +626,12 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item35",
-            "titulo": "Item 35 - Cursos Curtos ministrados"
+            "id": "item34",
+            "titulo": "Item 34 - Cursos Curtos ministrados"
         },
         {
             "nome_curto": "Docência Ensino Médio/Monitoria",
-            "tagBase": "ITEM_36_DOCENCIA_MEDIO",
+            "tagBase": "ITEM_35_DOCENCIA_MEDIO",
             "descricao": "Docência no Ensino Médio ou monitoria - 0,2 ponto a cada 12 meses (limite de 5 pontos) – por disciplina-semestre. / High School Teaching or Tutoring - 0.2 point every 12 months (limit of 5 points) - per course-semester.",
             "extraLabel": "Meses comprovados: / Proven months:",
             "regra_matematica": "meses",
@@ -656,12 +641,12 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item36",
-            "titulo": "Item 36 - Docência Ensino Médio/Monitoria"
+            "id": "item35",
+            "titulo": "Item 35 - Docência Ensino Médio/Monitoria"
         },
         {
             "nome_curto": "Experiência Profissional Eng.",
-            "tagBase": "ITEM_37_EXP_PROFISSIONAL",
+            "tagBase": "ITEM_36_EXP_PROFISSIONAL",
             "descricao": "Experiência Profissional em Engenharia e áreas afins 3 pontos a cada 12 meses (limite de 15 pontos) – contar ano completo. / Professional Experience in Engineering and related fields 3 points every 12 months (limit of 15 points) - count full year.",
             "extraLabel": "Meses comprovados: / Proven months:",
             "regra_matematica": "meses",
@@ -671,44 +656,11 @@
             "exige_doi": false,
             "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
-            "id": "item37",
-            "titulo": "Item 37 - Experiência Profissional Eng."
+            "id": "item36",
+            "titulo": "Item 36 - Experiência Profissional Eng."
         }
     ],
-    "campos_personalizados": [
-        {
-            "label": "Instituição onde realizou o Mestrado / Institution where you obtained your Master's degree",
-            "helper": "Ex: UEM, UFPR, USP...",
-            "obrigatorio": true
-        },
-        {
-            "label": "Ano de Defesa do Mestrado / Year of Master's Defense",
-            "helper": "Ex: 2024",
-            "obrigatorio": true
-        },
-        {
-            "label": "Orientador / Advisor",
-            "helper": "Nome do professor do PEQ / Name of the PEQ professor",
-            "obrigatorio": true
-        },
-        {
-            "label": "Título do Projeto de Pesquisa / Research Project Title",
-            "helper": "Título exato que consta no PDF do Plano de Pesquisa / Exact title as it appears on the Research Plan PDF",
-            "obrigatorio": true
-        },
-        {
-            "label": "Categoria de Vagas / Vacancy Category",
-            "tipo": "selecao",
-            "opcoes": [
-                "Ampla Concorrência - Brasileiros (ACCB) / Broad Competition - Brazilians",
-                "Ampla Concorrência - Estrangeiros (ACCE) / Broad Competition - Foreigners",
-                "Cotas para Indígenas e Negros (CIN) / Quotas for Indigenous and Black candidates",
-                "Cotas para Pessoas com Deficiência (PcD) / Quotas for Persons with Disabilities"
-            ],
-            "obrigatorio": true,
-            "helper": ""
-        }
-    ],
+    "campos_personalizados": [],
     "comissao": [
         "amsvieira@uem.br",
         "cbbcosta@uem.br",
@@ -736,10 +688,10 @@
         "vfcabral@uem.br"
     ],
     "info_ata": {
-        "semestre_ingresso": "segundo semestre de 2026",
+        "semestre_ingresso": "primeiro semestre de 2026",
         "numero_edital": "053/2026-PEQ",
         "resolucao_comissao": "345/2025-PEQ",
-        "resolucao_criterios": "320/2025-PEQ",
+        "resolucao_criterios": "318/2025-PEQ",
         "local_reuniao": "sala 121 do bloco D90"
     }
 }
