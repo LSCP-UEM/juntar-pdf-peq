@@ -695,6 +695,18 @@
             "label": "Título do Projeto de Pesquisa / Research Project Title",
             "helper": "Título exato que consta no PDF do Plano de Pesquisa / Exact title as it appears on the Research Plan PDF",
             "obrigatorio": true
+        },
+        {
+            "label": "Categoria de Vagas / Vacancy Category",
+            "tipo": "selecao",
+            "opcoes": [
+                "Ampla Concorrência - Brasileiros (ACCB) / Broad Competition - Brazilians",
+                "Ampla Concorrência - Estrangeiros (ACCE) / Broad Competition - Foreigners",
+                "Cotas para Indígenas e Negros (CIN) / Quotas for Indigenous and Black candidates",
+                "Cotas para Pessoas com Deficiência (PcD) / Quotas for Persons with Disabilities"
+            ],
+            "obrigatorio": true,
+            "helper": ""
         }
     ],
     "comissao": [
@@ -725,7 +737,7 @@
     ],
     "info_ata": {
         "semestre_ingresso": "segundo semestre de 2026",
-        "numero_edital": "017/2026-PEQ",
+        "numero_edital": "053/2026-PEQ",
         "resolucao_comissao": "345/2025-PEQ",
         "resolucao_criterios": "320/2025-PEQ",
         "local_reuniao": "sala 121 do bloco D90"
