@@ -1,7 +1,8 @@
 [
     {
         "id": "regras_056-2025-peq",
-        "nome": "Edital 056/2025-PEQ"
+        "nome": "Edital 056/2025-PEQ",
+        "ativo": false
     },
     {
         "id": "regras_057-2025-peq",
