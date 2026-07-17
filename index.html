@@ -167,6 +167,7 @@
             
             selector.innerHTML = '<option value="">-- Selecione o Edital / Select Call --</option>';
             editais.forEach(ed => {
+                if (ed.ativo === false) return;
                 let opt = document.createElement('option');
                 opt.value = ed.id + ".json"; 
                 opt.text = ed.nome;
