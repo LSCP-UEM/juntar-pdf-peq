@@ -8,114 +8,6 @@
             "max_uploads": 1,
             "id": "doc01",
             "titulo": "Doc 01 - Requerimento de Inscrição (Anexo I)"
-        },
-        {
-            "nome_curto": "Certidão Civil",
-            "tagBase": "DOC_CERTIDAO_CIVIL",
-            "descricao": "Certidão de Nascimento ou Casamento. / Birth or Marriage Certificate.",
-            "obrigatorio": true,
-            "max_uploads": 1,
-            "id": "doc02",
-            "titulo": "Doc 02 - Certidão Civil"
-        },
-        {
-            "nome_curto": "Documento de Identificação Oficial",
-            "tagBase": "DOC_IDENTIDADE",
-            "descricao": "Brasileiros: RG ou CNH. Estrangeiros: Passaporte ou DNI local. / Brazilians: RG or CNH. Foreigners: Passport or local National ID.",
-            "obrigatorio": true,
-            "max_uploads": 1,
-            "id": "doc03",
-            "titulo": "Doc 03 - Documento de Identificação Oficial"
-        },
-        {
-            "nome_curto": "Histórico Escolar da Graduação",
-            "tagBase": "DOC_HIST_GRADUACAO",
-            "descricao": "",
-            "obrigatorio": true,
-            "max_uploads": 1,
-            "id": "doc04",
-            "titulo": "Doc 04 - Histórico Escolar da Graduação"
-        },
-        {
-            "nome_curto": "Diploma da Graduação",
-            "tagBase": "DOC_DIPLOMA_GRADUACAO",
-            "descricao": "Frente e verso do documento. / Front and back of the document.",
-            "obrigatorio": true,
-            "max_uploads": 1,
-            "id": "doc05",
-            "titulo": "Doc 05 - Diploma da Graduação"
-        },
-        {
-            "nome_curto": "Histórico Escolar da Pós-Graduação",
-            "tagBase": "DOC_HIST_POS",
-            "descricao": "Especialização (Se aplicável). / Specialization (If applicable).",
-            "obrigatorio": false,
-            "max_uploads": 1,
-            "id": "doc06",
-            "titulo": "Doc 06 - Histórico Escolar da Pós-Graduação"
-        },
-        {
-            "nome_curto": "Diploma/Certificado da Pós-Graduação",
-            "tagBase": "DOC_DIPLOMA_POS",
-            "descricao": "Especialização (Se aplicável). / Specialization (If applicable).",
-            "obrigatorio": false,
-            "max_uploads": 1,
-            "id": "doc07",
-            "titulo": "Doc 07 - Diploma/Certificado da Pós-Graduação"
-        },
-        {
-            "nome_curto": "Print da Plataforma Sucupira",
-            "tagBase": "DOC_PRINT_SUCUPIRA",
-            "descricao": "Captura da aba Identificadores contendo Lattes e ORCID. / Screenshot of the Identifiers tab showing Lattes and ORCID.",
-            "obrigatorio": true,
-            "max_uploads": 1,
-            "id": "doc08",
-            "titulo": "Doc 08 - Print da Plataforma Sucupira"
-        },
-        {
-            "nome_curto": "Comprovante SGIPOS / UEM",
-            "tagBase": "DOC_COMPROVANTE_SGIPOS",
-            "descricao": "Cópia do cadastro realizado no sistema da universidade. / Copy of the registration in the university system.",
-            "obrigatorio": true,
-            "max_uploads": 1,
-            "id": "doc09",
-            "titulo": "Doc 09 - Comprovante SGIPOS / UEM"
-        },
-        {
-            "nome_curto": "Autodeclaração Étnico-Racial (Anexo II)",
-            "tagBase": "DOC_COTA_ANEXO2",
-            "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
-            "obrigatorio": false,
-            "max_uploads": 1,
-            "id": "doc10",
-            "titulo": "Doc 10 - Autodeclaração Étnico-Racial (Anexo II)"
-        },
-        {
-            "nome_curto": "Comprovante Indígena",
-            "tagBase": "DOC_COTA_RANI",
-            "descricao": "RANI ou Declaração de Liderança (Preencher apenas se aplicável). / RANI or Leadership Declaration (Fill only if applicable).",
-            "obrigatorio": false,
-            "max_uploads": 1,
-            "id": "doc11",
-            "titulo": "Doc 11 - Comprovante Indígena"
-        },
-        {
-            "nome_curto": "Autodeclaração PcD (Anexo III)",
-            "tagBase": "DOC_COTA_ANEXO3",
-            "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
-            "obrigatorio": false,
-            "max_uploads": 1,
-            "id": "doc12",
-            "titulo": "Doc 12 - Autodeclaração PcD (Anexo III)"
-        },
-        {
-            "nome_curto": "Laudo Médico PcD (Anexo IV)",
-            "tagBase": "DOC_COTA_ANEXO4",
-            "descricao": "Preencher apenas se aplicável à cota. / Fill only if applying for the quota.",
-            "obrigatorio": false,
-            "max_uploads": 1,
-            "id": "doc13",
-            "titulo": "Doc 13 - Laudo Médico PcD (Anexo IV)"
         }
     ],
     "criterios": [
@@ -688,8 +580,8 @@
         "vfcabral@uem.br"
     ],
     "info_ata": {
-        "semestre_ingresso": "primeiro semestre de 2026",
-        "numero_edital": "016/2026-PEQ",
+        "semestre_ingresso": "segundo semestre de 2026",
+        "numero_edital": "053/2026-PEQ",
         "resolucao_comissao": "345/2025-PEQ",
         "resolucao_criterios": "318/2025-PEQ",
         "local_reuniao": "sala 121 do bloco D90"
