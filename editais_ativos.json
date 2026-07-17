@@ -19,6 +19,7 @@
     },
     {
         "id": "regras_017-2026-peq",
-        "nome": "Edital 017/2026-PEQ"
+        "nome": "Edital 017/2026-PEQ",
+        "ativo": false
     }
 ]
