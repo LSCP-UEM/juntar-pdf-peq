@@ -6,7 +6,8 @@
     },
     {
         "id": "regras_057-2025-peq",
-        "nome": "Edital 057/2025-PEQ"
+        "nome": "Edital 057/2025-PEQ",
+        "ativo": false
     },
     {
         "id": "regras_054-2026-peq",
