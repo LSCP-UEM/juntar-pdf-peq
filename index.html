@@ -694,9 +694,25 @@
                     const fileArrayBuffer = await file.arrayBuffer();
                     let userPdf;
                     
-                    // --- INÍCIO DO erro? ---
+                    // --- A ARMADILHA AGORA ENGLOBA TUDO ---
                     try {
                         userPdf = await PDFDocument.load(fileArrayBuffer);
+                        
+                        let pagesToCopy;
+                        if (pageCropValue) {
+                            let pageNum = parseInt(pageCropValue);
+                            const totalPages = userPdf.getPageCount();
+                            if (isNaN(pageNum) || pageNum < 1) pageNum = 1;
+                            if (pageNum > totalPages) pageNum = totalPages; 
+
+                            pagesToCopy = await mergedPdf.copyPages(userPdf, [pageNum - 1]);
+                            separatorPage.drawText(`(O sistema extraiu apenas a pagina ${pageNum} do PDF original enviado)`, { x: 50, y: yCursor - 10, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) });
+                        } else {
+                            pagesToCopy = await mergedPdf.copyPages(userPdf, userPdf.getPageIndices());
+                        }
+
+                        pagesToCopy.forEach((page) => mergedPdf.addPage(page));
+                        
                     } catch (e) {
                         // Pinta a caixa do arquivo de vermelho
                         fileInputEle.parentElement.classList.add('erro-destaque');
@@ -705,14 +721,15 @@
 
                         // Monta a mensagem apontando o nome
                         const msgErro = `🚨 <b>FALHA NO ARQUIVO: "${file.name}"</b><br><br>
-                        Este PDF possui um script interno (ex: auto-imprimir), assinatura digital ou formatação corrompida.<br><br>
+                        Este PDF possui um bloqueio de editora (senha/permissões) ou formatação corrompida.<br><br>
                         👉 <b>COMO RESOLVER AGORA:</b><br>
                         1. Abra este arquivo no seu navegador (Chrome/Edge).<br>
                         2. Aperte <b>Ctrl + P</b> (Imprimir).<br>
-                        3. Escolha <b>"Salvar/imprimir como PDF"</b>.<br>
-                        4. Anexe o novo arquivo aqui e tente novamente.`;
+                        3. Escolha <b>"Salvar como PDF"</b>.<br>
+                        4. Anexe o novo arquivo limpo aqui e tente novamente.`;
 
                         // Joga na tela e trava
+                        const statusDiv = document.getElementById('status');
                         statusDiv.innerHTML = msgErro;
                         statusDiv.style.color = "#721c24";
                         statusDiv.style.backgroundColor = "#f8d7da";
@@ -722,11 +739,10 @@
                         
                         statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                        // Lança um erro com um "código secreto" para parar o processo
-                        throw new Error(`SISTEMA_DEDO_DURO: Falha ao ler ${file.name}`);
+                        // Lança o erro com o código secreto para parar o processo
+                        throw new Error(`SISTEMA_DEDO_DURO: Falha ao ler ou copiar ${file.name}`);
                     }
-                    // --- FIM DO erro ---
-                    
+                    // --- FIM DA ARMADILHA ---                    
                     let pagesToCopy;
                     if (pageCropValue) {
                         let pageNum = parseInt(pageCropValue);
