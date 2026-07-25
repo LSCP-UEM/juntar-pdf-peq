@@ -671,11 +671,15 @@
                     const file = fileInputEle.files[0];
                     
                     const separatorPage = mergedPdf.addPage();
+                    
+                    // --- VACINA ANTI-ALIENÍGENA ---
+                    // Troca qualquer caractere fora do padrão Latin-1 (como o 0x202F) por um espaço normal
+                    const nomeArquivoLimpo = file.name.replace(/[^\x00-\xFF]/g, ' ');
+
                     // SUBIU PARA O TOPO: 400 virou 780
                     separatorPage.drawText(`### ${tagString} ###`, { x: 50, y: 780, size: 24, font: font, color: rgb(0.8, 0, 0) });
                     // SUBIU: 350 virou 750
-                    separatorPage.drawText(`Arquivo original: ${file.name}`, { x: 50, y: 750, size: 12, font: normalFont });
-
+                    separatorPage.drawText(`Arquivo original: ${nomeArquivoLimpo}`, { x: 50, y: 750, size: 12, font: normalFont });
                     // O CURSOR ACOMPANHA: 310 virou 710
                     let yCursor = 710;
                     if (detalheRegra) {
@@ -858,9 +862,7 @@
         } catch (error) {
             console.error(error);
             
-            // --- RASTREADOR AGRESSIVO (Apagaremos depois) ---
-            alert("MENSAGEM DO ERRO ORIGINAL:\n" + error.message);
-            // ------------------------------------------------
+
             
             // --- TRAVA BLINDADA "OLD SCHOOL" ---
             if (error && error.message && error.message.includes("SISTEMA_DEDO_DURO")) {
