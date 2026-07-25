@@ -858,13 +858,16 @@
         } catch (error) {
             console.error(error);
             
-            // --- TRAVA BLINDADA "OLD SCHOOL" (Seguro para navegadores antigos) ---
+            // --- RASTREADOR AGRESSIVO (Apagaremos depois) ---
+            alert("MENSAGEM DO ERRO ORIGINAL:\n" + error.message);
+            // ------------------------------------------------
+            
+            // --- TRAVA BLINDADA "OLD SCHOOL" ---
             if (error && error.message && error.message.includes("SISTEMA_DEDO_DURO")) {
-                return; // Aborta a execução sem sobrescrever a mensagem vermelha bonita
+                return; 
             }
             // ---------------------------------------------------------------------
 
-            // Se o erro NÃO for o nosso dedo-duro, ele exibe a mensagem genérica
             statusDiv.innerText = "❌ Erro. Certifique-se de que os arquivos enviados são PDFs válidos e não estão corrompidos ou protegidos por senha. / Error. Make sure the uploaded files are valid PDFs and not corrupted.";
             statusDiv.style.color = "red";
         }
