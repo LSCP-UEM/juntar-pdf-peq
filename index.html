@@ -747,20 +747,6 @@
                         throw new Error(`SISTEMA_DEDO_DURO: Falha ao ler ou copiar ${file.name}`);
                     }
                     // --- FIM DA ARMADILHA ---                    
-                    let pagesToCopy;
-                    if (pageCropValue) {
-                        let pageNum = parseInt(pageCropValue);
-                        const totalPages = userPdf.getPageCount();
-                        if (isNaN(pageNum) || pageNum < 1) pageNum = 1;
-                        if (pageNum > totalPages) pageNum = totalPages; 
-
-                        pagesToCopy = await mergedPdf.copyPages(userPdf, [pageNum - 1]);
-                        separatorPage.drawText(`(O sistema extraiu apenas a pagina ${pageNum} do PDF original enviado)`, { x: 50, y: yCursor - 10, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) });
-                    } else {
-                        pagesToCopy = await mergedPdf.copyPages(userPdf, userPdf.getPageIndices());
-                    }
-
-                    pagesToCopy.forEach((page) => mergedPdf.addPage(page));
                 }
             }
 
