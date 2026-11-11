@@ -659,7 +659,7 @@
     },
     "avaliador_artigos": {
         "url": "https://lscp-uem.github.io/avaliar-artigos-peq/",
-        "titulo": "Confira o estrato dos seus artigos antes de escolher a gaveta / Check your papers' strata before choosing the drawer",
+        "titulo": "Confira o estrato (A1 a A8) dos seus artigos antes de escolher o item da Tabela 1 / Check your papers' stratum (A1 to A8) before choosing the Table 1 item",
         "aviso": "Ferramenta de apoio em versão de teste. Para candidatos a bolsa, o resultado NÃO vale como pontuação oficial e pode estar desatualizado (bases: CiteScore 2025 e lista de fontes da Scopus de setembro de 2026). O estrato oficial é verificado pela Comissão. / Support tool (test version): it is NOT an official score and may be outdated (CiteScore 2025; Scopus source list of September 2026). The Committee verifies the official stratum."
     },
     "pfa": {

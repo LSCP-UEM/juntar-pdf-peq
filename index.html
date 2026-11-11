@@ -500,7 +500,7 @@
         const cfg = dadosEdital && dadosEdital.avaliador_artigos;
         if (!cfg || !cfg.url) { box.style.display = 'none'; box.innerHTML = ''; return; }
         const esc = (s) => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-        box.innerHTML = `<strong>🔎 ${esc(cfg.titulo || 'Confira o estrato dos seus artigos antes de escolher a gaveta')}</strong><br>
+        box.innerHTML = `<strong>🔎 ${esc(cfg.titulo || 'Confira o estrato (A1 a A8) dos seus artigos antes de escolher o item da Tabela 1')}</strong><br>
             <a href="${esc(cfg.url)}" target="_blank" rel="noopener">${esc(cfg.url)}</a>
             ${cfg.aviso ? `<div style="margin-top: 8px; color: #6e4b00; background: #fff8e1; padding: 8px; border-radius: 4px;">⚠️ ${esc(cfg.aviso)}</div>` : ''}`;
         box.style.display = 'block';
