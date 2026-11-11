@@ -103,6 +103,15 @@
 
         <div id="campos-personalizados-container" style="background: #fdfdfe; padding: 15px; border-left: 4px solid #17a2b8; border-radius: 4px; margin-bottom: 15px; display: none;"></div>
 
+        <div id="dados-academicos-section" style="display: none;">
+            <h3>Dados Acadêmicos / Academic Data</h3>
+            <div class="alert" style="background: #e8f4fd; color: #0c5460; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 0.9em;">
+                Os valores declarados aqui serão conferidos pela Comissão com os comprovantes anexados. / The values declared here will be checked by the Committee against the attached proofs.
+            </div>
+            <div id="dados-academicos-container"></div>
+            <div id="dados-academicos-comprovantes"></div>
+        </div>
+
         <h3>2. Documentação Básica Obrigatória / Basic Mandatory Documentation</h3>
         <div class="alert" style="background: #e2e3e5; color: #383d41; border-color: #d6d8db; padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 0.9em;">
             Anexe cada documento em seu respectivo campo. O sistema organizará tudo automaticamente na ordem exigida pela secretaria. / Attach each document in its respective field. The system will automatically organize everything in the order required by the secretariat.
@@ -221,6 +230,7 @@
             renderizarDocumentosBasicos();
             renderizarCriteriosTabela1();
             renderizarCamposPersonalizados();
+            renderizarDadosAcademicos();
             
             document.getElementById('pontuacao-estimada-display').innerText = "0.00";
 
@@ -360,6 +370,190 @@
     }
 
     // =========================================================================
+    // DADOS ACADÊMICOS DECLARADOS (schema v2: dadosEdital.declaracoes_academicas)
+    // Valores escritos na separadora "### DADOS_ACADEMICOS ###" e conferidos pela Comissão.
+    // =========================================================================
+    function getDA() { return (dadosEdital && dadosEdital.declaracoes_academicas) || null; }
+
+    function igualValor(a, b) {
+        const na = parseFloat(a), nb = parseFloat(b);
+        return (!isNaN(na) && !isNaN(nb)) ? na === nb : String(a) === String(b);
+    }
+
+    function condicaoOk(cond, valores) {
+        if (!cond) return true;
+        const v = valores[cond.var];
+        return v !== null && v !== undefined && v !== "" && cond.em.some(e => igualValor(v, e));
+    }
+
+    function arred2(x) { return Math.round((x + Number.EPSILON) * 100) / 100; }
+
+    function renderizarDadosAcademicos() {
+        const da = getDA();
+        const secao = document.getElementById('dados-academicos-section');
+        const cont = document.getElementById('dados-academicos-container');
+        const comp = document.getElementById('dados-academicos-comprovantes');
+        cont.innerHTML = ''; comp.innerHTML = '';
+        if (!da) { secao.style.display = 'none'; return; }
+        secao.style.display = 'block';
+
+        da.campos.forEach(c => {
+            const w = document.createElement('div');
+            w.className = 'form-group';
+            w.id = `da-campo-${c.var}`;
+            w.style = "padding: 10px; background: #f8f9fa; border-left: 3px solid #17a2b8; border-radius: 4px;";
+            let campo = '';
+            if (c.tipo === 'escolha') {
+                campo = `<select id="da-${c.var}" onchange="atualizarDadosAcademicos()"><option value="">-- Selecione / Select --</option>` +
+                        c.opcoes.map(o => `<option value="${o.valor}">${o.texto}</option>`).join('') + `</select>`;
+            } else if (c.tipo === 'sim_nao') {
+                campo = `<select id="da-${c.var}" onchange="atualizarDadosAcademicos()"><option value="">-- Selecione / Select --</option>
+                         <option value="1">Sim / Yes</option><option value="0">Não / No</option></select>`;
+            } else if (c.tipo === 'numero') {
+                campo = `<input type="number" id="da-${c.var}" step="0.01" ${c.minimo != null ? `min="${c.minimo}"` : ''} ${c.maximo != null ? `max="${c.maximo}"` : ''}
+                         style="max-width: 200px; padding: 8px;" oninput="atualizarDadosAcademicos()">`;
+            } else if (c.tipo === 'calculadora_cr') {
+                campo = `<div style="margin-bottom:8px; font-weight:bold; color:#155724;">CR calculado / Calculated GPA: <span id="cr-display-da-${c.var}">0.00</span></div>
+                         <div id="disciplines-da-${c.var}" data-cr-final="0.00"></div>
+                         <button class="btn-add" type="button" onclick="addDisciplineRow('da-${c.var}')" style="background:#17a2b8;">+ Adicionar Disciplina / Add Course</button>`;
+            }
+            w.innerHTML = `<label>${c.rotulo} <span style="color:red">*</span></label>` +
+                          (c.ajuda ? `<span style="font-size: 0.85em; color: #666; display:block; margin-bottom:8px;"><em>${c.ajuda}</em></span>` : '') + campo;
+            cont.appendChild(w);
+        });
+
+        (da.comprovantes || []).forEach(p => {
+            const w = document.createElement('div');
+            w.className = 'form-group';
+            w.id = `da-comp-${p.tag}`;
+            w.style = "padding: 10px; background: #fff8e1; border-left: 3px solid #ffb300; border-radius: 4px; display: none;";
+            w.innerHTML = `<label>${p.titulo} <span style="color:red">*</span></label>` +
+                          (p.descricao ? `<span style="font-size: 0.85em; color: #666; display:block; margin-bottom:8px;">${p.descricao}</span>` : '') +
+                          `<input type="file" accept=".pdf" class="da-comprovante-input" data-tag="${p.tag}" data-nome="${p.titulo}">`;
+            comp.appendChild(w);
+        });
+        atualizarDadosAcademicos();
+    }
+
+    function valoresBrutosDA() {
+        const da = getDA(); const v = {};
+        if (!da) return v;
+        da.campos.forEach(c => {
+            if (c.tipo === 'calculadora_cr') {
+                const el = document.getElementById(`disciplines-da-${c.var}`);
+                v[c.var] = el && el.querySelectorAll('.calc-row').length > 0 ? parseFloat(el.getAttribute('data-cr-final')) : null;
+            } else {
+                const el = document.getElementById(`da-${c.var}`);
+                const s = el ? el.value.trim() : '';
+                if (s === '') v[c.var] = null;
+                else if (c.tipo === 'escolha' && c.opcoes.length && typeof c.opcoes[0].valor === 'number') v[c.var] = parseFloat(s);
+                else if (c.tipo === 'sim_nao' || c.tipo === 'numero') v[c.var] = parseFloat(s.replace(',', '.'));
+                else v[c.var] = s;
+            }
+        });
+        return v;
+    }
+
+    // Valores finais: campos ocultos assumem o valor padrão (ex.: CNA = 0 para PROFI-EQ).
+    function valoresDeclaradosDA() {
+        const da = getDA(); const brutos = valoresBrutosDA(); const out = {};
+        if (!da) return out;
+        da.campos.forEach(c => { out[c.var] = condicaoOk(c.visivel_se, brutos) ? brutos[c.var] : c.valor_padrao; });
+        return out;
+    }
+
+    function comprovantesExigidosDA() {
+        const da = getDA(); const brutos = valoresBrutosDA(); const tags = new Set();
+        if (!da) return tags;
+        da.campos.forEach(c => {
+            if (c.comprovante && condicaoOk(c.visivel_se, brutos) && condicaoOk(c.comprovante_exigido_se, brutos)) tags.add(c.comprovante);
+        });
+        return tags;
+    }
+
+    function atualizarDadosAcademicos() {
+        const da = getDA();
+        if (!da) return;
+        const brutos = valoresBrutosDA();
+        da.campos.forEach(c => {
+            const w = document.getElementById(`da-campo-${c.var}`);
+            if (w) w.style.display = condicaoOk(c.visivel_se, brutos) ? 'block' : 'none';
+        });
+        const exigidos = comprovantesExigidosDA();
+        (da.comprovantes || []).forEach(p => {
+            const w = document.getElementById(`da-comp-${p.tag}`);
+            if (w) w.style.display = exigidos.has(p.tag) ? 'block' : 'none';
+        });
+    }
+
+    // Retorna mensagem de erro (string) ou null se os dados acadêmicos estão completos.
+    function validarDadosAcademicos() {
+        const da = getDA();
+        if (!da) return null;
+        const brutos = valoresBrutosDA();
+        for (const c of da.campos) {
+            if (!condicaoOk(c.visivel_se, brutos)) continue;
+            const v = brutos[c.var];
+            if (v === null || v === undefined || (typeof v === 'number' && isNaN(v))) {
+                return c.tipo === 'calculadora_cr'
+                    ? `Lance ao menos uma disciplina em "${c.rotulo}". / Add at least one course.`
+                    : `Preencha "${c.rotulo}". / Please fill in this field.`;
+            }
+            if (c.tipo === 'numero' && ((c.minimo != null && v < c.minimo) || (c.maximo != null && v > c.maximo))) {
+                return `"${c.rotulo}" deve estar entre ${c.minimo} e ${c.maximo}. / Out of range.`;
+            }
+            if (c.tipo === 'calculadora_cr') {
+                const rows = document.querySelectorAll(`#disciplines-da-${c.var} .calc-row`);
+                for (const row of rows) {
+                    if (!row.querySelector('.disc-cred').value || !row.querySelector('.disc-nota').value) {
+                        return `Há disciplina sem créditos ou conceito em "${c.rotulo}". / A course is missing credits or grade.`;
+                    }
+                }
+            }
+        }
+        for (const tag of comprovantesExigidosDA()) {
+            const inp = document.querySelector(`.da-comprovante-input[data-tag="${tag}"]`);
+            if (!inp || inp.files.length === 0) return `O comprovante obrigatório "${inp ? inp.getAttribute('data-nome') : tag}" não foi anexado! / Mandatory proof not attached!`;
+        }
+        return null;
+    }
+
+    function semAcento(s) {
+        return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\x20-\x7E]/g, " ").replace(/\|/g, "/");
+    }
+
+    // Escreve "### DADOS_ACADEMICOS ###" + linhas "VAR DECLARADO: valor" + disciplinas (com páginas de continuação).
+    function escreverDadosAcademicos(mergedPdf, font, normalFont, rgb) {
+        const da = getDA();
+        if (!da) return;
+        const valores = valoresDeclaradosDA();
+        let page = mergedPdf.addPage();
+        page.drawText(`### DADOS_ACADEMICOS ###`, { x: 50, y: 780, size: 24, font: font, color: rgb(0.8, 0, 0) });
+        page.drawText(`Dados academicos declarados pelo candidato (conferidos pela Comissao)`, { x: 50, y: 750, size: 12, font: normalFont });
+        let y = 720;
+        const linha = (txt, f, size) => {
+            if (y < 60) { page = mergedPdf.addPage(); y = 780; }
+            page.drawText(txt, { x: 50, y: y, size: size || 12, font: f || normalFont });
+            y -= 18;
+        };
+        da.campos.forEach(c => {
+            const v = valores[c.var];
+            if (v !== null && v !== undefined) linha(`${c.var} DECLARADO: ${c.tipo === 'calculadora_cr' ? Number(v).toFixed(da.casas_cr ?? 2) : v}`, font, 13);
+        });
+        da.campos.filter(c => c.tipo === 'calculadora_cr' && valores[c.var] !== null).forEach(c => {
+            y -= 10;
+            linha(`Disciplinas declaradas para o calculo de ${c.var}:`, font, 12);
+            document.querySelectorAll(`#disciplines-da-${c.var} .calc-row`).forEach(row => {
+                const nome = semAcento(row.querySelector('.disc-nome').value || "Sem nome").slice(0, 60);
+                const cred = row.querySelector('.disc-cred').value || "0";
+                const sel = row.querySelector('.disc-nota');
+                const conc = sel.options[sel.selectedIndex].getAttribute('data-conceito') || "?";
+                linha(`DISCIPLINA: ${nome} | CREDITOS: ${cred} | CONCEITO: ${conc}`, normalFont, 10);
+            });
+        });
+    }
+
+    // =========================================================================
     // LÓGICA DA CALCULADORA E CAMPOS DINÂMICOS
     // =========================================================================
     function addDisciplineRow(itemId) {
@@ -372,11 +566,12 @@
             <input type="number" class="disc-cred" placeholder="Créditos / Credits" min="1" style="flex: 1; padding: 8px;" oninput="calculateCR('${itemId}')">
             <select class="disc-nota" style="flex: 1; padding: 8px;" onchange="calculateCR('${itemId}')">
                 <option value="">Conceito / Grade...</option>
-                <option value="3">A (9,0 a 10,0)</option>
-                <option value="2">B (7,5 a 8,9)</option>
-                <option value="1">C (6,0 a 7,4)</option>
-                <option value="0">R (Reprovado / Fail)</option>
-                <option value="ignore">S, I ou J (Ignorar / Ignore)</option>
+                <option value="3" data-conceito="A">A (9,0 a 10,0)</option>
+                <option value="2" data-conceito="B">B (7,5 a 8,9)</option>
+                <option value="1" data-conceito="C">C (6,0 a 7,4)</option>
+                <option value="0" data-conceito="R">R (Reprovado / Fail)</option>
+                <option value="ignore" data-conceito="S">S, I ou J (Ignorar / Ignore)</option>
+                <option value="ignore_ed" data-conceito="ED">Estágio na Docência (não entra / not counted)</option>
             </select>
             <button type="button" onclick="this.parentElement.remove(); calculateCR('${itemId}')" style="background: #dc3545; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer;">❌</button>
         `;
@@ -393,7 +588,7 @@
             const credStr = row.querySelector('.disc-cred').value;
             const notaVal = row.querySelector('.disc-nota').value;
 
-            if (credStr && notaVal && notaVal !== "ignore" && notaVal !== "") {
+            if (credStr && notaVal && !notaVal.startsWith("ignore")) {
                 const cred = parseFloat(credStr);
                 const nota = parseFloat(notaVal);
                 if (cred > 0) {
@@ -403,10 +598,11 @@
             }
         });
 
-        const cr = totalCreditos > 0 ? (totalPontos / totalCreditos).toFixed(2) : "0.00";
+        const cr = totalCreditos > 0 ? arred2(totalPontos / totalCreditos).toFixed(2) : "0.00";
         document.getElementById(`cr-display-${itemId}`).innerText = cr;
-        calcContainer.setAttribute('data-cr-final', cr); 
+        calcContainer.setAttribute('data-cr-final', cr);
         atualizarPontuacaoEstimada();
+        if (String(itemId).startsWith('da-')) atualizarDadosAcademicos();
     }
 
     function addInput(itemId, max, tagBase, extraLabel, requiresDoi, requiresPageCrop) {
@@ -588,6 +784,12 @@
             }
         }
 
+        const erroDA = validarDadosAcademicos();
+        if (erroDA) {
+            alert(`⚠️ ${erroDA}`);
+            return;
+        }
+
         const statusDiv = document.getElementById('status');
         statusDiv.innerText = "⏳ Processando arquivos e carimbando metadados institucionais... / Processing files and stamping institutional metadata... Aguarde / Please wait.";
         statusDiv.style.color = "#0056b3";
@@ -751,6 +953,17 @@
             }
 
             // O Lattes XML foi completamente deletado desta etapa também.
+
+            // Dados acadêmicos declarados + comprovantes exigidos (apenas editais com declaracoes_academicas)
+            if (getDA()) {
+                escreverDadosAcademicos(mergedPdf, font, normalFont, rgb);
+                const exigidos = comprovantesExigidosDA();
+                for (let input of document.querySelectorAll('.da-comprovante-input')) {
+                    if (exigidos.has(input.getAttribute('data-tag'))) {
+                        await anexarComTag(input, input.getAttribute('data-tag'), null, null, null, null);
+                    }
+                }
+            }
 
             for (let input of basicDocs) {
                 const tag = input.getAttribute('data-tag');
