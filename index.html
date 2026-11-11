@@ -120,7 +120,9 @@
         <div id="documentos-basicos-container"></div>
 
         <h3>3. Comprovantes da Tabela 1 / Table 1 Proofs (Evaluation Criteria)</h3>
-        
+
+        <div id="avaliador-artigos-box" style="display: none; background: #eef6ff; border-left: 5px solid #0969da; padding: 12px 15px; border-radius: 4px; margin-bottom: 20px; font-size: 0.9em; line-height: 1.5;"></div>
+
         <div id="dynamic-items-container"></div>
         
         <div style="background-color: #fff3cd; color: #856404; border-left: 5px solid #ffeeba; padding: 15px; margin-top: 40px; margin-bottom: 20px; border-radius: 4px;">
@@ -231,6 +233,7 @@
             renderizarCriteriosTabela1();
             renderizarCamposPersonalizados();
             renderizarDadosAcademicos();
+            renderizarAvaliadorArtigos();
             
             document.getElementById('pontuacao-estimada-display').innerText = "0.00";
 
@@ -370,6 +373,109 @@
     }
 
     // =========================================================================
+    // TEXTO SEGURO NO PDF
+    // As fontes padrão do PDF (Helvetica) só codificam WinAnsi (cp1252). Qualquer caractere fora dele
+    // (espaços especiais como U+202F, emoji, "≤", acentos decompostos do macOS, caracteres invisíveis)
+    // fazia o pdf-lib lançar erro e o dossiê não era gerado. Todo texto desenhado ou medido passa aqui.
+    // =========================================================================
+    // Classes de caracteres montadas por código numérico (sem "\u" literal no fonte: U+2028/U+2029
+    // escritos diretamente quebram o JavaScript).
+    const _cc = (...cps) => String.fromCharCode(...cps);
+    const _faixa = (a, b) => { let s = ""; for (let c = a; c <= b; c++) s += String.fromCharCode(c); return s; };
+    const _classe = (s) => new RegExp("[" + s.replace(/[\]\^-]/g, "\$&") + "]", "g");
+    const _SUBST_TEXTO = [
+        [_classe(_cc(9, 10, 11, 12, 13)), " "],
+        [_classe(_cc(0xA0, 0x1680) + _faixa(0x2000, 0x200A) + _cc(0x202F, 0x205F, 0x3000)), " "],   // espaços especiais
+        [_classe(_cc(0xAD) + _faixa(0x200B, 0x200F) + _cc(0x2028, 0x2029) + _faixa(0x202A, 0x202E)
+                 + _faixa(0x2060, 0x2064) + _cc(0xFEFF)), ""],                                        // invisíveis
+        [_classe(_cc(0x2018, 0x2019, 0x201A, 0x201B, 0x2032, 0xB4, 0x60)), "'"],
+        [_classe(_cc(0x201C, 0x201D, 0x201E, 0x201F, 0x2033)), '"'],
+        [_classe(_faixa(0x2010, 0x2015) + _cc(0x2212, 0x2043)), "-"],
+        [_classe(_cc(0x2026)), "..."], [_classe(_cc(0x2264)), "<="], [_classe(_cc(0x2265)), ">="], [_classe(_cc(0x2260)), "!="],
+        [_classe(_cc(0x2022, 0x25CF, 0x25AA, 0x2023)), "-"], [_classe(_cc(0x2192)), "->"], [_classe(_cc(0x2190)), "<-"],
+    ];
+    const _ACENTOS_COMBINANTES = _classe(_faixa(0x0300, 0x036F));
+    const _cacheCodificavel = new Map();
+
+    function textoSeguro(texto, fonte) {
+        let s = String(texto ?? "").normalize("NFC");
+        for (const [re, rep] of _SUBST_TEXTO) s = s.replace(re, rep);
+        let out = "";
+        for (const ch of s) {
+            const code = ch.codePointAt(0);
+            if (code >= 0x20 && code <= 0x7E) { out += ch; continue; }
+            let ok = _cacheCodificavel.get(ch);
+            if (ok === undefined) {
+                ok = false;
+                if (fonte && typeof fonte.encodeText === "function") {
+                    try { fonte.encodeText(ch); ok = true; } catch (e) { ok = false; }
+                } else {
+                    ok = (code >= 0xA0 && code <= 0xFF);   // sem fonte: Latin-1 visível
+                }
+                _cacheCodificavel.set(ch, ok);
+            }
+            if (ok) { out += ch; continue; }
+            const base = ch.normalize("NFD").replace(_ACENTOS_COMBINANTES, "");   // tenta a letra sem acento
+            out += (base && base.codePointAt(0) <= 0x7E) ? base : "?";
+        }
+        return out;
+    }
+
+    (function instalarTextoSeguro() {
+        if (!window.PDFLib || PDFLib.__textoSeguroInstalado) return;
+        const drawOrig = PDFLib.PDFPage.prototype.drawText;
+        PDFLib.PDFPage.prototype.drawText = function (texto, opcoes = {}) {
+            return drawOrig.call(this, textoSeguro(texto, opcoes.font), opcoes);
+        };
+        const larguraOrig = PDFLib.PDFFont.prototype.widthOfTextAtSize;
+        PDFLib.PDFFont.prototype.widthOfTextAtSize = function (texto, tamanho) {
+            return larguraOrig.call(this, textoSeguro(texto, this), tamanho);
+        };
+        PDFLib.__textoSeguroInstalado = true;
+    })();
+
+    // Quebra o texto pela largura disponível (palavras longas, como DOIs e nomes de arquivo, são cortadas).
+    function quebrarPorLargura(texto, fonte, tamanho, largura) {
+        const palavras = textoSeguro(texto, fonte).split(" ");
+        const linhas = []; let atual = "";
+        const cabe = (t) => fonte.widthOfTextAtSize(t, tamanho) <= largura;
+        for (let p of palavras) {
+            while (!cabe(p)) {                       // palavra maior que a linha: corta
+                let k = p.length - 1;
+                while (k > 1 && !cabe(p.slice(0, k))) k--;
+                if (atual) { linhas.push(atual); atual = ""; }
+                linhas.push(p.slice(0, k)); p = p.slice(k);
+            }
+            const tentativa = atual ? atual + " " + p : p;
+            if (cabe(tentativa)) atual = tentativa; else { linhas.push(atual); atual = p; }
+        }
+        if (atual) linhas.push(atual);
+        return linhas.length ? linhas : [""];
+    }
+
+    // Quebra por caractere (para identificadores sem espaços, como DOIs): mantém o rótulo e o início do valor na 1ª linha.
+    function quebrarPorCaractere(texto, fonte, tamanho, largura) {
+        const s = textoSeguro(texto, fonte);
+        const linhas = []; let atual = "";
+        for (const ch of s) {
+            if (fonte.widthOfTextAtSize(atual + ch, tamanho) > largura && atual) { linhas.push(atual); atual = ""; }
+            atual += ch;
+        }
+        if (atual) linhas.push(atual);
+        return linhas;
+    }
+
+    // Escreve um texto quebrado em linhas; devolve o novo y.
+    function escreverQuebrado(page, texto, { x = 50, y, size = 12, font, color, largura = 495, entrelinha } = {}) {
+        const passo = entrelinha || Math.round(size * 1.3);
+        for (const linha of quebrarPorLargura(texto, font, size, largura)) {
+            page.drawText(linha, color ? { x, y, size, font, color } : { x, y, size, font });
+            y -= passo;
+        }
+        return y;
+    }
+
+    // =========================================================================
     // DADOS ACADÊMICOS DECLARADOS (schema v2: dadosEdital.declaracoes_academicas)
     // Valores escritos na separadora "### DADOS_ACADEMICOS ###" e conferidos pela Comissão.
     // =========================================================================
@@ -387,6 +493,32 @@
     }
 
     function arred2(x) { return Math.round((x + Number.EPSILON) * 100) / 100; }
+
+    // Link para a ferramenta pública de conferência de artigos (schema v2: dadosEdital.avaliador_artigos = {url, titulo, aviso})
+    function renderizarAvaliadorArtigos() {
+        const box = document.getElementById('avaliador-artigos-box');
+        const cfg = dadosEdital && dadosEdital.avaliador_artigos;
+        if (!cfg || !cfg.url) { box.style.display = 'none'; box.innerHTML = ''; return; }
+        const esc = (s) => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        box.innerHTML = `<strong>🔎 ${esc(cfg.titulo || 'Confira o estrato dos seus artigos antes de escolher a gaveta')}</strong><br>
+            <a href="${esc(cfg.url)}" target="_blank" rel="noopener">${esc(cfg.url)}</a>
+            ${cfg.aviso ? `<div style="margin-top: 8px; color: #6e4b00; background: #fff8e1; padding: 8px; border-radius: 4px;">⚠️ ${esc(cfg.aviso)}</div>` : ''}`;
+        box.style.display = 'block';
+    }
+
+    // Janela de produção (schema v2: dadosEdital.janela_producao = {inicio: "AAAA-MM-DD", fim: "AAAA-MM-DD"})
+    function janelaAnos() {
+        const j = dadosEdital && dadosEdital.janela_producao;
+        if (!j || !j.inicio || !j.fim) return null;
+        return { inicio: parseInt(String(j.inicio).slice(0, 4)), fim: parseInt(String(j.fim).slice(0, 4)) };
+    }
+
+    function anoForaDaJanela(valor) {
+        const jan = janelaAnos();
+        const ano = parseInt(valor);
+        if (!jan || !valor || isNaN(ano)) return false;
+        return ano < jan.inicio || ano > jan.fim;
+    }
 
     function renderizarDadosAcademicos() {
         const da = getDA();
@@ -519,7 +651,7 @@
     }
 
     function semAcento(s) {
-        return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\x20-\x7E]/g, " ").replace(/\|/g, "/");
+        return String(s).normalize("NFD").replace(_ACENTOS_COMBINANTES, "").replace(/[^\x20-\x7E]/g, " ").replace(/\|/g, "/");
     }
 
     // Escreve "### DADOS_ACADEMICOS ###" + linhas "VAR DECLARADO: valor" + disciplinas (com páginas de continuação).
@@ -544,7 +676,7 @@
             y -= 10;
             linha(`Disciplinas declaradas para o calculo de ${c.var}:`, font, 12);
             document.querySelectorAll(`#disciplines-da-${c.var} .calc-row`).forEach(row => {
-                const nome = semAcento(row.querySelector('.disc-nome').value || "Sem nome").slice(0, 60);
+                const nome = semAcento(row.querySelector('.disc-nome').value || "Sem nome").slice(0, 50);
                 const cred = row.querySelector('.disc-cred').value || "0";
                 const sel = row.querySelector('.disc-nota');
                 const conc = sel.options[sel.selectedIndex].getAttribute('data-conceito') || "?";
@@ -653,16 +785,49 @@
                 block.appendChild(pageWrapper);
             }
 
+            const cfgMeses = (dadosEdital.criterios || []).find(c => c.id === itemId);
+            if (cfgMeses && cfgMeses.meses_fixos_por_comprovante) {
+                // Cada comprovante vale um número fixo de meses (ex.: 6 = uma disciplina-semestre): não pede meses.
+                const nota = document.createElement('div');
+                nota.style = "font-size: 0.85em; color: #555; margin-top: 5px;";
+                nota.innerText = `Cada comprovante corresponde a uma disciplina-semestre (${cfgMeses.meses_fixos_por_comprovante} meses). / Each proof counts as one course-semester.`;
+                block.appendChild(nota);
+                extraLabel = null;
+            }
+
             if (extraLabel) {
                 const extraInput = document.createElement('input');
                 extraInput.type = 'number';
                 extraInput.placeholder = extraLabel;
                 extraInput.id = `extra-${uniqueTag}`;
                 extraInput.style.marginTop = "5px";
-                extraInput.oninput = atualizarPontuacaoEstimada; 
+                extraInput.oninput = atualizarPontuacaoEstimada;
                 block.appendChild(extraInput);
             }
-            
+
+            // Ano da produção: só para critérios com janela de produção (schema v2: exige_janela)
+            const itemCfg = (dadosEdital.criterios || []).find(c => c.id === itemId);
+            if (itemCfg && itemCfg.exige_janela) {
+                const jan = janelaAnos();
+                const anoInput = document.createElement('input');
+                anoInput.type = 'number';
+                anoInput.className = 'ano-input';
+                anoInput.id = `ano-${uniqueTag}`;
+                anoInput.placeholder = jan ? `Ano da produção / Year (${jan.inicio} a ${jan.fim})` : 'Ano da produção / Year';
+                anoInput.style.marginTop = "5px"; anoInput.style.maxWidth = "320px";
+                const aviso = document.createElement('div');
+                aviso.className = 'ano-aviso';
+                aviso.style = "font-size: 0.85em; color: #c0392b; font-weight: bold; display: none; margin-top: 3px;";
+                anoInput.oninput = function () {
+                    const fora = anoForaDaJanela(this.value);
+                    aviso.style.display = fora ? 'block' : 'none';
+                    aviso.innerText = fora ? `⚠️ Fora da janela de produção do edital (${jan.inicio} a ${jan.fim}): não será pontuado. / Outside the call's period: will not be scored.` : '';
+                    atualizarPontuacaoEstimada();
+                };
+                block.appendChild(anoInput);
+                block.appendChild(aviso);
+            }
+
             const btnRemove = document.createElement('button');
             btnRemove.innerText = "❌ Remover / Remove";
             btnRemove.style.background = "#dc3545"; btnRemove.style.color = "white"; btnRemove.style.border = "none";
@@ -714,8 +879,11 @@
                     let totalMesesAcumulados = 0;
 
                     for (let i = 0; i < blocks.length; i++) {
+                        const anoInput = blocks[i].querySelector('.ano-input');
+                        if (anoInput && anoForaDaJanela(anoInput.value)) continue;   // fora da janela: não pontua
                         const extraInput = blocks[i].querySelector('input[id^="extra-"]');
-                        const extraValue = extraInput ? (parseFloat(extraInput.value) || 0) : 0;
+                        let extraValue = extraInput ? (parseFloat(extraInput.value) || 0) : 0;
+                        if (regra.tipo === "meses" && item.meses_fixos_por_comprovante) extraValue = item.meses_fixos_por_comprovante;
 
                         if (regra.tipo === "flat") {
                             itemTotal += regra.peso;
@@ -790,6 +958,20 @@
             return;
         }
 
+        // Ano obrigatório para comprovantes anexados em critérios com janela de produção
+        for (const anoInput of document.querySelectorAll('.ano-input')) {
+            const bloco = anoInput.parentElement;
+            const arquivo = bloco.querySelector('input[type="file"]');
+            const ano = parseInt(anoInput.value);
+            if (arquivo && arquivo.files.length > 0 && (isNaN(ano) || ano < 1950 || ano > 2100)) {
+                anoInput.style.border = "2px solid red";
+                anoInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                alert(`⚠️ Informe o ano da produção do comprovante "${arquivo.files[0].name}". / Please enter the year of this proof.`);
+                return;
+            }
+            anoInput.style.border = "";
+        }
+
         const statusDiv = document.getElementById('status');
         statusDiv.innerText = "⏳ Processando arquivos e carimbando metadados institucionais... / Processing files and stamping institutional metadata... Aguarde / Please wait.";
         statusDiv.style.color = "#0056b3";
@@ -808,93 +990,72 @@
             const font = await mergedPdf.embedFont(StandardFonts.HelveticaBold);
             const normalFont = await mergedPdf.embedFont(StandardFonts.Helvetica);
 
-            const coverPage = mergedPdf.addPage();
-            
+            let coverPage = mergedPdf.addPage();
+
             coverPage.drawText(`UNIVERSIDADE ESTADUAL DE MARINGA`, { x: 50, y: 800, size: 14, font: font });
             coverPage.drawText(`Programa de Pos-Graduacao em Engenharia Quimica - PEQ`, { x: 50, y: 785, size: 12, font: normalFont });
             coverPage.drawText(`DOSSIE DIGITAL DE INSCRICAO`, { x: 50, y: 730, size: 24, font: font, color: rgb(0.78, 0.06, 0.18) });
-            
-            coverPage.drawText(`Processo Seletivo: ${nomeEditalAtual}`, { x: 50, y: 690, size: 14, font: font });
-            coverPage.drawText(`Candidato: ${nomeInput}`, { x: 50, y: 660, size: 14, font: font });
-            coverPage.drawText(`${docTipo}: ${docId}  |  E-mail: ${emailInput}`, { x: 50, y: 640, size: 12, font: normalFont });
-            
-// Função inteligente para medir palavras e quebrar linhas
-            function quebrarTexto(texto, fonte, tamanho, larguraMaxima) {
-                const palavras = texto.split(' ');
-                let linhas = [];
-                let linhaAtual = palavras[0] || "";
 
-                for (let i = 1; i < palavras.length; i++) {
-                    const palavra = palavras[i];
-                    // Mede a largura da linha atual + a nova palavra
-                    const largura = fonte.widthOfTextAtSize(linhaAtual + " " + palavra, tamanho);
-                    if (largura < larguraMaxima) {
-                        linhaAtual += " " + palavra; // Cabe na linha, adiciona
-                    } else {
-                        linhas.push(linhaAtual); // Não cabe, fecha a linha e joga a palavra para baixo
-                        linhaAtual = palavra;
-                    }
-                }
-                if (linhaAtual) linhas.push(linhaAtual);
-                return linhas;
-            }
+            let yCursorCapa = 690;
+            yCursorCapa = escreverQuebrado(coverPage, `Processo Seletivo: ${nomeEditalAtual}`, { y: yCursorCapa, size: 14, font: font });
+            yCursorCapa = escreverQuebrado(coverPage, `Candidato: ${nomeInput}`, { y: yCursorCapa - 8, size: 14, font: font });
+            yCursorCapa = escreverQuebrado(coverPage, `${docTipo}: ${docId}  |  E-mail: ${emailInput}`, { y: yCursorCapa, size: 12, font: normalFont });
+            yCursorCapa -= 15;
 
-            let yCursorCapa = 610;
-            const maxWidth = 500; // Limite da borda da página A4
-
+            // Respostas dos campos personalizados (com página de continuação se a capa encher)
+            const garantirEspacoCapa = (minimo) => {
+                if (yCursorCapa < minimo) { coverPage = mergedPdf.addPage(); yCursorCapa = 780; }
+            };
             respostasExtras.forEach(resp => {
-                coverPage.drawText(`${resp.label}:`, { x: 50, y: yCursorCapa, size: 12, font: font, color: rgb(0, 0.33, 0.7) });
-                yCursorCapa -= 15; // Desce o cursor para a resposta
-                
-                // Aplica o quebrador de texto na resposta do aluno
-                const linhasQuebradas = quebrarTexto(resp.valor, normalFont, 12, maxWidth);
-                
-                // Imprime linha por linha descendo o cursor
-                linhasQuebradas.forEach(linha => {
+                garantirEspacoCapa(140);
+                yCursorCapa = escreverQuebrado(coverPage, `${resp.label}:`, { y: yCursorCapa, size: 12, font: font, color: rgb(0, 0.33, 0.7), entrelinha: 15 });
+                for (const linha of quebrarPorLargura(resp.valor, normalFont, 12, 495)) {
+                    garantirEspacoCapa(110);
                     coverPage.drawText(linha, { x: 50, y: yCursorCapa, size: 12, font: normalFont });
                     yCursorCapa -= 15;
-                });
-                
+                }
                 yCursorCapa -= 10; // Dá um espaço extra antes da próxima pergunta
             });
 
             const pontuacaoEstimadaEle = document.getElementById('pontuacao-estimada-display');
             const pontuacaoFinal = pontuacaoEstimadaEle ? pontuacaoEstimadaEle.innerText : "0.00";
-            
+
+            garantirEspacoCapa(110);
             coverPage.drawText(`Pontuacao Estimada pelo Candidato: ${pontuacaoFinal} pts`, { x: 50, y: yCursorCapa - 15, size: 16, font: font, color: rgb(0.15, 0.65, 0.15) });
             coverPage.drawText(`(A pontuacao final oficial sera validada exclusivamente pela Comissao de Selecao do PEQ)`, { x: 50, y: yCursorCapa - 35, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) });
-            coverPage.drawText(`Documento gerado automaticamente pelo Sistema LSCP-UEM.`, { x: 50, y: 50, size: 10, font: normalFont, color: rgb(0.6, 0.6, 0.6) }); 
+            coverPage.drawText(`Documento gerado automaticamente pelo Sistema LSCP-UEM.`, { x: 50, y: 50, size: 10, font: normalFont, color: rgb(0.6, 0.6, 0.6) });
 
             // ==========================================
             // 5. MOTOR DE ANEXAÇÃO (COM O AJUSTE NO EIXO Y PARA O TOPO)
             // ==========================================
-            async function anexarComTag(fileInputEle, tagString, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue) {
+            async function anexarComTag(fileInputEle, tagString, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue, anoValue) {
                 if (fileInputEle.files.length > 0) {
                     const file = fileInputEle.files[0];
-                    
-                    const separatorPage = mergedPdf.addPage();
-                    
-                    // --- VACINA ANTI-ALIENÍGENA ---
-                    // Troca qualquer caractere fora do padrão Latin-1 (como o 0x202F) por um espaço normal
-                    const nomeArquivoLimpo = file.name.replace(/[^\x00-\xFF]/g, ' ');
 
-                    // SUBIU PARA O TOPO: 400 virou 780
+                    const separatorPage = mergedPdf.addPage();
+
+                    // Nome do arquivo: o texto seguro (textoSeguro) já normaliza espaços especiais (ex.: U+202F),
+                    // acentos decompostos e caracteres fora do WinAnsi.
+                    const nomeArquivoLimpo = file.name;
+
                     separatorPage.drawText(`### ${tagString} ###`, { x: 50, y: 780, size: 24, font: font, color: rgb(0.8, 0, 0) });
-                    // SUBIU: 350 virou 750
-                    separatorPage.drawText(`Arquivo original: ${nomeArquivoLimpo}`, { x: 50, y: 750, size: 12, font: normalFont });
-                    // O CURSOR ACOMPANHA: 310 virou 710
-                    let yCursor = 710;
+                    let yCursor = escreverQuebrado(separatorPage, `Arquivo original: ${nomeArquivoLimpo}`, { y: 750, size: 12, font: normalFont });
+                    yCursor -= 22;
+                    if (anoValue) {
+                        yCursor = escreverQuebrado(separatorPage, `ANO DECLARADO: ${anoValue}`, { y: yCursor, size: 14, font: font, color: rgb(0.35, 0.2, 0.6), entrelinha: 25 });
+                    }
                     if (detalheRegra) {
-                        separatorPage.drawText(detalheRegra, { x: 50, y: yCursor, size: 14, font: font, color: rgb(0, 0.4, 0) });
-                        yCursor -= 25;
+                        yCursor = escreverQuebrado(separatorPage, detalheRegra, { y: yCursor, size: 14, font: font, color: rgb(0, 0.4, 0), entrelinha: 25 });
                     }
                     if (notaPleiteadaDoc) {
-                        separatorPage.drawText(notaPleiteadaDoc, { x: 50, y: yCursor, size: 14, font: font, color: rgb(0.8, 0.3, 0) });
-                        yCursor -= 25;
+                        yCursor = escreverQuebrado(separatorPage, notaPleiteadaDoc, { y: yCursor, size: 14, font: font, color: rgb(0.8, 0.3, 0), entrelinha: 25 });
                     }
                     if (doiValue) {
-                        separatorPage.drawText(`DOI DECLARADO: ${doiValue}`, { x: 50, y: yCursor, size: 14, font: font, color: rgb(0, 0, 0.8) });
-                        yCursor -= 25;
+                        for (const linhaDoi of quebrarPorCaractere(`DOI DECLARADO: ${doiValue.trim()}`, font, 11, 495)) {
+                            separatorPage.drawText(linhaDoi, { x: 50, y: yCursor, size: 11, font: font, color: rgb(0, 0, 0.8) });
+                            yCursor -= 14;
+                        }
+                        yCursor -= 7;
                     }
 
                     const fileArrayBuffer = await file.arrayBuffer();
@@ -1012,7 +1173,9 @@
                             const doiValue = doiInputEle ? doiInputEle.value : null;
                             const pageCropInput = document.getElementById(`pagecrop-${tag}`);
                             const pageCropValue = pageCropInput ? pageCropInput.value : null;
-                            
+                            const anoInputEle = document.getElementById(`ano-${tag}`);
+                            const anoValue = anoInputEle && anoInputEle.value ? parseInt(anoInputEle.value) : null;
+
                             let detalheRegra = null;
                             let notaPleiteadaDoc = null;
 
@@ -1033,7 +1196,7 @@
                                 }
                             }
 
-                            await anexarComTag(input, tag, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue);
+                            await anexarComTag(input, tag, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue, anoValue);
                         }
                     }
                 }
