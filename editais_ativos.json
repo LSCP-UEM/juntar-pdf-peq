@@ -23,5 +23,15 @@
         "id": "regras_039-2026-peq",
         "nome": "Edital 039/2026-PEQ PIPD (Pós-Doutorado)",
         "ativo": true
+    },
+    {
+        "id": "regras_098-2026-peq",
+        "nome": "Edital 098/2026-PEQ Bolsas de Mestrado",
+        "ativo": true
+    },
+    {
+        "id": "regras_099-2026-peq",
+        "nome": "Edital 099/2026-PEQ Bolsas de Doutorado",
+        "ativo": true
     }
 ]
