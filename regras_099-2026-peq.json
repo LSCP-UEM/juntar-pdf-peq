@@ -934,5 +934,20 @@
             "R": 0
         },
         "casas_cr": 2
+    },
+    "documentos_resultado": {
+        "titulo_nivel": "BOLSAS DE DOUTORADO",
+        "descricao_candidatos": "candidatos a bolsa de doutorado",
+        "resolucoes_comissao": "Resoluções nº 346/2026-PEQ e 002/2026-PEQ",
+        "paragrafos_criterios": [
+            "Os critérios adotados para a classificação de bolsistas foram os dispostos no Regulamento do Programa de Pós-Graduação em Engenharia Química aprovado pela Resolução nº 142/2023-CI/CTC - Republicação, no regulamento do PROEX da CAPES, na Resolução nº 325/2025-PEQ, na Resolução nº 320/2025-PEQ e na Portaria CAPES nº 133/2023 sobre Acúmulo de Bolsa e Vínculo Empregatício.",
+            "Segundo a Resolução nº 242/2026-PEQ, de modo a proporcionar oportunidades iguais aos professores orientadores do PEQ, cada orientador tem direito à cota de uma bolsa CAPES. Conforme disposto no § 2º do Art. 5º da Res. 325/2025-PEQ, os demais alunos devem ser classificados em três grupos: alunos que não possuem vínculo empregatício; alunos que possuem vínculo empregatício em docência; e alunos que possuem vínculo empregatício em outra área de atuação."
+        ],
+        "paragrafos_finais": [
+            "Os alunos classificados na cota de seu orientador terão a bolsa implementada a partir da data de disponibilidade da bolsa da cota de seu orientador.",
+            "As bolsas não pertencentes às cotas dos orientadores, e que estiverem disponíveis ou vierem a ficar disponíveis, serão implementadas de acordo com as normas dispostas no artigo 14 da Resolução nº 325/2025-PEQ, transcrita a seguir.",
+            "“Art. 14. As bolsas são concedidas aos alunos que não possuem vínculo empregatício até que todos sejam contemplados durante a vigência da classificação mencionada em Edital. § 1º. O aluno contemplado com bolsa na condição de aluno sem vínculo empregatício deve comunicar ao PEQ se vier a assumir vínculo empregatício. § 2º. O aluno bolsista que assume vínculo empregatício passa a integrar o grupo de alunos com vínculo empregatício, estando sujeito, a partir de então, a ter a sua bolsa cancelada para ser atribuída a aluno classificado no grupo de aluno sem vínculo empregatício. § 3º. Uma vez atendidos todos os alunos sem vínculo empregatício e, havendo bolsas disponíveis, as mesmas podem ser atribuídas aos alunos que possuem vínculo empregatício, até a próxima classificação, quando pode haver redistribuição das bolsas de modo a contemplar prioritariamente os alunos sem vínculo empregatício. § 4º. As bolsas direcionadas a alunos com vínculo empregatício são atribuídas, prioritariamente, aos alunos que atuam como docentes nos ensinos de qualquer grau.”"
+        ],
+        "grupo_com_orientador": "cota_orientador"
     }
 }

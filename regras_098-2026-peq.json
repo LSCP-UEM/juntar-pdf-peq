@@ -907,5 +907,17 @@
             "R": 0
         },
         "casas_cr": 2
+    },
+    "documentos_resultado": {
+        "titulo_nivel": "BOLSAS DE MESTRADO",
+        "descricao_candidatos": "candidatos a bolsa de mestrado",
+        "resolucoes_comissao": "Resoluções nº 346/2025-PEQ e 001/2026-PEQ",
+        "paragrafos_criterios": [
+            "Os critérios adotados para a classificação dos bolsistas foram os dispostos no Regulamento do Programa de Pós-Graduação em Engenharia Química aprovado pela Resolução nº 142/2023-CI/CTC-Republicação, no regulamento do PROEX da CAPES, na Resolução nº 319/2025-PEQ, na Resolução nº 324/2025-PEQ e na Portaria CAPES nº 133, de 10/07/2023, alterada pela Portaria nº 187, de 28/07/2023, que regulamenta o acúmulo de bolsas concedidas pela CAPES com atividade remunerada ou outros rendimentos.",
+            "Conforme o critério estabelecido no Art. 15 da Resolução nº 324/2025-PEQ, as bolsas são concedidas aos alunos que não possuem vínculo empregatício até que todos sejam contemplados durante a vigência da classificação mencionada no Edital. Uma vez atendidos todos os alunos sem vínculo empregatício e, havendo bolsas disponíveis, as mesmas podem ser atribuídas aos alunos que possuem vínculo empregatício. As bolsas direcionadas aos alunos com vínculo empregatício são atribuídas, prioritariamente, aos que atuam como docentes nos ensinos de qualquer grau."
+        ],
+        "paragrafos_finais": [
+            "As bolsas deverão ser distribuídas conforme estabelecido pela Resolução nº 324/2025-PEQ, priorizando inicialmente os candidatos sem vínculo empregatício. Caso ainda haja bolsas disponíveis, estas poderão ser concedidas aos candidatos com vínculo empregatício, conforme previsto na normativa."
+        ]
     }
 }
