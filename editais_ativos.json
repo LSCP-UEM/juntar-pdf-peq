@@ -33,5 +33,15 @@
         "id": "regras_099-2026-peq",
         "nome": "Edital 099/2026-PEQ Bolsas de Doutorado",
         "ativo": true
+    },
+    {
+        "id": "regras_064-2026-peq",
+        "nome": "Edital 064/2026-PEQ Seleção de Alunos Regulares - Mestrado",
+        "ativo": true
+    },
+    {
+        "id": "regras_065-2026-peq",
+        "nome": "Edital 065/2026-PEQ Seleção de Alunos Regulares - Doutorado",
+        "ativo": true
     }
 ]

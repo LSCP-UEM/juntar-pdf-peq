@@ -392,16 +392,21 @@
                 {
                     "id": "CAPA",
                     "rotulo": "Capa do livro / Book cover",
-                    "obrigatorio": false
+                    "obrigatorio": true
                 },
                 {
                     "id": "FICHA",
-                    "rotulo": "Ficha catalográfica (ISBN) / Catalogue card (ISBN)",
-                    "obrigatorio": false
+                    "rotulo": "Página com ISBN e editora (ficha catalográfica) / Page with ISBN and publisher (catalogue card)",
+                    "obrigatorio": true
+                },
+                {
+                    "id": "SUMARIO",
+                    "rotulo": "Sumário ou índice / Table of contents",
+                    "obrigatorio": true
                 },
                 {
                     "id": "CAPITULO",
-                    "rotulo": "Página(s) do capítulo com TÍTULO e AUTORES / Chapter page(s) showing TITLE and AUTHORS",
+                    "rotulo": "Páginas do capítulo, da inicial à final / Chapter pages, first to last",
                     "obrigatorio": true
                 }
             ]

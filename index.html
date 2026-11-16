@@ -112,12 +112,14 @@
             <div id="dados-academicos-comprovantes"></div>
         </div>
 
+        <div id="documentos-basicos-section">
         <h3>2. Documentação Básica Obrigatória / Basic Mandatory Documentation</h3>
         <div class="alert" style="background: #e2e3e5; color: #383d41; border-color: #d6d8db; padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 0.9em;">
             Anexe cada documento em seu respectivo campo. O sistema organizará tudo automaticamente na ordem exigida pela secretaria. / Attach each document in its respective field. The system will automatically organize everything in the order required by the secretariat.
         </div>
-        
+
         <div id="documentos-basicos-container"></div>
+        </div>
 
         <h3>3. Comprovantes da Tabela 1 / Table 1 Proofs (Evaluation Criteria)</h3>
 
@@ -300,8 +302,11 @@
     function renderizarDocumentosBasicos() {
         const container = document.getElementById('documentos-basicos-container');
         let html = '';
-        
-        dadosEdital.documentos.forEach(doc => {
+        const documentos = dadosEdital.documentos || [];
+        // Calls without basic documents (e.g. student selection: documents go to SIGAA) hide the section
+        document.getElementById('documentos-basicos-section').style.display = documentos.length ? 'block' : 'none';
+
+        documentos.forEach(doc => {
             const reqAsterisk = doc.obrigatorio ? '<span style="color:red">*</span>' : '';
             const acceptType = '.pdf';
             
@@ -325,7 +330,8 @@
             let textoPeso = "";
             
             if (regra && regra.peso > 0) {
-                if (regra.tipo === "cr") textoPeso = `Peso: ${regra.peso}x o CR`;
+                if (regra.tipo === "cr") textoPeso = item.cr_entrada === 'media' ? `Peso ${regra.peso} x média (0 a 10)`
+                    : item.cr_entrada === 'conceitos' ? `Peso ${regra.peso} x coeficiente (A=3, B=2, C=1, R=0)` : `Peso: ${regra.peso}x o CR`;
                 else if (regra.tipo === "flat") textoPeso = `${regra.peso} pts/item`;
                 else if (regra.tipo === "autores") textoPeso = `Até ${regra.peso} pts (div. por autores)`;
                 else if (regra.tipo === "meses") textoPeso = `${regra.peso} pts a cada 12 meses`;
@@ -342,7 +348,9 @@
             const card = document.createElement('div');
             card.className = 'item-card';
 
-            if (item.is_calculadora_cr) {
+            if (item.regra_matematica === 'cr' && item.cr_entrada) {
+                card.innerHTML = cartaoCRHtml(item, badgeHtml, descHtml);
+            } else if (item.is_calculadora_cr) {
                 card.innerHTML = `
                     <div class="item-header">
                         <div class="item-title">${item.titulo} ${badgeHtml}</div>
@@ -363,6 +371,7 @@
                     </div>
                     ${descHtml}
                     <div id="inputs-${item.id}" data-next-index="1"></div>
+                    ${item.meses_por_periodo ? `<div id="per-total-${item.id}" style="font-size:0.9em; font-weight:bold; color:#0c5460; margin-top:4px;"></div>` : ''}
                     <button class="btn-add" id="btn-${item.id}" onclick="addInput('${item.id}', ${item.max_uploads}, '${item.tagBase}', ${paramExtraLabel}, ${item.exige_doi}, ${item.exige_cortador_pagina})">
                         + Adicionar Comprovante / Add Proof
                     </button>
@@ -849,6 +858,9 @@
                 nota.innerText = `Cada comprovante corresponde a uma disciplina-semestre (${cfgMeses.meses_fixos_por_comprovante} meses). / Each proof counts as one course-semester.`;
                 block.appendChild(nota);
                 extraLabel = null;
+            } else if (cfgMeses && cfgMeses.meses_por_periodo) {
+                block.appendChild(caixaPeriodo(block));   // start/end dates instead of a months field
+                extraLabel = null;
             }
 
             if (extraLabel) {
@@ -911,6 +923,253 @@
     }
 
     // =========================================================================
+    // AVERAGE / COEFFICIENT CARD (schema v2: regra_matematica "cr" + cr_entrada "media" | "conceitos")
+    // Native PEQ scales: overall average 0-10, or coefficient with A=3, B=2, C=1, R=0 (Regulamento, Art. 30).
+    // Grades 0-10 become concepts by Art. 30, par. 5 (A >= 9.0; B >= 7.5; C >= 6.0; R below 6.0).
+    // Any other scale: the candidate describes it and the Committee converts (no points estimated).
+    // =========================================================================
+    const CR_MAX_DISCIPLINAS = 40;
+    const CR_CONCEITOS = { A: 3, B: 2, C: 1, R: 0 };
+
+    function cartaoCRHtml(item, badgeHtml, descHtml) {
+        const id = item.id;
+        const opcoes = item.cr_entrada === 'media'
+            ? `<option value="0-10">Notas de 0 a 10 / Grades from 0 to 10</option>`
+            : `<option value="CONCEITOS">Conceitos A, B, C, R / Letter grades A, B, C, R</option>
+               <option value="NOTAS">Notas de 0 a 10 (convertidas em conceitos pelo Art. 30 do Regulamento do PEQ) / Grades from 0 to 10</option>`;
+        const corpo = item.cr_entrada === 'media'
+            ? `<div style="margin-top:8px;"><label style="font-weight:normal;">Média global acumulada, como consta no histórico / Overall cumulative average, as shown in the transcript:</label>
+               <input type="number" id="cr-media-${id}" step="0.01" min="0" style="max-width:200px; padding:8px;" oninput="calcularCartaoCR('${id}')"></div>`
+            : `<div style="font-size:0.85em; color:#555; margin:8px 0;">Lance cada disciplina com créditos e conceito (ou nota). Disciplina reprovada e refeita: lance só o resultado novo. Disciplinas com S, I ou J não entram. / One row per course; for a failed and retaken course, enter only the new result; courses graded S, I or J are not entered.</div>
+               <div id="cr-linhas-${id}"></div>
+               <button class="btn-add" type="button" onclick="addLinhaCR('${id}')" style="background:#17a2b8;">+ Adicionar Disciplina / Add Course</button>`;
+        return `
+            <div class="item-header">
+                <div class="item-title">${item.titulo} ${badgeHtml}</div>
+                <div class="item-counter" style="background:#d4edda; color:#155724;">Valor / Value: <span id="cr-valor-${id}">-</span> | <span id="cr-pts-${id}">0.00</span> pts</div>
+            </div>
+            ${descHtml}
+            <div class="cr-box" id="cr-box-${id}" data-pts="0">
+                <label style="font-weight:normal;">Sistema de notas do histórico / Grading system of the transcript:</label>
+                <select id="cr-escala-${id}" style="max-width:560px;" onchange="trocarEscalaCR('${id}')">
+                    <option value="">-- Selecione / Select --</option>${opcoes}
+                    <option value="OUTRA">Outra escala (a Comissão faz a conversão) / Other scale (converted by the Committee)</option>
+                </select>
+                <div id="cr-outra-${id}" style="display:none; margin-top:6px;">
+                    <input type="text" id="cr-desc-${id}" placeholder="Descreva a escala, ex.: 0 a 20, aprovação a partir de 10 / Describe the scale, e.g. 0 to 20, pass mark 10">
+                </div>
+                ${corpo}
+                <div style="margin-top:10px;"><label style="font-weight:normal;">Histórico escolar (PDF) / Academic transcript (PDF): <span style="color:red">*</span></label>
+                <input type="file" accept=".pdf" id="cr-file-${id}" class="cr-file" data-tag="${item.tagBase}_1" onchange="calcularCartaoCR('${id}')"></div>
+            </div>`;
+    }
+
+    function notaParaConceito(n) {
+        if (n === null || isNaN(n)) return null;
+        if (n >= 9.0) return 'A';
+        if (n >= 7.5) return 'B';
+        if (n >= 6.0) return 'C';
+        return 'R';
+    }
+
+    function celulaNotaCR(escala, id) {
+        if (escala === 'CONCEITOS') {
+            return `<select class="cr-conceito" style="width:auto; padding:8px; margin:0;" onchange="calcularCartaoCR('${id}')">
+                <option value="">Conceito / Grade...</option><option value="A">A</option><option value="B">B</option>
+                <option value="C">C</option><option value="R">R (Reprovado / Fail)</option></select>`;
+        }
+        const ph = escala === 'NOTAS' ? 'Nota 0 a 10 / Grade' : 'Nota no histórico / Grade';
+        return `<input type="number" class="cr-nota" step="0.01" min="0" placeholder="${ph}" style="width:160px; padding:8px; margin:0;" oninput="calcularCartaoCR('${id}')">
+                <span class="cr-conv" style="font-size:0.9em; font-weight:bold; color:#155724; min-width:36px;"></span>`;
+    }
+
+    function addLinhaCR(id) {
+        const escala = document.getElementById(`cr-escala-${id}`).value;
+        if (!escala) { alert('Escolha primeiro o sistema de notas do histórico. / Choose the grading system first.'); return; }
+        const cont = document.getElementById(`cr-linhas-${id}`);
+        if (cont.children.length >= CR_MAX_DISCIPLINAS) { alert(`Máximo de ${CR_MAX_DISCIPLINAS} disciplinas. / At most ${CR_MAX_DISCIPLINAS} courses.`); return; }
+        const row = document.createElement('div');
+        row.className = 'cr-linha';
+        row.style = "display:flex; gap:10px; margin-bottom:8px; align-items:center; flex-wrap:wrap; background:#f8f9fa; padding:8px; border-radius:4px; border-left:3px solid #17a2b8;";
+        row.innerHTML = `<input type="text" class="cr-disc" placeholder="Disciplina / Course" style="flex:2; width:auto; min-width:180px; padding:8px; margin:0;">
+            <input type="number" class="cr-cred" placeholder="Créditos / Credits" min="0" step="0.5" style="width:130px; padding:8px; margin:0;" oninput="calcularCartaoCR('${id}')">
+            <span class="cr-nota-cel" style="display:flex; gap:6px; align-items:center;">${celulaNotaCR(escala, id)}</span>
+            <button type="button" style="background:#dc3545; color:white; border:none; padding:8px 10px; border-radius:4px; cursor:pointer;">X</button>`;
+        row.querySelector('button').onclick = () => { row.remove(); calcularCartaoCR(id); };
+        cont.appendChild(row);
+    }
+
+    function trocarEscalaCR(id) {
+        const escala = document.getElementById(`cr-escala-${id}`).value;
+        document.getElementById(`cr-outra-${id}`).style.display = escala === 'OUTRA' ? 'block' : 'none';
+        const cont = document.getElementById(`cr-linhas-${id}`);
+        if (cont) cont.querySelectorAll('.cr-linha').forEach(row => {
+            row.querySelector('.cr-nota-cel').innerHTML = celulaNotaCR(escala || 'CONCEITOS', id);
+        });
+        const media = document.getElementById(`cr-media-${id}`);
+        if (media) { if (escala === '0-10') media.max = '10'; else media.removeAttribute('max'); }
+        calcularCartaoCR(id);
+    }
+
+    // State of one card: escala, valor (native scale; null for another scale or incomplete), course rows, file.
+    function lerCartaoCR(id) {
+        const item = dadosEdital.criterios.find(c => c.id === id);
+        const escala = document.getElementById(`cr-escala-${id}`).value;
+        const desc = (document.getElementById(`cr-desc-${id}`).value || '').trim();
+        const arquivo = document.getElementById(`cr-file-${id}`);
+        const out = { item, escala, desc, valor: null, media: null, linhas: [],
+                      arquivo: arquivo && arquivo.files.length > 0 ? arquivo : null };
+        const num = (s) => { s = String(s || '').trim().replace(',', '.'); return s === '' ? null : parseFloat(s); };
+        if (item.cr_entrada === 'media') {
+            out.media = num(document.getElementById(`cr-media-${id}`).value);
+            if (escala === '0-10' && out.media !== null && out.media >= 0 && out.media <= 10) out.valor = arred2(out.media);
+        } else {
+            let somaC = 0, somaP = 0, completo = true;
+            document.querySelectorAll(`#cr-linhas-${id} .cr-linha`).forEach(row => {
+                const nome = row.querySelector('.cr-disc').value.trim();
+                const cred = num(row.querySelector('.cr-cred').value);
+                const sel = row.querySelector('.cr-conceito');
+                const inpNota = row.querySelector('.cr-nota');
+                const nota = inpNota ? num(inpNota.value) : null;
+                const conceito = sel ? (sel.value || null) : (escala === 'NOTAS' && nota !== null && nota <= 10 ? notaParaConceito(nota) : null);
+                const conv = row.querySelector('.cr-conv');
+                if (conv) conv.innerText = escala === 'NOTAS' && conceito ? `= ${conceito}` : '';
+                out.linhas.push({ nome, cred, conceito, nota });
+                if (!(cred > 0) || (escala !== 'OUTRA' && !conceito) || (escala === 'OUTRA' && nota === null)) completo = false;
+                if (cred > 0 && conceito) { somaC += cred; somaP += cred * CR_CONCEITOS[conceito]; }
+            });
+            if (escala && escala !== 'OUTRA' && completo && somaC > 0) out.valor = arred2(somaP / somaC);
+        }
+        out.usado = !!(escala || out.arquivo || out.media !== null || out.linhas.length > 0);
+        return out;
+    }
+
+    function pontosCR(id, valor) {
+        const regra = regrasPontuacao[id];
+        if (valor === null) return 0;
+        const pts = regra.peso * valor;
+        return regra.limite && pts > regra.limite ? regra.limite : pts;
+    }
+
+    function calcularCartaoCR(id) {
+        const r = lerCartaoCR(id);
+        const pts = pontosCR(id, r.valor);
+        document.getElementById(`cr-box-${id}`).setAttribute('data-pts', String(pts));
+        document.getElementById(`cr-valor-${id}`).innerText = r.valor !== null ? r.valor.toFixed(2) : (r.escala === 'OUTRA' ? 'Comissão' : '-');
+        document.getElementById(`cr-pts-${id}`).innerText = pts.toFixed(2);
+        atualizarPontuacaoEstimada();
+    }
+
+    // Error message (string) or null.
+    function validarCartoesCR() {
+        for (const item of dadosEdital.criterios) {
+            if (!(item.regra_matematica === 'cr' && item.cr_entrada)) continue;
+            const r = lerCartaoCR(item.id);
+            if (!r.usado) continue;
+            const nome = `"${item.titulo}"`;
+            if (!r.escala) return `Escolha o sistema de notas do histórico em ${nome}. / Choose the grading system.`;
+            if (r.escala === 'OUTRA' && !r.desc) return `Descreva a escala de notas em ${nome}. / Describe the grading scale.`;
+            if (item.cr_entrada === 'media') {
+                if (r.media === null || isNaN(r.media) || r.media < 0) return `Informe a média global em ${nome}. / Enter the overall average.`;
+                if (r.escala === '0-10' && r.media > 10) return `A média em ${nome} deve estar entre 0 e 10; se o histórico usa outra escala, escolha "Outra escala". / The average must be from 0 to 10.`;
+            } else {
+                if (r.linhas.length === 0) return `Lance ao menos uma disciplina em ${nome}. / Add at least one course.`;
+                for (const l of r.linhas) {
+                    if (!l.nome) return `Há disciplina sem nome em ${nome}. / A course has no name.`;
+                    if (!(l.cred > 0)) return `Há disciplina sem créditos em ${nome}. / A course is missing credits.`;
+                    if (r.escala === 'CONCEITOS' && !l.conceito) return `Há disciplina sem conceito em ${nome}. / A course is missing its grade.`;
+                    if (r.escala !== 'CONCEITOS' && (l.nota === null || isNaN(l.nota) || l.nota < 0)) return `Há disciplina sem nota em ${nome}. / A course is missing its grade.`;
+                    if (r.escala === 'NOTAS' && l.nota > 10) return `Nota acima de 10 em ${nome}; se o histórico usa outra escala, escolha "Outra escala". / Grade above 10.`;
+                }
+            }
+            if (!r.arquivo) return `Anexe o histórico escolar (PDF) em ${nome}. / Attach the academic transcript.`;
+        }
+        return null;
+    }
+
+    // Separator lines of a card: ESCALA DECLARADA, VALOR DECLARADO (native scale only), PONTUACAO PLEITEADA, courses.
+    function linhasSeparadorCR(r) {
+        const item = r.item;
+        const L = [];
+        const rotulos = { '0-10': '0-10', 'CONCEITOS': 'CONCEITOS A-B-C-R', 'NOTAS': 'NOTAS 0-10 (CONVERTIDAS EM CONCEITOS PELO ART. 30)' };
+        L.push({ t: `ESCALA DECLARADA: ${rotulos[r.escala] || 'OUTRA: ' + semAcento(r.desc).slice(0, 90)}`, s: 12, b: true });
+        if (r.valor !== null) {
+            L.push({ t: `VALOR DECLARADO: ${r.valor.toFixed(2)}`, s: 14, b: true, cor: [0, 0.4, 0] });
+            L.push({ t: `PONTUACAO PLEITEADA: ${pontosCR(item.id, r.valor).toFixed(2)} pts`, s: 14, b: true, cor: [0.8, 0.3, 0] });
+        } else {
+            if (item.cr_entrada === 'media') L.push({ t: `MEDIA NA ESCALA DO HISTORICO: ${r.media}`, s: 14, b: true });
+            L.push({ t: `PONTUACAO PLEITEADA: a definir pela Comissao (outra escala)`, s: 12, b: true, cor: [0.8, 0.3, 0] });
+        }
+        if (item.cr_entrada === 'conceitos') {
+            L.push({ t: `Disciplinas declaradas (${r.linhas.length}):`, s: 11, b: true });
+            r.linhas.forEach(l => {
+                let t = `DISCIPLINA: ${semAcento(l.nome).slice(0, 55)} | CREDITOS: ${l.cred} | CONCEITO: ${l.conceito || '?'}`;
+                if (l.nota !== null) t += ` | NOTA: ${l.nota}`;
+                L.push({ t, s: 9, b: false });
+            });
+        }
+        return L;
+    }
+
+    // =========================================================================
+    // LINKS BY PERIOD (schema v2: criterio.meses_por_periodo) - decision of 2026-11:
+    // inclusive days per link; days of all links are summed; a month is 30 days; an ongoing link
+    // (and any end date after it) counts up to the end of registrations (fim_inscricoes).
+    // =========================================================================
+    function fimInscricoes() {
+        const s = dadosEdital && (dadosEdital.fim_inscricoes || (dadosEdital.janela_producao && dadosEdital.janela_producao.fim));
+        return s ? String(s).slice(0, 10) : null;
+    }
+    function diaUTC(s) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : null; }
+    function dataBR(s) { return s ? `${s.slice(8, 10)}/${s.slice(5, 7)}/${s.slice(0, 4)}` : ''; }
+
+    function lerPeriodo(block) {
+        const caixa = block.querySelector('.periodo-box');
+        if (!caixa) return null;
+        const ini = caixa.querySelector('.per-ini').value;
+        const atual = caixa.querySelector('.per-atual').checked;
+        const lim = fimInscricoes();
+        const r = { ini, fim: atual ? lim : caixa.querySelector('.per-fim').value, atual, dias: 0, limitado: false, erro: null };
+        const a = diaUTC(r.ini), lb = diaUTC(lim);
+        let b = diaUTC(r.fim);
+        if (a === null) { r.erro = 'informe a data de início / enter the start date'; return r; }
+        if (b === null) { r.erro = 'informe a data de término ou marque "vínculo atual" / enter the end date or tick "current link"'; return r; }
+        if (lb !== null && a > lb) { r.erro = `início depois do fim das inscrições (${dataBR(lim)}) / start after the registration deadline`; return r; }
+        if (lb !== null && b > lb) { b = lb; r.fim = lim; r.limitado = !atual; }
+        if (b < a) { r.erro = 'término anterior ao início / end before start'; return r; }
+        r.dias = Math.round((b - a) / 86400000) + 1;
+        return r;
+    }
+
+    function caixaPeriodo(block) {
+        const lim = fimInscricoes();
+        const caixa = document.createElement('div');
+        caixa.className = 'periodo-box';
+        caixa.style = "margin-top: 8px; padding: 8px 10px; background: #f3f6fb; border: 1px solid #b8c8e6; border-radius: 4px;";
+        caixa.innerHTML = `<div style="font-size:0.85em; color:#555; margin-bottom:6px;">Período deste vínculo, como consta no comprovante (um comprovante por vínculo; vínculos simultâneos contam separadamente). Os dias de todos os vínculos são somados e cada 30 dias contam 1 mês. / Period of this link as shown in the proof (one proof per link). Days of all links are summed; every 30 days count as 1 month.</div>
+            <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center;">
+              <label style="font-weight:normal; margin:0;">Início / Start: <input type="date" class="per-ini" style="width:auto; padding:6px; margin:0;"></label>
+              <label style="font-weight:normal; margin:0;">Término / End: <input type="date" class="per-fim" style="width:auto; padding:6px; margin:0;"></label>
+              <label style="font-weight:normal; margin:0; display:flex; align-items:center; gap:6px;"><input type="checkbox" class="per-atual"> Vínculo atual (conta até ${dataBR(lim)}) / Current link</label>
+            </div>
+            <div class="per-dias" style="font-size:0.85em; margin-top:4px;"></div>`;
+        const atualizar = () => {
+            caixa.querySelector('.per-fim').disabled = caixa.querySelector('.per-atual').checked;
+            const r = lerPeriodo(block);
+            const out = caixa.querySelector('.per-dias');
+            if (!r.ini && !caixa.querySelector('.per-fim').value && !r.atual) out.innerText = '';
+            else if (r.erro) { out.style.color = '#c0392b'; out.innerText = r.erro; }
+            else {
+                out.style.color = '#0c5460';
+                out.innerText = `${r.dias} dias / days` + (r.limitado ? ` (contado até ${dataBR(r.fim)}, fim das inscrições / counted up to the deadline)` : '');
+            }
+            atualizarPontuacaoEstimada();
+        };
+        caixa.querySelectorAll('input').forEach(i => { i.addEventListener('input', atualizar); i.addEventListener('change', atualizar); });
+        return caixa;
+    }
+
+    // =========================================================================
     // O MOTOR DE MATEMÁTICA
     // =========================================================================
     function atualizarPontuacaoEstimada() {
@@ -922,7 +1181,10 @@
 
             let itemTotal = 0;
 
-            if (item.is_calculadora_cr) {
+            if (item.regra_matematica === 'cr' && item.cr_entrada) {
+                const box = document.getElementById(`cr-box-${item.id}`);
+                itemTotal = box ? (parseFloat(box.getAttribute('data-pts')) || 0) : 0;
+            } else if (item.is_calculadora_cr) {
                 const calcContainer = document.getElementById(`disciplines-${item.id}`);
                 if (calcContainer) {
                     const cr = parseFloat(calcContainer.getAttribute('data-cr-final')) || 0;
@@ -933,10 +1195,13 @@
                 if (inputContainer) {
                     const blocks = inputContainer.children;
                     let totalMesesAcumulados = 0;
+                    let totalDias = 0;
 
                     for (let i = 0; i < blocks.length; i++) {
                         const anoInput = blocks[i].querySelector('.ano-input');
                         if (anoInput && anoForaDaJanela(anoInput.value)) continue;   // fora da janela: não pontua
+                        const periodo = item.meses_por_periodo ? lerPeriodo(blocks[i]) : null;
+                        if (periodo) { if (!periodo.erro) totalDias += periodo.dias; continue; }
                         const extraInput = blocks[i].querySelector('input[id^="extra-"]');
                         let extraValue = extraInput ? (parseFloat(extraInput.value) || 0) : 0;
                         if (regra.tipo === "meses" && item.meses_fixos_por_comprovante) extraValue = item.meses_fixos_por_comprovante;
@@ -953,7 +1218,14 @@
                     }
 
                     if (regra.tipo === "meses") {
-                        itemTotal += regra.peso * Math.floor(totalMesesAcumulados / 12);
+                        const unidade = item.meses_por_unidade || 12;
+                        const mesesDias = Math.floor(totalDias / 30);
+                        const anos = Math.floor((totalMesesAcumulados + mesesDias) / unidade);
+                        itemTotal += regra.peso * anos;
+                        const tot = document.getElementById(`per-total-${item.id}`);
+                        if (tot) tot.innerText = totalDias > 0
+                            ? `Total: ${totalDias} dias = ${mesesDias} meses de 30 dias = ${anos} período(s) completo(s) de ${unidade} meses / Total: ${totalDias} days = ${mesesDias} months = ${anos} full period(s)`
+                            : '';
                     }
                 }
             }
@@ -1047,6 +1319,27 @@
             }
         }
 
+        const erroCR = validarCartoesCR();
+        if (erroCR) {
+            alert(`⚠️ ${erroCR}`);
+            return;
+        }
+
+        // Links by period: dates are mandatory for every attached proof
+        for (const caixa of document.querySelectorAll('.periodo-box')) {
+            const bloco = caixa.parentElement;
+            const arquivo = bloco.querySelector('input[type="file"]');
+            if (!arquivo || arquivo.files.length === 0) continue;
+            const r = lerPeriodo(bloco);
+            if (r.erro) {
+                caixa.style.border = "2px solid red";
+                caixa.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                alert(`⚠️ Período do comprovante "${arquivo.files[0].name}": ${r.erro}.`);
+                return;
+            }
+            caixa.style.border = "1px solid #b8c8e6";
+        }
+
         const statusDiv = document.getElementById('status');
         statusDiv.innerText = "⏳ Processando arquivos e carimbando metadados institucionais... / Processing files and stamping institutional metadata... Aguarde / Please wait.";
         statusDiv.style.color = "#0056b3";
@@ -1103,7 +1396,7 @@
             // ==========================================
             // 5. MOTOR DE ANEXAÇÃO (COM O AJUSTE NO EIXO Y PARA O TOPO)
             // ==========================================
-            async function anexarComTag(fileInputEle, tagString, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue, anoValue, recortesValue) {
+            async function anexarComTag(fileInputEle, tagString, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue, anoValue, recortesValue, linhasExtras) {
                 if (fileInputEle.files.length > 0) {
                     const file = fileInputEle.files[0];
 
@@ -1124,6 +1417,10 @@
                     }
                     if (notaPleiteadaDoc) {
                         yCursor = escreverQuebrado(separatorPage, notaPleiteadaDoc, { y: yCursor, size: 14, font: font, color: rgb(0.8, 0.3, 0), entrelinha: 25 });
+                    }
+                    for (const l of (linhasExtras || [])) {
+                        yCursor = escreverQuebrado(separatorPage, l.t, { y: yCursor, size: l.s, font: l.b ? font : normalFont,
+                                                   color: l.cor ? rgb(l.cor[0], l.cor[1], l.cor[2]) : undefined, entrelinha: Math.round(l.s * 1.6) });
                     }
                     if (doiValue) {
                         for (const linhaDoi of quebrarPorCaractere(`DOI DECLARADO: ${doiValue.trim()}`, font, 11, 495)) {
@@ -1236,8 +1533,16 @@
             }
 
             for (let itemConfig of dadosEdital.criterios) {
-                const regra = regrasPontuacao[itemConfig.id]; 
-                
+                const regra = regrasPontuacao[itemConfig.id];
+
+                if (itemConfig.regra_matematica === 'cr' && itemConfig.cr_entrada) {
+                    const r = lerCartaoCR(itemConfig.id);
+                    if (r.usado && r.arquivo) {
+                        await anexarComTag(r.arquivo, r.arquivo.getAttribute('data-tag'), null, null, null, null, null, null, linhasSeparadorCR(r));
+                    }
+                    continue;
+                }
+
                 if (itemConfig.is_calculadora_cr) {
                     const calcContainer = document.getElementById(`disciplines-${itemConfig.id}`);
                     if(calcContainer) {
@@ -1306,7 +1611,20 @@
                                 }
                             }
 
-                            await anexarComTag(input, tag, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue, anoValue, recortesValue);
+                            let linhasExtras = null;
+                            const periodo = itemConfig.meses_por_periodo ? lerPeriodo(input.parentElement) : null;
+                            if (periodo && !periodo.erro) {
+                                detalheRegra = null;
+                                notaPleiteadaDoc = null;
+                                linhasExtras = [
+                                    { t: `PERIODO DECLARADO: ${dataBR(periodo.ini)} A ${dataBR(periodo.fim)}`
+                                         + (periodo.atual ? ' (VINCULO ATUAL)' : periodo.limitado ? ' (ATE O FIM DAS INSCRICOES)' : ''),
+                                      s: 12, b: true, cor: [0, 0.4, 0] },
+                                    { t: `DIAS DECLARADOS: ${periodo.dias}`, s: 14, b: true, cor: [0, 0.4, 0] },
+                                    { t: `PONTUACAO PLEITEADA: Submetido para soma global de dias`, s: 13, b: true, cor: [0.8, 0.3, 0] }];
+                            }
+
+                            await anexarComTag(input, tag, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue, anoValue, recortesValue, linhasExtras);
                         }
                     }
                 }
