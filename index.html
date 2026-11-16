@@ -36,6 +36,9 @@
         .btn-gerar { display: block; width: 100%; padding: 15px; background: #28a745; color: white; border: none; font-size: 18px; border-radius: 4px; cursor: pointer; margin-top: 30px; font-weight: bold; transition: background 0.3s; }
         .btn-gerar:hover { background: #218838; }
         #status { margin-top: 20px; font-weight: bold; text-align: center; color: #0056b3; }
+        .aviso-pdf { font-size: 0.9em; margin: 2px 0 8px; color: #555; }
+        .aviso-pdf-ok { color: #1e7e34; }
+        .aviso-pdf-erro { color: #721c24; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; padding: 10px; text-align: left; line-height: 1.45; }
         
         /* Rodapé Institucional */
         .footer-institucional { text-align: center; padding: 20px; margin-top: 40px; color: #6c757d; font-size: 0.9em; border-top: 1px solid #dee2e6; }
@@ -402,6 +405,11 @@
         [_classe(_faixa(0x2010, 0x2015) + _cc(0x2212, 0x2043)), "-"],
         [_classe(_cc(0x2026)), "..."], [_classe(_cc(0x2264)), "<="], [_classe(_cc(0x2265)), ">="], [_classe(_cc(0x2260)), "!="],
         [_classe(_cc(0x2022, 0x25CF, 0x25AA, 0x2023)), "-"], [_classe(_cc(0x2192)), "->"], [_classe(_cc(0x2190)), "<-"],
+        // Ligatures copied from PDFs (e.g. "final" pasted as U+FB01 + "nal")
+        [_classe(_cc(0xFB00)), "ff"], [_classe(_cc(0xFB01)), "fi"], [_classe(_cc(0xFB02)), "fl"],
+        [_classe(_cc(0xFB03)), "ffi"], [_classe(_cc(0xFB04)), "ffl"], [_classe(_cc(0xFB05, 0xFB06)), "st"],
+        // Remaining control characters (text copied from PDFs often carries U+0001..U+001F): they crashed the generation
+        [_classe(_faixa(0x00, 0x08) + _faixa(0x0E, 0x1F) + _faixa(0x7F, 0x9F)), ""],
     ];
     const _ACENTOS_COMBINANTES = _classe(_faixa(0x0300, 0x036F));
     const _cacheCodificavel = new Map();
@@ -442,6 +450,114 @@
         };
         PDFLib.__textoSeguroInstalado = true;
     })();
+
+    // =========================================================================
+    // DIAGNÓSTICO DO PDF NO MOMENTO DO ANEXO
+    // Cada arquivo é lido assim que o candidato o escolhe; o aviso aparece ao lado do campo, com a causa
+    // (vazio, não é PDF, protegido, corrompido) e um caminho legítimo. Nenhuma proteção é removida: de um PDF
+    // protegido lê-se apenas o dicionário de permissões (não cifrado) para saber se a impressão é permitida.
+    // =========================================================================
+    const _diagCache = new WeakMap();
+
+    function escHtml(s) {
+        return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    }
+
+    function diagnosticarPdf(file) {
+        if (_diagCache.has(file)) return _diagCache.get(file);
+        const p = (async () => {
+            if (!file || file.size === 0) return { tipo: "vazio" };
+            const buf = await file.arrayBuffer();
+            const cab = new Uint8Array(buf, 0, Math.min(1024, buf.byteLength));
+            const txt = String.fromCharCode.apply(null, cab);
+            if (txt.indexOf("%PDF") < 0) {
+                let formato = "outro tipo de arquivo / another file type";
+                if (cab[0] === 0xFF && cab[1] === 0xD8) formato = "uma imagem JPG / a JPG image";
+                else if (cab[0] === 0x89 && txt.slice(1, 4) === "PNG") formato = "uma imagem PNG / a PNG image";
+                else if (txt.slice(0, 2) === "PK") formato = "um documento do Word/Office ou arquivo compactado / a Word/Office document or a zip file";
+                else if (/<(!doctype|html|head|body)/i.test(txt)) formato = "uma página da internet (HTML) / a web page (HTML)";
+                return { tipo: "nao_pdf", formato };
+            }
+            try {
+                const doc = await PDFLib.PDFDocument.load(buf, { updateMetadata: false });
+                return { tipo: "ok", paginas: doc.getPageCount() };
+            } catch (e) {
+                if (/encrypted/i.test(String(e && e.message))) {
+                    let imprimir = null;
+                    try {
+                        const d2 = await PDFLib.PDFDocument.load(buf, { ignoreEncryption: true, updateMetadata: false });
+                        const enc = d2.context.lookup(d2.context.trailerInfo.Encrypt);
+                        const P = enc && enc.get(PDFLib.PDFName.of("P"));
+                        if (P && typeof P.asNumber === "function") imprimir = (P.asNumber() & 4) !== 0;
+                    } catch (e2) { imprimir = null; }
+                    return { tipo: "protegido", imprimir };
+                }
+                return { tipo: "corrompido" };
+            }
+        })();
+        _diagCache.set(file, p);
+        return p;
+    }
+
+    const _PASSOS_IMPRIMIR = `1. Abra o arquivo no Chrome ou no Edge (digite a senha, se ele pedir). / Open the file in Chrome or Edge (enter the password if asked).<br>
+        2. Aperte <b>Ctrl + P</b> (Imprimir). / Press Ctrl + P (Print).<br>
+        3. Em "Destino", escolha <b>"Salvar como PDF"</b> e salve. / As destination, choose "Save as PDF".<br>
+        4. Anexe aqui o novo arquivo. / Attach the new file here.`;
+
+    // HTML explaining the problem and a legitimate way out; "" when the file is fine.
+    function mensagemArquivo(diag) {
+        switch (diag.tipo) {
+            case "vazio":
+                return `O arquivo está vazio (0 bytes). Baixe ou salve o documento de novo e anexe outra vez. /
+                    The file is empty (0 bytes). Download or save the document again and re-attach it.`;
+            case "nao_pdf":
+                return `Este arquivo <b>não é um PDF</b>: parece ser ${diag.formato}, apenas com o nome terminado em ".pdf". /
+                    This file is not a PDF, only its name ends in ".pdf".<br><br>
+                    👉 Converta para PDF e anexe o novo arquivo. No Word: Arquivo &gt; Salvar como &gt; PDF. Imagem: abra no
+                    Chrome ou no Edge, aperte Ctrl + P e escolha "Salvar como PDF". / Convert it to PDF and attach the new file.`;
+            case "protegido":
+                if (diag.imprimir === true) {
+                    return `Este PDF tem <b>proteção</b> (senha ou restrição colocada pela editora ou pelo evento) e o sistema não
+                        consegue juntá-lo ao dossiê. A impressão deste arquivo é permitida, então gere uma cópia comum: /
+                        This PDF is protected and cannot be merged. Printing is allowed, so make a plain copy:<br><br>${_PASSOS_IMPRIMIR}`;
+                }
+                return `Este PDF tem <b>proteção</b> (colocada pela editora ou pelo evento) que ${diag.imprimir === false ? "impede imprimir e copiar" : "impede o sistema de lê-lo"}.
+                    O sistema não remove essa proteção. / This PDF carries a publisher or event protection that the system does not remove.<br><br>
+                    👉 Anexe uma versão sem essa restrição: / Attach a version without the restriction:<br>
+                    • <b>Artigo:</b> a versão do autor (manuscrito aceito) ou a cópia disponibilizada pela própria revista. /
+                    Paper: the author's accepted manuscript or the copy provided by the journal.<br>
+                    • <b>Certificado ou declaração:</b> peça ao emissor uma via sem restrição. / Certificate: ask the issuer for an unrestricted copy.<br>
+                    • <b>Arquivo que pede senha para abrir:</b> se a senha é sua, abra com ela e, se a impressão for permitida, siga os passos:<br>
+                    ${_PASSOS_IMPRIMIR}`;
+            case "corrompido":
+                return `O arquivo está <b>corrompido ou incompleto</b> (o download pode ter sido interrompido). Baixe de novo da fonte
+                    original. Se o erro continuar, abra no Chrome ou no Edge e gere uma cópia: / The file is corrupted or incomplete.
+                    Download it again; if the error persists, make a copy:<br><br>${_PASSOS_IMPRIMIR}`;
+            default:
+                return "";
+        }
+    }
+
+    document.addEventListener("change", async (ev) => {
+        const el = ev.target;
+        if (!(el instanceof HTMLInputElement) || el.type !== "file") return;
+        const prox = el.nextElementSibling;
+        let aviso = prox && prox.classList.contains("aviso-pdf") ? prox : null;
+        if (!el.files || el.files.length === 0) { if (aviso) aviso.remove(); return; }
+        if (!aviso) { aviso = document.createElement("div"); aviso.className = "aviso-pdf"; el.insertAdjacentElement("afterend", aviso); }
+        const file = el.files[0];
+        aviso.className = "aviso-pdf";
+        aviso.textContent = "Verificando o arquivo... / Checking the file...";
+        const diag = await diagnosticarPdf(file);
+        if (el.files[0] !== file) return;   // the candidate changed the file meanwhile
+        if (diag.tipo === "ok") {
+            aviso.className = "aviso-pdf aviso-pdf-ok";
+            aviso.textContent = `✓ PDF lido: ${diag.paginas} página(s). / PDF read: ${diag.paginas} page(s).`;
+        } else {
+            aviso.className = "aviso-pdf aviso-pdf-erro";
+            aviso.innerHTML = `🚨 <b>Problema no arquivo "${escHtml(file.name)}"</b> / Problem with this file<br><br>${mensagemArquivo(diag)}`;
+        }
+    });
 
     // Quebra o texto pela largura disponível (palavras longas, como DOIs e nomes de arquivo, são cortadas).
     function quebrarPorLargura(texto, fonte, tamanho, largura) {
@@ -1487,14 +1603,16 @@
                         fileInputEle.parentElement.style.backgroundColor = "#ffe6e6";
 
                         // Monta a mensagem apontando o nome
-                        const msgErro = erroRecorte ? `🚨 <b>PÁGINAS INVÁLIDAS NO ARQUIVO: "${file.name}"</b><br><br>${erroRecorte}<br><br>
-                        👉 Confira o número de páginas do PDF e corrija o intervalo. / Check the page count and fix the range.` : `🚨 <b>FALHA NO ARQUIVO: "${file.name}"</b><br><br>
-                        Este PDF possui um bloqueio de editora (senha/permissões) ou formatação corrompida.<br><br>
-                        👉 <b>COMO RESOLVER AGORA:</b><br>
-                        1. Abra este arquivo no seu navegador (Chrome/Edge).<br>
-                        2. Aperte <b>Ctrl + P</b> (Imprimir).<br>
-                        3. Escolha <b>"Salvar como PDF"</b>.<br>
-                        4. Anexe o novo arquivo limpo aqui e tente novamente.`;
+                        let msgErro;
+                        if (erroRecorte) {
+                            msgErro = `🚨 <b>PÁGINAS INVÁLIDAS NO ARQUIVO: "${escHtml(file.name)}"</b><br><br>${erroRecorte}<br><br>
+                            👉 Confira o número de páginas do PDF e corrija o intervalo. / Check the page count and fix the range.`;
+                        } else {
+                            const diag = await diagnosticarPdf(file);
+                            const explic = mensagemArquivo(diag) || `O sistema não conseguiu copiar as páginas deste PDF. Gere uma cópia
+                                e anexe de novo: / The system could not copy the pages of this PDF. Make a copy and re-attach it:<br><br>${_PASSOS_IMPRIMIR}`;
+                            msgErro = `🚨 <b>FALHA NO ARQUIVO: "${escHtml(file.name)}"</b> (${escHtml(tagString)})<br><br>${explic}`;
+                        }
 
                         // Joga na tela e trava
                         const statusDiv = document.getElementById('status');
@@ -1660,7 +1778,11 @@
             }
             // ---------------------------------------------------------------------
 
-            statusDiv.innerText = "❌ Erro. Certifique-se de que os arquivos enviados são PDFs válidos e não estão corrompidos ou protegidos por senha. / Error. Make sure the uploaded files are valid PDFs and not corrupted.";
+            // File problems are reported above (SISTEMA_DEDO_DURO); anything reaching here is not a PDF problem.
+            statusDiv.innerText = "❌ Erro inesperado ao montar o dossiê. Os arquivos PDF foram lidos sem problema. Confira se algum campo "
+                + "de texto tem caractere incomum colado de outro documento e tente de novo. Se o erro continuar, envie à secretaria "
+                + "do PEQ esta mensagem: / Unexpected error while building the dossier; the PDF files were read correctly. If it "
+                + "persists, send this message to the PEQ office: " + String((error && error.message) || error).slice(0, 200);
             statusDiv.style.color = "red";
         }
     }
