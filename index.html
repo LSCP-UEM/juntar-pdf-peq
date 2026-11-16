@@ -513,6 +513,29 @@
         return { inicio: parseInt(String(j.inicio).slice(0, 4)), fim: parseInt(String(j.fim).slice(0, 4)) };
     }
 
+    // Page ranges typed by the candidate (schema v2: criterio.recorte_paginas): "3", "45-52", "45-47, 50".
+    // Typographic dashes are built from code points (never paste them literally into this file).
+    const _TRACOS = new RegExp('[' + [0x2010, 0x2011, 0x2012, 0x2013, 0x2014, 0x2212].map(c => String.fromCharCode(c)).join('') + ']', 'g');
+    function lerFaixasPaginas(texto) {
+        const s = String(texto || '').replace(_TRACOS, '-').replace(/;/g, ',').replace(/\s+/g, '');
+        if (!s) return { faixas: [] };
+        const partes = s.split(',').filter(p => p !== '');
+        if (partes.length > 6) return { erro: 'use no máximo 6 trechos separados por vírgula / at most 6 ranges' };
+        const faixas = [];
+        for (const parte of partes) {
+            const m = /^(\d{1,4})(?:-(\d{1,4}))?$/.exec(parte);
+            if (!m) return { erro: `"${parte}" não é uma página nem um intervalo válido / invalid page or range` };
+            const a = parseInt(m[1]), b = m[2] ? parseInt(m[2]) : a;
+            if (a < 1 || b < a) return { erro: `intervalo "${parte}" inválido (início maior que o fim?) / invalid range` };
+            faixas.push([a, b]);
+        }
+        return { faixas };
+    }
+
+    function textoFaixas(faixas) {
+        return faixas.map(([a, b]) => a === b ? `${a}` : `${a}-${b}`).join(', ');
+    }
+
     function anoForaDaJanela(valor) {
         const jan = janelaAnos();
         const ano = parseInt(valor);
@@ -773,7 +796,40 @@
                 block.appendChild(doiInput);
             }
             
-            if (requiresPageCrop) {
+            const cfgRecorte = (dadosEdital.criterios || []).find(c => c.id === itemId);
+            const recortes = cfgRecorte && Array.isArray(cfgRecorte.recorte_paginas) ? cfgRecorte.recorte_paginas : [];
+            if (recortes.length > 0) {
+                const caixa = document.createElement('div');
+                caixa.className = 'recortes-box';
+                caixa.style = "margin-top: 8px; padding: 8px 10px; background: #f3faf4; border: 1px solid #b7dfc0; border-radius: 4px;";
+                caixa.innerHTML = `<div style="font-size:0.85em; color:#555;">Informe as páginas do PDF anexado (ex.: <b>3</b>, <b>45-52</b> ou <b>45-47, 50</b>). Só essas páginas entram no dossiê. / Enter the pages of the attached PDF (e.g. 3, 45-52 or 45-47, 50). Only these pages go into the dossier.</div>`;
+                recortes.forEach(r => {
+                    const linha = document.createElement('div');
+                    linha.style.marginTop = "8px";
+                    const rotulo = document.createElement('div');
+                    rotulo.style = "font-size:0.85em; font-weight:bold; color:#333; margin-bottom:3px;";
+                    rotulo.innerText = r.obrigatorio ? `${r.rotulo} (obrigatório / mandatory)` : `${r.rotulo} (opcional / optional)`;
+                    linha.appendChild(rotulo);
+                    const inp = document.createElement('input');
+                    inp.type = 'text';
+                    inp.className = 'recorte-input';
+                    inp.id = `recorte-${uniqueTag}-${r.id}`;
+                    inp.setAttribute('data-recorte-id', r.id);
+                    inp.setAttribute('data-obrig', r.obrigatorio ? 'true' : 'false');
+                    inp.setAttribute('data-rotulo', r.rotulo);
+                    inp.placeholder = r.obrigatorio ? 'ex.: 45-52' : 'ex.: 1';
+                    inp.style.maxWidth = "220px"; inp.style.padding = "6px"; inp.style.borderColor = "#28a745";
+                    linha.appendChild(inp);
+                    if (r.ajuda) {
+                        const ajuda = document.createElement('div');
+                        ajuda.style = "font-size:0.8em; color:#6e4b00; margin-top:3px;";
+                        ajuda.innerText = r.ajuda;
+                        linha.appendChild(ajuda);
+                    }
+                    caixa.appendChild(linha);
+                });
+                block.appendChild(caixa);
+            } else if (requiresPageCrop) {
                 const pageWrapper = document.createElement('div');
                 pageWrapper.style.marginTop = "8px";
                 pageWrapper.innerHTML = `<div style="font-size:0.85em; color:#555; font-weight:bold; margin-bottom:3px;">Página exata do PDF onde constam o TÍTULO do artigo e o NOME DOS AUTORES / Exact page showing TITLE and AUTHORS:</div>`;
@@ -972,6 +1028,25 @@
             anoInput.style.border = "";
         }
 
+        // Page ranges (recorte_paginas): syntax and mandatory ranges are checked before any processing;
+        // page existence is checked when the PDF is read (anexarComTag).
+        for (const caixa of document.querySelectorAll('.recortes-box')) {
+            const arquivo = caixa.parentElement.querySelector('input[type="file"]');
+            if (!arquivo || arquivo.files.length === 0) continue;
+            for (const inp of caixa.querySelectorAll('.recorte-input')) {
+                const r = lerFaixasPaginas(inp.value);
+                let erro = r.erro || null;
+                if (!erro && inp.getAttribute('data-obrig') === 'true' && r.faixas.length === 0) erro = 'campo obrigatório / mandatory field';
+                if (erro) {
+                    inp.style.border = "2px solid red";
+                    inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    alert(`⚠️ Páginas de "${inp.getAttribute('data-rotulo')}" (arquivo "${arquivo.files[0].name}"): ${erro}.`);
+                    return;
+                }
+                inp.style.border = "";
+            }
+        }
+
         const statusDiv = document.getElementById('status');
         statusDiv.innerText = "⏳ Processando arquivos e carimbando metadados institucionais... / Processing files and stamping institutional metadata... Aguarde / Please wait.";
         statusDiv.style.color = "#0056b3";
@@ -1028,7 +1103,7 @@
             // ==========================================
             // 5. MOTOR DE ANEXAÇÃO (COM O AJUSTE NO EIXO Y PARA O TOPO)
             // ==========================================
-            async function anexarComTag(fileInputEle, tagString, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue, anoValue) {
+            async function anexarComTag(fileInputEle, tagString, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue, anoValue, recortesValue) {
                 if (fileInputEle.files.length > 0) {
                     const file = fileInputEle.files[0];
 
@@ -1060,13 +1135,41 @@
 
                     const fileArrayBuffer = await file.arrayBuffer();
                     let userPdf;
+                    let erroRecorte = null;
                     
                     // --- A ARMADILHA AGORA ENGLOBA TUDO ---
                     try {
                         userPdf = await PDFDocument.load(fileArrayBuffer);
                         
                         let pagesToCopy;
-                        if (pageCropValue) {
+                        if (recortesValue) {
+                            // Ranges in the configured order (e.g. cover, catalogue card, chapter); repeated pages kept once
+                            const totalPages = userPdf.getPageCount();
+                            const indices = [], vistos = new Set(), linhasRecorte = [];
+                            for (const rc of recortesValue) {
+                                if (rc.faixas.length === 0) continue;
+                                const fora = rc.faixas.find(([a, b]) => b > totalPages);
+                                if (fora) {
+                                    erroRecorte = `"${rc.rotulo}": a página ${fora[1]} não existe, o arquivo tem ${totalPages} página(s). / Page ${fora[1]} does not exist; the file has ${totalPages} page(s).`;
+                                    throw new Error('RECORTE_INVALIDO');
+                                }
+                                const doRecorte = new Set();
+                                for (const [a, b] of rc.faixas) {
+                                    for (let pg = a; pg <= b; pg++) {
+                                        doRecorte.add(pg);
+                                        if (!vistos.has(pg)) { vistos.add(pg); indices.push(pg - 1); }
+                                    }
+                                }
+                                linhasRecorte.push(`RECORTE ${rc.id}: ${textoFaixas(rc.faixas)} (${doRecorte.size} ${doRecorte.size === 1 ? 'PAGINA' : 'PAGINAS'})`);
+                            }
+                            pagesToCopy = await mergedPdf.copyPages(userPdf, indices);
+                            for (const linha of linhasRecorte) {
+                                separatorPage.drawText(linha, { x: 50, y: yCursor, size: 11, font: font, color: rgb(0, 0.4, 0.2) });
+                                yCursor -= 16;
+                            }
+                            separatorPage.drawText(`PAGINAS NO ARQUIVO ORIGINAL: ${totalPages}`, { x: 50, y: yCursor, size: 11, font: normalFont });
+                            separatorPage.drawText(`(O sistema extraiu apenas as paginas indicadas pelo candidato, na ordem acima)`, { x: 50, y: yCursor - 18, size: 10, font: normalFont, color: rgb(0.5, 0.5, 0.5) });
+                        } else if (pageCropValue) {
                             let pageNum = parseInt(pageCropValue);
                             const totalPages = userPdf.getPageCount();
                             if (isNaN(pageNum) || pageNum < 1) pageNum = 1;
@@ -1087,7 +1190,8 @@
                         fileInputEle.parentElement.style.backgroundColor = "#ffe6e6";
 
                         // Monta a mensagem apontando o nome
-                        const msgErro = `🚨 <b>FALHA NO ARQUIVO: "${file.name}"</b><br><br>
+                        const msgErro = erroRecorte ? `🚨 <b>PÁGINAS INVÁLIDAS NO ARQUIVO: "${file.name}"</b><br><br>${erroRecorte}<br><br>
+                        👉 Confira o número de páginas do PDF e corrija o intervalo. / Check the page count and fix the range.` : `🚨 <b>FALHA NO ARQUIVO: "${file.name}"</b><br><br>
                         Este PDF possui um bloqueio de editora (senha/permissões) ou formatação corrompida.<br><br>
                         👉 <b>COMO RESOLVER AGORA:</b><br>
                         1. Abra este arquivo no seu navegador (Chrome/Edge).<br>
@@ -1175,6 +1279,12 @@
                             const pageCropValue = pageCropInput ? pageCropInput.value : null;
                             const anoInputEle = document.getElementById(`ano-${tag}`);
                             const anoValue = anoInputEle && anoInputEle.value ? parseInt(anoInputEle.value) : null;
+                            const recorteInputs = input.parentElement.querySelectorAll('.recorte-input');
+                            const recortesValue = recorteInputs.length === 0 ? null : Array.from(recorteInputs).map(i => ({
+                                id: i.getAttribute('data-recorte-id'),
+                                rotulo: i.getAttribute('data-rotulo'),
+                                faixas: lerFaixasPaginas(i.value).faixas || []
+                            }));
 
                             let detalheRegra = null;
                             let notaPleiteadaDoc = null;
@@ -1196,7 +1306,7 @@
                                 }
                             }
 
-                            await anexarComTag(input, tag, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue, anoValue);
+                            await anexarComTag(input, tag, detalheRegra, notaPleiteadaDoc, doiValue, pageCropValue, anoValue, recortesValue);
                         }
                     }
                 }

@@ -382,12 +382,29 @@
             "teto_maximo": 0.0,
             "max_uploads": 4,
             "exige_doi": false,
-            "exige_cortador_pagina": true,
+            "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item22",
             "titulo": "Item 22 - Capítulos de livros",
             "limite_quantidade": 4,
-            "exige_janela": true
+            "exige_janela": true,
+            "recorte_paginas": [
+                {
+                    "id": "CAPA",
+                    "rotulo": "Capa do livro / Book cover",
+                    "obrigatorio": false
+                },
+                {
+                    "id": "FICHA",
+                    "rotulo": "Ficha catalográfica (ISBN) / Catalogue card (ISBN)",
+                    "obrigatorio": false
+                },
+                {
+                    "id": "CAPITULO",
+                    "rotulo": "Página(s) do capítulo com TÍTULO e AUTORES / Chapter page(s) showing TITLE and AUTHORS",
+                    "obrigatorio": true
+                }
+            ]
         },
         {
             "nome_curto": "Trabalhos Completos em Anais",
@@ -399,13 +416,31 @@
             "teto_maximo": 0.0,
             "max_uploads": 5,
             "exige_doi": false,
-            "exige_cortador_pagina": true,
+            "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item23",
             "titulo": "Item 23 - Trabalhos Completos em Anais",
             "limite_quantidade": 5,
             "transbordo_para": "ITEM_24_RESUMO_ANAIS",
-            "exige_janela": true
+            "exige_janela": true,
+            "recorte_paginas": [
+                {
+                    "id": "CAPA",
+                    "rotulo": "Capa dos anais / Proceedings cover",
+                    "obrigatorio": false
+                },
+                {
+                    "id": "FICHA",
+                    "rotulo": "Ficha catalográfica ou página com ISBN/ISSN / Catalogue card or ISBN/ISSN page",
+                    "obrigatorio": false
+                },
+                {
+                    "id": "TRABALHO",
+                    "rotulo": "TODAS as páginas do trabalho, da primeira à última / ALL pages of the paper, first to last",
+                    "obrigatorio": true,
+                    "ajuda": "O trabalho deve ser anexado por inteiro. Se o arquivo for só o seu trabalho, informe 1 até a última página (ex.: 1-8). Se for o volume completo dos anais, informe o intervalo do seu trabalho (ex.: 245-252). / The whole paper is required."
+                }
+            ]
         },
         {
             "nome_curto": "Resumos/Expandidos em Anais",
@@ -417,12 +452,30 @@
             "teto_maximo": 0.0,
             "max_uploads": 3,
             "exige_doi": false,
-            "exige_cortador_pagina": true,
+            "exige_cortador_pagina": false,
             "is_calculadora_cr": false,
             "id": "item24",
             "titulo": "Item 24 - Resumos/Expandidos em Anais",
             "limite_quantidade": 3,
-            "exige_janela": true
+            "exige_janela": true,
+            "recorte_paginas": [
+                {
+                    "id": "CAPA",
+                    "rotulo": "Capa dos anais / Proceedings cover",
+                    "obrigatorio": false
+                },
+                {
+                    "id": "FICHA",
+                    "rotulo": "Ficha catalográfica ou página com ISBN/ISSN / Catalogue card or ISBN/ISSN page",
+                    "obrigatorio": false
+                },
+                {
+                    "id": "TRABALHO",
+                    "rotulo": "TODAS as páginas do resumo, da primeira à última / ALL pages of the abstract, first to last",
+                    "obrigatorio": true,
+                    "ajuda": "O resumo deve ser anexado por inteiro. Se o arquivo for o volume completo dos anais, informe o intervalo do seu resumo. / The whole abstract is required."
+                }
+            ]
         },
         {
             "nome_curto": "Apresentação de trabalhos",
